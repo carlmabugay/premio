@@ -18,8 +18,12 @@ it('stores a valid event', function () {
         ],
     ];
 
-    $response = $this->postJson('/api/events', $payload);
+    $this->postJson('/api/events', $payload)->assertCreated();
 
-    $response->assertStatus(201);
+    $this->assertDatabaseHas('events', [
+        'external_event_id' => 'evt_123',
+        'event_type' => 'order.completed',
+        'source' => 'web',
+    ]);
 
 });

@@ -2,18 +2,24 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
 
 class Event extends Model
 {
-    public $timestamps = false;
-    protected $keyType = 'string';
+    use HasUuids;
 
-    protected static function booted(): void
-    {
-        static::creating(function ($model) {
-           $model->id = (string) Str::uuid();
-        });
-    }
+    protected $fillable = [
+        'id',
+        'external_id',
+        'source',
+        'type',
+        'payload',
+        'occurred_at',
+    ];
+
+    protected $casts = [
+        'occurred_at' => 'datetime',
+        'payload' => 'array',
+    ];
 }

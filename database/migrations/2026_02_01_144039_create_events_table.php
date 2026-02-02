@@ -13,11 +13,12 @@ return new class extends Migration
     {
         Schema::create('events', function (Blueprint $table) {
             $table->uuid('id')->primary();
+            $table->string('external_id');
             $table->string('source');
-            $table->string('event_type');
-            $table->string('external_event_id');
+            $table->string('type');
             $table->json('payload');
-            $table->timestamp('received_at')->nullable();
+            $table->timestamp('occurred_at')->nullable();
+            $table->timestamps();
         });
     }
 

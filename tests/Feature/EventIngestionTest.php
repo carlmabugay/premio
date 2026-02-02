@@ -4,13 +4,13 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
-
 it('stores a valid event', function () {
 
+    // Arrange
     $payload = [
-        'id' => '1',
-        'type' => 'order.completed',
+        'external_id' => 'evt_123',
         'source' => 'web',
+        'type' => 'order.completed',
         'occurred_at' => now()->toISOString(),
         'payload' => [
             'order_id' => '1001',
@@ -18,12 +18,16 @@ it('stores a valid event', function () {
         ],
     ];
 
-    $this->postJson('/api/events', $payload)->assertCreated();
+    // Act
+    $response = $this->postJson('/api/events', $payload);
+
+    // Assert
+    $response->assertStatus(201);
 
     $this->assertDatabaseHas('events', [
-        'external_event_id' => 'evt_123',
-        'event_type' => 'order.completed',
-        'source' => 'web',
+        'external_id' => $payload['external_id'],
+        'source' => $payload['source'],
+        'type' => $payload['type'],
     ]);
 
 });

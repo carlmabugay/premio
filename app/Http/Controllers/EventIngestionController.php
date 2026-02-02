@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Application\Events\IngestEvent\IngestEventService;
 use App\Http\Requests\InjestEventRequest;
-use Illuminate\Http\Request;
 
 class EventIngestionController extends Controller
 {

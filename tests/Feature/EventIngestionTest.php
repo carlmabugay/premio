@@ -92,6 +92,73 @@ describe('Event Ingestion Feature', function () {
             $this->assertDatabaseCount('events', 0);
 
         });
+
+        it('rejects invalid timestamps.', function () {
+
+            // Arrange
+            $payload = [
+                'external_id' => 'EVT123',
+                'source' => 'web',
+                'type' => 'order.completed',
+                'occurred_at' => '01/Jan/2026',
+                'payload' => [
+                    'order_id' => '1001',
+                    'customer_id' => '1',
+                ],
+            ];
+
+            $response = $this->postJson('/api/v1/events', $payload);
+
+            // Assert
+            $response->assertStatus(422);
+
+            $response->assertJson([
+                'message' => 'The occurred at field must be a valid date.',
+                'errors' => [
+                    "occurred_at" => [
+                        "The occurred at field must be a valid date.",
+                    ]
+                ],
+            ]);
+
+            $response->assertJsonValidationErrors([
+                'occurred_at',
+            ]);
+
+            $this->assertDatabaseCount('events', 0);
+        });
+
+        it('rejects invalid payload structure.', function () {
+
+            // Arrange
+            $payload = [
+                'external_id' => 'EVT123',
+                'source' => 'web',
+                'type' => 'order.completed',
+                'occurred_at' => now()->toISOString(),
+                'payload' => 'invalid payload',
+            ];
+
+            $response = $this->postJson('/api/v1/events', $payload);
+
+            // Assert
+            $response->assertStatus(422);
+
+            $response->assertJson([
+                'message' => 'The payload field must be an array.',
+                'errors' => [
+                    "payload" => [
+                        "The payload field must be an array.",
+                    ]
+                ],
+            ]);
+
+            $response->assertJsonValidationErrors([
+                'payload',
+            ]);
+
+            $this->assertDatabaseCount('events', 0);
+        });
     });
 
 });

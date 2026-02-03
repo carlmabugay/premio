@@ -4,14 +4,14 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
-describe('Even Ingestion Feature', function () {
+describe('Event Ingestion Feature', function () {
 
     describe('Payload & Process', function () {
         it('stores a valid event.', function () {
 
             // Arrange
             $payload = [
-                'external_id' => 'evt_123',
+                'external_id' => 'EVT123',
                 'source' => 'web',
                 'type' => 'order.completed',
                 'occurred_at' => now()->toISOString(),
@@ -34,6 +34,34 @@ describe('Even Ingestion Feature', function () {
             ]);
 
         });
+
+        it('stores the same external event only once.', function () {
+
+            // Arrange
+            $payload = [
+                'external_id' => 'EVT123',
+                'source' => 'web',
+                'type' => 'order.completed',
+                'occurred_at' => now()->toISOString(),
+                'payload' => [
+                    'order_id' => '1001',
+                    'customer_id' => '1',
+                ],
+            ];
+
+            // Act
+            $this->postJson('/api/v1/events', $payload)->assertStatus(201);
+            $this->postJson('/api/v1/events', $payload)->assertStatus(200);
+
+            $this->assertDatabaseCount('events', 1);
+
+            $this->assertDatabaseHas('events', [
+                'external_id' => $payload['external_id'],
+                'type' => $payload['type'],
+                'source' => $payload['source'],
+            ]);
+        });
+
     });
 
     describe('Validations', function () {
@@ -60,6 +88,8 @@ describe('Even Ingestion Feature', function () {
                 'payload',
                 'occurred_at',
             ]);
+
+            $this->assertDatabaseCount('events', 0);
 
         });
     });

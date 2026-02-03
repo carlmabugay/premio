@@ -12,8 +12,13 @@ class EventIngestionController extends Controller
         InjestEventRequest $request,
         IngestEventService $service,
     ) {
-        $service->handle($request->toCommand());
 
-        return response()->json(['ok' => true], 201);
+        $result = $service->handle($request->toCommand());
+
+        return response()->json([
+            'created' => true
+        ],
+            $result->was_created ? 201 : 200
+        );
     }
 }

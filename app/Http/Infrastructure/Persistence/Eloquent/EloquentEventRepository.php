@@ -8,6 +8,10 @@ use App\Models\Event as EventModel;
 
 class EloquentEventRepository implements EventRepository
 {
+    public function existsByExternalId(string $external_id, string $source): bool
+    {
+        return EventModel::where('external_id', $external_id)->where('source', $source)->exists();
+    }
     public function save(Event $event): void
     {
         EventModel::create([

@@ -11,10 +11,18 @@ readonly class IngestEventService
         private EventRepository $eventRepository,
     ) {}
 
-    public function handle(IngestEventCommand $command): void
+    public function handle(IngestEventCommand $command): IngestEventResult
     {
+        if ($this->eventRepository->existsByExternalId(
+            $command->external_id, $command->source
+        )) {
+            return IngestEventResult::duplicate();
+        }
+
         $event = Event::fromCommand($command);
 
         $this->eventRepository->save($event);
+
+        return IngestEventResult::created();
     }
 }

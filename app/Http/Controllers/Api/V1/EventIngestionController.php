@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Application\Events\IngestEvent\IngestEventService;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\InjestEventRequest;
 
 class EventIngestionController extends Controller

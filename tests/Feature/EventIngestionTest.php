@@ -22,7 +22,7 @@ describe('Even Ingestion Feature', function () {
             ];
 
             // Act
-            $response = $this->postJson('/api/events', $payload);
+            $response = $this->postJson('/api/v1/events', $payload);
 
             // Assert
             $response->assertStatus(201);
@@ -43,7 +43,7 @@ describe('Even Ingestion Feature', function () {
             $payload = [];
 
             // Act
-            $response = $this->postJson('/api/events', $payload);
+            $response = $this->postJson('/api/v1/events', $payload);
 
             // Assert
             $response->assertStatus(422);

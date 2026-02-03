@@ -6,7 +6,7 @@ use App\Http\Application\Events\IngestEvent\IngestEventCommand;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class InjestEventRequest extends FormRequest
+class IngestEventRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.

@@ -7,6 +7,7 @@ uses(RefreshDatabase::class);
 describe('Event Ingestion Feature', function () {
 
     describe('Payload & Process', function () {
+
         it('stores a valid event.', function () {
 
             // Arrange
@@ -65,6 +66,7 @@ describe('Event Ingestion Feature', function () {
     });
 
     describe('Validations', function () {
+
         it('rejects missing required fields.', function () {
 
             // Arrange
@@ -115,9 +117,9 @@ describe('Event Ingestion Feature', function () {
             $response->assertJson([
                 'message' => 'The occurred at field must be a valid date.',
                 'errors' => [
-                    "occurred_at" => [
-                        "The occurred at field must be a valid date.",
-                    ]
+                    'occurred_at' => [
+                        'The occurred at field must be a valid date.',
+                    ],
                 ],
             ]);
 
@@ -147,9 +149,9 @@ describe('Event Ingestion Feature', function () {
             $response->assertJson([
                 'message' => 'The payload field must be an array.',
                 'errors' => [
-                    "payload" => [
-                        "The payload field must be an array.",
-                    ]
+                    'payload' => [
+                        'The payload field must be an array.',
+                    ],
                 ],
             ]);
 

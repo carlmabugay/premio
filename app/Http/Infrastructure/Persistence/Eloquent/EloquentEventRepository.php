@@ -12,6 +12,7 @@ class EloquentEventRepository implements EventRepository
     {
         return EventModel::where('external_id', $external_id)->where('source', $source)->exists();
     }
+
     public function save(Event $event): void
     {
         EventModel::create([

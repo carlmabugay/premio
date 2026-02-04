@@ -26,4 +26,23 @@ readonly class Event
             occurred_at: $command->occurred_at,
         );
     }
+
+    public static function fromPrimitives(
+        string $id,
+        string $external_id,
+        string $type,
+        string $source,
+        string $occurred_at,
+        array $payload
+    ): self {
+        return new self(
+            id: $id,
+            external_id: $external_id,
+            source: $source,
+            type: $type,
+            payload: $payload,
+            occurred_at: $occurred_at,
+        );
+
+    }
 }

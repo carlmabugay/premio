@@ -94,6 +94,34 @@ describe('Rule Evaluation', function () {
         });
     });
 
-    describe('Validation', function () {});
+    describe('Validation', function () {
+
+        it('does not trigger a rule when the payload condition is satisfied.', function () {
+
+            // Given
+            $event = Event::fromPrimitives(
+                id: 'EVT123',
+                external_id: 'EXT123',
+                type: 'order.completed',
+                source: 'shopify',
+                occurred_at: now()->toISOString(),
+                payload: [
+                    'order_total' => 500,
+                ]
+            );
+
+            // And
+            $rule = Rule::whenEventType('order.completed')
+                ->whenPayloadAtLeast('order_total', 1000)
+                ->givePoints(10);
+
+            // When
+            $evaluator = new RuleEvaluator;
+            $results = $evaluator->evaluate($event, [$rule]);
+
+            // Then
+            expect($results)->toBeEmpty();
+        });
+    });
 
 });

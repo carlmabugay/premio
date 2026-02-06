@@ -11,11 +11,11 @@ final class RuleEvaluator
         $results = [];
 
         foreach ($rules as $rule) {
-            if (! $rule->matches($event)) {
-                continue;
+            if ($rule->matches($event)) {
+                foreach ($rule->rewards() as $reward) {
+                    $results[] = $reward;
+                }
             }
-
-            $results[] = $rule->toRewardInstruction();
         }
 
         return $results;

@@ -10,16 +10,17 @@ final class Rule
 {
     private array $conditions = [];
 
+    private array $rewardInstructions = [];
+
     private bool $enabled = true;
 
     private function __construct(
         private readonly string $event_type,
-        private int $points,
     ) {}
 
     public static function whenEventType(string $event_type): self
     {
-        return new self($event_type, 0);
+        return new self($event_type);
     }
 
     public function whenPayloadAtLeast(string $key, int|float $value): self
@@ -31,7 +32,7 @@ final class Rule
 
     public function givePoints(int $points): self
     {
-        $this->points = $points;
+        $this->rewardInstructions[] = RewardInstruction::points($points);
 
         return $this;
     }
@@ -62,8 +63,8 @@ final class Rule
         return true;
     }
 
-    public function toRewardInstruction(): RewardInstruction
+    public function rewards(): array
     {
-        return new RewardInstruction($this->points);
+        return $this->rewardInstructions;
     }
 }

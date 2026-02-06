@@ -92,6 +92,36 @@ describe('Rule Evaluation', function () {
             expect($results)->toHaveCount(2)
                 ->and(collect($results)->pluck('points'))->toContain(10, 5);
         });
+
+        it('triggers multiple rewards when a rule defines multiple actions.', function () {
+
+            // Given
+            $event = Event::fromPrimitives(
+                id: 'EVT123',
+                external_id: 'EXT123',
+                type: 'order.completed',
+                source: 'shopify',
+                occurred_at: now()->toISOString(),
+                payload: [
+                    'order_total' => 1500,
+                ]
+            );
+
+            // And
+            $rule = Rule::whenEventType('order.completed')
+                ->whenPayloadAtLeast('order_total', 1000)
+                ->givePoints(10)
+                ->givePoints(5);
+
+            // When
+            $evaluator = new RuleEvaluator;
+            $results = $evaluator->evaluate($event, [$rule]);
+
+            expect($results)->toHaveCount(2);
+            //                ->and($results[0]->getPoints())->toBe(10)
+            //                ->and($results[1]->getPoints())->toBe(5);
+
+        });
     });
 
     describe('Validation', function () {

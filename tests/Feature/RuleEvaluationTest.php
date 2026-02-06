@@ -122,6 +122,33 @@ describe('Rule Evaluation', function () {
             // Then
             expect($results)->toBeEmpty();
         });
+
+        it('does not trigger a rule when the rule is disabled.', function () {
+
+            // Given
+            $event = Event::fromPrimitives(
+                id: 'EVT123',
+                external_id: 'EXT123',
+                type: 'order.completed',
+                source: 'shopify',
+                occurred_at: now()->toISOString(),
+                payload: [
+                    'order_total' => 1500,
+                ]
+            );
+
+            // And
+            $rule = Rule::whenEventType('order.completed')
+                ->givePoints(10)
+                ->disable();
+
+            // When
+            $evaluator = new RuleEvaluator;
+            $results = $evaluator->evaluate($event, [$rule]);
+
+            // Then
+            expect($results)->toBeEmpty();
+        });
     });
 
 });

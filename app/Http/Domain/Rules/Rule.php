@@ -10,6 +10,8 @@ final class Rule
 {
     private array $conditions = [];
 
+    private bool $enabled = true;
+
     private function __construct(
         private readonly string $event_type,
         private int $points,
@@ -34,8 +36,19 @@ final class Rule
         return $this;
     }
 
+    public function disable(): self
+    {
+        $this->enabled = false;
+
+        return $this;
+    }
+
     public function matches(Event $event): bool
     {
+        if (! $this->enabled) {
+            return false;
+        }
+
         if ($event->type !== $this->event_type) {
             return false;
         }

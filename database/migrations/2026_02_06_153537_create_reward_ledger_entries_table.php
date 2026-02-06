@@ -11,12 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('reward_rules', function (Blueprint $table) {
+        Schema::create('reward_ledger_entries', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('event_type');
-            $table->string('reward_type');
-            $table->integer('reward_amount');
-            $table->boolean('is_active')->default(true);
+            //            $table->foreignUuid('reward_rule_id')->references('id')->on('reward_rules')->onDelete('cascade');
+            $table->string('subject_type');
+            $table->string('subject_id');
+            $table->float('points');
+            $table->string('reason')->nullable();
             $table->timestamp('created_at')->useCurrent();
         });
     }
@@ -26,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('reward_rules');
+        Schema::dropIfExists('reward_ledger_entries');
     }
 };

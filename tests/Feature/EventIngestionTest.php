@@ -55,12 +55,14 @@ describe('Event Ingestion Feature', function () {
             $this->postJson('/api/v1/events', $payload)->assertStatus(200);
 
             $this->assertDatabaseCount('events', 1);
+            $this->assertDatabaseCount('reward_ledger_entries', 1);
 
             $this->assertDatabaseHas('events', [
                 'external_id' => $payload['external_id'],
                 'type' => $payload['type'],
                 'source' => $payload['source'],
             ]);
+
         });
 
     });

@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-use App\Http\Application\Events\IngestEvent\IngestEventCommand;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -30,16 +29,5 @@ class IngestEventRequest extends FormRequest
             'payload' => 'required|array',
             'occurred_at' => 'required|date',
         ];
-    }
-
-    public function toCommand(): IngestEventCommand
-    {
-        return new IngestEventCommand(
-            external_id: $this->input('external_id'),
-            source: $this->input('source'),
-            type: $this->input('type'),
-            payload: $this->input('payload'),
-            occurred_at: $this->input('occurred_at'),
-        );
     }
 }

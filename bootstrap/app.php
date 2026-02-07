@@ -16,7 +16,5 @@ return Application::configure(basePath: dirname(__DIR__))
         //
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        $exceptions->report(function (DuplicateEvent $event): void {
-
-        });
+        $exceptions->report(function (DuplicateEvent $event): void {});
     })->create();

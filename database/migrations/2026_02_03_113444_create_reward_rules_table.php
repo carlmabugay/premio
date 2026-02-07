@@ -14,10 +14,13 @@ return new class extends Migration
         Schema::create('reward_rules', function (Blueprint $table) {
             $table->id();
             $table->string('event_type');
-            $table->enum('reward_type', ['points', 'credits'])->default('points');
-            $table->integer('amount')->default(0);
+            $table->json('condition_json')->nullable();
+            $table->enum('reward_type', ['fixed', 'percentage'])->default('fixed');
+            $table->integer('reward_value')->default(0);
+            $table->integer('cap')->default(0);
             $table->boolean('is_active')->default(true);
-            $table->timestamps();
+            $table->date('starts_at')->nullable();
+            $table->date('ends_at')->nullable();
         });
     }
 

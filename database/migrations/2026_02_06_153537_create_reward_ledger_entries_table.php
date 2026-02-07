@@ -18,8 +18,8 @@ return new class extends Migration
             $table->enum('type', ['earn', 'adjust'])->default('earn');
             $table->enum('subject_type', ['customer', 'order'])->default('customer');
             $table->string('subject_id');
-            $table->float('points');
-            $table->timestamps();
+            $table->float('amount');
+            $table->timestamp('created_at')->useCurrent();
         });
     }
 

@@ -13,12 +13,13 @@ return new class extends Migration
     {
         Schema::create('reward_ledger_entries', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            //            $table->foreignUuid('reward_rule_id')->references('id')->on('reward_rules')->onDelete('cascade');
-            $table->string('subject_type');
+            $table->uuid('event_id');
+            $table->foreignId('reward_rule_id')->constrained();
+            $table->enum('type', ['earn', 'adjust'])->default('earn');
+            $table->enum('subject_type', ['customer', 'order'])->default('customer');
             $table->string('subject_id');
             $table->float('points');
-            $table->string('reason')->nullable();
-            $table->timestamp('created_at')->useCurrent();
+            $table->timestamps();
         });
     }
 

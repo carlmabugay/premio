@@ -9,14 +9,7 @@ class Event extends Model
 {
     use HasUuids;
 
-    protected $fillable = [
-        'id',
-        'external_id',
-        'source',
-        'type',
-        'payload',
-        'occurred_at',
-    ];
+    protected $guarded = [];
 
     protected $casts = [
         'occurred_at' => 'datetime',

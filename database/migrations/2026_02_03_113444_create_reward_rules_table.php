@@ -12,12 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('reward_rules', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->id();
             $table->string('event_type');
-            $table->string('reward_type');
-            $table->integer('reward_amount');
+            $table->enum('reward_type', ['points', 'credits'])->default('points');
+            $table->integer('amount')->default(0);
             $table->boolean('is_active')->default(true);
-            $table->timestamp('created_at')->useCurrent();
+            $table->timestamps();
         });
     }
 

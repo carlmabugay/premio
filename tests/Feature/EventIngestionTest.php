@@ -15,10 +15,10 @@ describe('Event Ingestion Feature', function () {
                 'external_id' => 'EXT-123',
                 'type' => 'order.complete',
                 'source' => 'shopify',
-                'occurred_at' => now()->toISOString(),
                 'payload' => [
                     'customer_id' => 'CST-123',
                 ],
+                'occurred_at' => now()->toISOString(),
             ];
 
             // When
@@ -29,8 +29,8 @@ describe('Event Ingestion Feature', function () {
 
             $this->assertDatabaseHas('events', [
                 'external_id' => $payload['external_id'],
-                'source' => $payload['source'],
                 'type' => $payload['type'],
+                'source' => $payload['source'],
             ]);
         });
 
@@ -41,10 +41,10 @@ describe('Event Ingestion Feature', function () {
                 'external_id' => 'EXT-123',
                 'type' => 'order.complete',
                 'source' => 'shopify',
-                'occurred_at' => now()->toISOString(),
                 'payload' => [
                     'customer_id' => 'CST-123',
                 ],
+                'occurred_at' => now()->toISOString(),
             ];
 
             // When
@@ -65,10 +65,10 @@ describe('Event Ingestion Feature', function () {
             $payload = [
                 'type' => 'order.completed',
                 'source' => 'shopify',
-                'occurred_at' => now()->toISOString(),
                 'payload' => [
                     'customer_id' => 'CST-123',
                 ],
+                'occurred_at' => now()->toISOString(),
             ];
 
             // When
@@ -92,10 +92,10 @@ describe('Event Ingestion Feature', function () {
             $payload = [
                 'external_id' => 'EXT-123',
                 'source' => 'shopify',
-                'occurred_at' => now()->toISOString(),
                 'payload' => [
                     'customer_id' => 'CST-123',
                 ],
+                'occurred_at' => now()->toISOString(),
             ];
 
             // When
@@ -119,10 +119,10 @@ describe('Event Ingestion Feature', function () {
             $payload = [
                 'external_id' => 'EXT-123',
                 'type' => 'order.completed',
-                'occurred_at' => now()->toISOString(),
                 'payload' => [
                     'customer_id' => 'CST-123',
                 ],
+                'occurred_at' => now()->toISOString(),
             ];
 
             // When
@@ -135,6 +135,56 @@ describe('Event Ingestion Feature', function () {
                 'message' => 'The source field is required.',
                 'errors' => [
                     'source' => ['The source field is required.'],
+                ],
+            ]);
+        });
+
+        it('fails when payload is missing.', function () {
+
+            // Given
+            $payload = [
+                'external_id' => 'EXT-123',
+                'type' => 'order.complete',
+                'source' => 'shopify',
+                'occurred_at' => now()->toISOString(),
+            ];
+
+            // When
+            $response = $this->postJson('/api/v1/events', $payload);
+
+            // Then
+            $response->assertStatus(422);
+
+            $response->assertJson([
+                'message' => 'The payload field is required.',
+                'errors' => [
+                    'payload' => ['The payload field is required.'],
+                ],
+            ]);
+
+        });
+
+        it('fails when payload structure is invalid.', function () {
+
+            // Given
+            $payload = [
+                'external_id' => 'EXT-123',
+                'source' => 'shopify',
+                'type' => 'order.completed',
+                'payload' => 'invalid',
+                'occurred_at' => now()->toISOString(),
+            ];
+
+            // When
+            $response = $this->postJson('/api/v1/events', $payload);
+
+            // Then
+            $response->assertStatus(422);
+
+            $response->assertJson([
+                'message' => 'The payload field must be an array.',
+                'errors' => [
+                    'payload' => ['The payload field must be an array.'],
                 ],
             ]);
         });
@@ -172,10 +222,10 @@ describe('Event Ingestion Feature', function () {
                 'external_id' => 'EXT-123',
                 'type' => 'order.completed',
                 'source' => 'shopify',
-                'occurred_at' => 'invalid',
                 'payload' => [
                     'customer_id' => 'CST-123',
                 ],
+                'occurred_at' => 'invalid',
             ];
 
             // When
@@ -188,56 +238,6 @@ describe('Event Ingestion Feature', function () {
                 'message' => 'The occurred at field must be a valid date.',
                 'errors' => [
                     'occurred_at' => ['The occurred at field must be a valid date.'],
-                ],
-            ]);
-        });
-
-        it('fails when payload is missing.', function () {
-
-            // Given
-            $payload = [
-                'external_id' => 'EXT-123',
-                'type' => 'order.complete',
-                'source' => 'shopify',
-                'occurred_at' => now()->toISOString(),
-            ];
-
-            // When
-            $response = $this->postJson('/api/v1/events', $payload);
-
-            // Then
-            $response->assertStatus(422);
-
-            $response->assertJson([
-                'message' => 'The payload field is required.',
-                'errors' => [
-                    'payload' => ['The payload field is required.'],
-                ],
-            ]);
-
-        });
-
-        it('fails when payload structure is invalid.', function () {
-
-            // Given
-            $payload = [
-                'external_id' => 'EXT-123',
-                'source' => 'shopify',
-                'type' => 'order.completed',
-                'occurred_at' => now()->toISOString(),
-                'payload' => 'invalid payload',
-            ];
-
-            // When
-            $response = $this->postJson('/api/v1/events', $payload);
-
-            // Then
-            $response->assertStatus(422);
-
-            $response->assertJson([
-                'message' => 'The payload field must be an array.',
-                'errors' => [
-                    'payload' => ['The payload field must be an array.'],
                 ],
             ]);
         });

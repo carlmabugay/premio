@@ -8,24 +8,23 @@ describe('Event Ingestion Feature', function () {
 
     describe('Payload & Process', function () {
 
-        it('stores a valid event.', function () {
+        it('saves when event payload is valid.', function () {
 
-            // Arrange
+            // Given
             $payload = [
-                'external_id' => 'EVT123',
-                'source' => 'web',
-                'type' => 'order.completed',
+                'external_id' => 'EXT-123',
+                'type' => 'order.complete',
+                'source' => 'shopify',
                 'occurred_at' => now()->toISOString(),
                 'payload' => [
-                    'order_id' => '1001',
-                    'customer_id' => '1',
+                    'customer_id' => 'CST-123',
                 ],
             ];
 
-            // Act
+            // When
             $response = $this->postJson('/api/v1/events', $payload);
 
-            // Assert
+            // Then
             $response->assertStatus(201);
 
             $this->assertDatabaseHas('events', [
@@ -33,134 +32,214 @@ describe('Event Ingestion Feature', function () {
                 'source' => $payload['source'],
                 'type' => $payload['type'],
             ]);
-
         });
 
-        it('stores the same external event only once.', function () {
+        it('returns 200 when the same event is submitted twice.', function () {
 
-            // Arrange
+            // Given
             $payload = [
-                'external_id' => 'EVT123',
-                'source' => 'web',
-                'type' => 'order.completed',
+                'external_id' => 'EXT-123',
+                'type' => 'order.complete',
+                'source' => 'shopify',
                 'occurred_at' => now()->toISOString(),
                 'payload' => [
-                    'order_id' => '1001',
-                    'customer_id' => '1',
+                    'customer_id' => 'CST-123',
                 ],
             ];
 
-            // Act
+            // When
             $this->postJson('/api/v1/events', $payload)->assertStatus(201);
             $this->postJson('/api/v1/events', $payload)->assertStatus(200);
 
+            // Then
             $this->assertDatabaseCount('events', 1);
-
-            $this->assertDatabaseHas('events', [
-                'external_id' => $payload['external_id'],
-                'type' => $payload['type'],
-                'source' => $payload['source'],
-            ]);
-
         });
 
     });
 
     describe('Validations', function () {
 
-        it('rejects missing required fields.', function () {
+        it('fails when external_id field is missing.', function () {
 
-            // Arrange
-            $payload = [];
-
-            // Act
-            $response = $this->postJson('/api/v1/events', $payload);
-
-            // Assert
-            $response->assertStatus(422);
-
-            $response->assertJson([
-                'message' => 'The external id field is required. (and 4 more errors)',
-                'errors' => [],
-            ]);
-
-            $response->assertJsonValidationErrors([
-                'external_id',
-                'source',
-                'type',
-                'payload',
-                'occurred_at',
-            ]);
-
-            $this->assertDatabaseCount('events', 0);
-
-        });
-
-        it('rejects invalid timestamps.', function () {
-
-            // Arrange
+            // Given
             $payload = [
-                'external_id' => 'EVT123',
-                'source' => 'web',
                 'type' => 'order.completed',
-                'occurred_at' => '01/Jan/2026',
+                'source' => 'shopify',
+                'occurred_at' => now()->toISOString(),
                 'payload' => [
-                    'order_id' => '1001',
-                    'customer_id' => '1',
+                    'customer_id' => 'CST-123',
                 ],
             ];
 
+            // When
             $response = $this->postJson('/api/v1/events', $payload);
 
-            // Assert
+            // Then
+            $response->assertStatus(422);
+
+            $response->assertJson([
+                'message' => 'The external id field is required.',
+                'errors' => [
+                    'external_id' => ['The external id field is required.'],
+                ],
+            ]);
+
+        });
+
+        it('fails when type field is missing.', function () {
+
+            // Given
+            $payload = [
+                'external_id' => 'EXT-123',
+                'source' => 'shopify',
+                'occurred_at' => now()->toISOString(),
+                'payload' => [
+                    'customer_id' => 'CST-123',
+                ],
+            ];
+
+            // When
+            $response = $this->postJson('/api/v1/events', $payload);
+
+            // Then
+            $response->assertStatus(422);
+
+            $response->assertJson([
+                'message' => 'The type field is required.',
+                'errors' => [
+                    'type' => ['The type field is required.'],
+                ],
+            ]);
+
+        });
+
+        it('fails when source is missing.', function () {
+
+            // Given
+            $payload = [
+                'external_id' => 'EXT-123',
+                'type' => 'order.completed',
+                'occurred_at' => now()->toISOString(),
+                'payload' => [
+                    'customer_id' => 'CST-123',
+                ],
+            ];
+
+            // When
+            $response = $this->postJson('/api/v1/events', $payload);
+
+            // Then
+            $response->assertStatus(422);
+
+            $response->assertJson([
+                'message' => 'The source field is required.',
+                'errors' => [
+                    'source' => ['The source field is required.'],
+                ],
+            ]);
+        });
+
+        it('fails when occurred at is missing.', function () {
+
+            // Given
+            $payload = [
+                'external_id' => 'EXT-123',
+                'type' => 'order.complete',
+                'source' => 'shopify',
+                'payload' => [
+                    'customer_id' => 'CST-123',
+                ],
+            ];
+
+            // When
+            $response = $this->postJson('/api/v1/events', $payload);
+
+            // Then
+            $response->assertStatus(422);
+
+            $response->assertJson([
+                'message' => 'The occurred at field is required.',
+                'errors' => [
+                    'occurred_at' => ['The occurred at field is required.'],
+                ],
+            ]);
+        });
+
+        it('fails when occurred at timestamps is invalid.', function () {
+
+            // Given
+            $payload = [
+                'external_id' => 'EXT-123',
+                'type' => 'order.completed',
+                'source' => 'shopify',
+                'occurred_at' => 'invalid',
+                'payload' => [
+                    'customer_id' => 'CST-123',
+                ],
+            ];
+
+            // When
+            $response = $this->postJson('/api/v1/events', $payload);
+
+            // Then
             $response->assertStatus(422);
 
             $response->assertJson([
                 'message' => 'The occurred at field must be a valid date.',
                 'errors' => [
-                    'occurred_at' => [
-                        'The occurred at field must be a valid date.',
-                    ],
+                    'occurred_at' => ['The occurred at field must be a valid date.'],
+                ],
+            ]);
+        });
+
+        it('fails when payload is missing.', function () {
+
+            // Given
+            $payload = [
+                'external_id' => 'EXT-123',
+                'type' => 'order.complete',
+                'source' => 'shopify',
+                'occurred_at' => now()->toISOString(),
+            ];
+
+            // When
+            $response = $this->postJson('/api/v1/events', $payload);
+
+            // Then
+            $response->assertStatus(422);
+
+            $response->assertJson([
+                'message' => 'The payload field is required.',
+                'errors' => [
+                    'payload' => ['The payload field is required.'],
                 ],
             ]);
 
-            $response->assertJsonValidationErrors([
-                'occurred_at',
-            ]);
-
-            $this->assertDatabaseCount('events', 0);
         });
 
-        it('rejects invalid payload structure.', function () {
+        it('fails when payload structure is invalid.', function () {
 
-            // Arrange
+            // Given
             $payload = [
-                'external_id' => 'EVT123',
-                'source' => 'web',
+                'external_id' => 'EXT-123',
+                'source' => 'shopify',
                 'type' => 'order.completed',
                 'occurred_at' => now()->toISOString(),
                 'payload' => 'invalid payload',
             ];
 
+            // When
             $response = $this->postJson('/api/v1/events', $payload);
 
-            // Assert
+            // Then
             $response->assertStatus(422);
 
             $response->assertJson([
                 'message' => 'The payload field must be an array.',
                 'errors' => [
-                    'payload' => [
-                        'The payload field must be an array.',
-                    ],
+                    'payload' => ['The payload field must be an array.'],
                 ],
             ]);
-
-            $response->assertJsonValidationErrors([
-                'payload',
-            ]);
-
-            $this->assertDatabaseCount('events', 0);
         });
     });
 

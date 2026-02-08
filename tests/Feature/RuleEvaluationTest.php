@@ -1,6 +1,7 @@
 <?php
 
 use App\Domain\Events\Entities\Event;
+use App\Domain\Rewards\Conditions\EqualCondition;
 use App\Domain\Rewards\Conditions\GreaterThanOrEqualCondition;
 use App\Domain\Rewards\Entities\RewardRule;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -25,12 +26,10 @@ describe('Rule Evaluation', function () {
 
             // And
             $rule = RewardRule::create(
-                id: '1',
+                id: 1,
                 event_type: 'order.completed',
                 reward_type: 'fixed',
                 reward_value: 100,
-                starts_at: now()->format('Y-m-d H:i:s'),
-                ends_at: now()->addMonths(6)->format('Y-m-d H:i:s'),
                 is_active: true,
             );
 
@@ -53,21 +52,22 @@ describe('Rule Evaluation', function () {
                 occurred_at: now()->format('Y-m-d H:i:s'),
             );
 
-            $condition = new GreaterThanOrEqualCondition(
-                field: 'order_total',
-                value: 1000,
-            );
+            $conditions = [
+                new GreaterThanOrEqualCondition(
+                    field: 'order_total',
+                    value: 1000),
+            ];
 
             // And
             $rule = RewardRule::create(
-                id: '1',
+                id: 1,
                 event_type: 'order.completed',
                 reward_type: 'fixed',
                 reward_value: 100,
                 starts_at: now()->format('Y-m-d H:i:s'),
                 ends_at: now()->addMonths(6)->format('Y-m-d H:i:s'),
                 is_active: true,
-                condition: $condition,
+                conditions: $conditions,
             );
 
             // When
@@ -75,6 +75,53 @@ describe('Rule Evaluation', function () {
 
             // Then
             expect($matches)->toBeTrue();
+        });
+
+        it('matches when multiple conditions all satisfy.', function () {
+
+            // Given
+            $event = Event::record(
+                id: Str::uuid()->toString(),
+                external_id : 'EXT-123',
+                type : 'order.completed',
+                source: 'shopify',
+                payload: [
+                    'order_total' => 1500,
+                    'customer_tier' => 'gold',
+                ],
+                occurred_at: now()->format('Y-m-d H:i:s'),
+            );
+
+            $conditions = [
+                new GreaterThanOrEqualCondition(
+                    field: 'order_total',
+                    value: 1000,
+                ),
+
+                new EqualCondition(
+                    field: 'customer_tier',
+                    value: 'gold',
+                ),
+            ];
+
+            // And
+            $rule = RewardRule::create(
+                id: 1,
+                event_type: 'order.completed',
+                reward_type: 'fixed',
+                reward_value: 100,
+                is_active: true,
+                starts_at: now()->subMonths(1)->format('Y-m-d H:i:s'),
+                ends_at: now()->addMonths(6)->format('Y-m-d H:i:s'),
+                conditions: $conditions,
+            );
+
+            // When
+            $matches = $rule->matches($event);
+
+            // Then
+            expect($matches)->toBeTrue();
+
         });
 
         it('matches when event occurred inside date range.', function () {
@@ -89,21 +136,15 @@ describe('Rule Evaluation', function () {
                 occurred_at: now()->format('Y-m-d H:i:s'),
             );
 
-            $condition = new GreaterThanOrEqualCondition(
-                field: 'order_total',
-                value: 1000,
-            );
-
             // And
             $rule = RewardRule::create(
-                id: '1',
+                id: 1,
                 event_type: 'order.completed',
                 reward_type: 'fixed',
                 reward_value: 100,
+                is_active: true,
                 starts_at: now()->subMonths(1)->format('Y-m-d H:i:s'),
                 ends_at: now()->addMonths(6)->format('Y-m-d H:i:s'),
-                is_active: true,
-                condition: $condition,
             );
 
             // When
@@ -111,6 +152,66 @@ describe('Rule Evaluation', function () {
 
             // Then
             expect($matches)->toBeTrue();
+        });
+
+        it('matches when rule has no payload conditions.', function () {
+
+            // Given
+            $event = Event::record(
+                id: Str::uuid()->toString(),
+                external_id : 'EXT-123',
+                type : 'order.completed',
+                source: 'shopify',
+                payload: ['order_total' => 1500],
+                occurred_at: now()->format('Y-m-d H:i:s'),
+            );
+
+            // And
+            $rule = RewardRule::create(
+                id: 1,
+                event_type: 'order.completed',
+                reward_type: 'fixed',
+                reward_value: 100,
+                starts_at: now()->subMonths(1)->format('Y-m-d H:i:s'),
+                ends_at: now()->addMonths(6)->format('Y-m-d H:i:s'),
+                is_active: true,
+            );
+
+            // When
+            $matches = $rule->matches($event);
+
+            // Then
+            expect($matches)->toBeTrue();
+
+        });
+
+        it('matches when rule has no date range', function () {
+
+            // Given
+            $event = Event::record(
+                id: Str::uuid()->toString(),
+                external_id : 'EXT-123',
+                type : 'order.completed',
+                source: 'shopify',
+                payload: ['order_total' => 1500],
+                occurred_at: now()->format('Y-m-d H:i:s'),
+            );
+
+            // And
+            $rule = RewardRule::create(
+                id: 1,
+                event_type: 'order.completed',
+                reward_type: 'fixed',
+                reward_value: 100,
+                is_active: true,
+            );
+
+            // When
+            $matches = $rule->matches($event);
+
+            // Then
+            expect($matches)->toBeTrue();
+
         });
 
         it('does not match when event type differs.', function () {
@@ -127,7 +228,7 @@ describe('Rule Evaluation', function () {
 
             // And
             $rule = RewardRule::create(
-                id: '1',
+                id: 1,
                 event_type: 'order.completed',
                 reward_type: 'fixed',
                 reward_value: 100,
@@ -158,7 +259,7 @@ describe('Rule Evaluation', function () {
 
             // And
             $rule = RewardRule::create(
-                id: '1',
+                id: 1,
                 event_type: 'order.completed',
                 reward_type: 'fixed',
                 reward_value: 100,
@@ -187,21 +288,15 @@ describe('Rule Evaluation', function () {
                 occurred_at: now()->format('Y-m-d H:i:s'),
             );
 
-            $condition = new GreaterThanOrEqualCondition(
-                field: 'order_total',
-                value: 1000,
-            );
-
             // And
             $rule = RewardRule::create(
-                id: '1',
+                id: 1,
                 event_type: 'order.completed',
                 reward_type: 'fixed',
                 reward_value: 100,
                 starts_at: now()->addMonths(2)->format('Y-m-d H:i:s'),
                 ends_at: now()->addMonths(6)->format('Y-m-d H:i:s'),
                 is_active: true,
-                condition: $condition,
             );
 
             // When
@@ -223,21 +318,23 @@ describe('Rule Evaluation', function () {
                 occurred_at: now()->format('Y-m-d H:i:s'),
             );
 
-            $condition = new GreaterThanOrEqualCondition(
-                field: 'order_total',
-                value: 2000,
-            );
+            $conditions = [
+                new GreaterThanOrEqualCondition(
+                    field: 'order_total',
+                    value: 2000,
+                ),
+            ];
 
             // And
             $rule = RewardRule::create(
-                id: '1',
+                id: 1,
                 event_type: 'order.completed',
                 reward_type: 'fixed',
                 reward_value: 100,
                 starts_at: now()->subMonths(1)->format('Y-m-d H:i:s'),
                 ends_at: now()->addMonths(6)->format('Y-m-d H:i:s'),
                 is_active: true,
-                condition: $condition,
+                conditions: $conditions,
             );
 
             // When
@@ -261,7 +358,7 @@ describe('Rule Evaluation', function () {
 
             // And
             $rule = RewardRule::create(
-                id: '1',
+                id: 1,
                 event_type: 'order.completed',
                 reward_type: 'fixed',
                 reward_value: 100,
@@ -289,10 +386,12 @@ describe('Rule Evaluation', function () {
                 occurred_at: now()->format('Y-m-d H:i:s'),
             );
 
-            $condition = new GreaterThanOrEqualCondition(
-                field: 'order_total',
-                value: '2000',
-            );
+            $conditions = [
+                new GreaterThanOrEqualCondition(
+                    field: 'order_total',
+                    value: '2000',
+                ),
+            ];
 
             // And
             $rule = RewardRule::create(
@@ -303,7 +402,7 @@ describe('Rule Evaluation', function () {
                 starts_at: now()->subMonths(1)->format('Y-m-d H:i:s'),
                 ends_at: now()->addMonths(6)->format('Y-m-d H:i:s'),
                 is_active: true,
-                condition: $condition,
+                conditions: $conditions,
             );
 
             // When
@@ -313,120 +412,70 @@ describe('Rule Evaluation', function () {
             expect($matches)->toBeFalse();
         });
 
-        //        it('triggers multiple rules for a single matching event.', function () {
-        //
-        //            // Given
-        //            $event = Event::fromPrimitives(
-        //                id: 'EVT123',
-        //                external_id: 'EXT123',
-        //                type: 'order.completed',
-        //                source: 'shopify',
-        //                occurred_at: now()->toISOString(),
-        //                payload: [
-        //                    'order_total' => 1500,
-        //                ]
-        //            );
-        //
-        //            // And
-        //            $ruleA = Rule::whenEventType('order.completed')->givePoints(10);
-        //            $ruleB = Rule::whenEventType('order.completed')
-        //                ->whenPayloadAtLeast('order_total', 1000)
-        //                ->givePoints(5);
-        //
-        //            // When
-        //            $evaluator = new RuleEvaluator;
-        //            $results = $evaluator->evaluate($event, [$ruleA, $ruleB]);
-        //
-        //            expect($results)->toHaveCount(2)
-        //                ->and(collect($results)->pluck('points'))->toContain(10, 5);
-        //        });
+        it('does not match when rule has expired.', function () {
 
-        //        it('triggers multiple rewards when a rule defines multiple actions.', function () {
-        //
-        //            // Given
-        //            $event = Event::fromPrimitives(
-        //                id: 'EVT123',
-        //                external_id: 'EXT123',
-        //                type: 'order.completed',
-        //                source: 'shopify',
-        //                occurred_at: now()->toISOString(),
-        //                payload: [
-        //                    'order_total' => 1500,
-        //                ]
-        //            );
-        //
-        //            // And
-        //            $rule = Rule::whenEventType('order.completed')
-        //                ->whenPayloadAtLeast('order_total', 1000)
-        //                ->givePoints(10)
-        //                ->givePoints(5);
-        //
-        //            // When
-        //            $evaluator = new RuleEvaluator;
-        //            $results = $evaluator->evaluate($event, [$rule]);
-        //
-        //            expect($results)->toHaveCount(2);
-        //            //                ->and($results[0]->getPoints())->toBe(10)
-        //            //                ->and($results[1]->getPoints())->toBe(5);
-        //
-        //        });
+            // Given
+            $event = Event::record(
+                id: Str::uuid()->toString(),
+                external_id : 'EXT-123',
+                type : 'order.completed',
+                source: 'shopify',
+                payload: ['order_total' => 1500],
+                occurred_at: now()->format('Y-m-d H:i:s'),
+            );
+
+            // And
+            $rule = RewardRule::create(
+                id: 1,
+                event_type: 'order.completed',
+                reward_type: 'fixed',
+                reward_value: 100,
+                is_active: true,
+                starts_at: now()->subMonths(2)->format('Y-m-d H:i:s'),
+                ends_at: now()->subMonths(3)->format('Y-m-d H:i:s'),
+            );
+
+            // When
+            $matches = $rule->matches($event);
+
+            // Then
+            expect($matches)->toBeFalse();
+
+        });
+
+        it('does not match when rule not yet started.', function () {
+
+            // Given
+            $event = Event::record(
+                id: Str::uuid()->toString(),
+                external_id : 'EXT-123',
+                type : 'order.completed',
+                source: 'shopify',
+                payload: ['order_total' => 1500],
+                occurred_at: now()->format('Y-m-d H:i:s'),
+            );
+
+            // And
+            $rule = RewardRule::create(
+                id: 1,
+                event_type: 'order.completed',
+                reward_type: 'fixed',
+                reward_value: 100,
+                is_active: true,
+                starts_at: now()->addMonths(1)->format('Y-m-d H:i:s'),
+                ends_at: now()->addMonths(2)->format('Y-m-d H:i:s'),
+            );
+
+            // When
+            $matches = $rule->matches($event);
+
+            // Then
+            expect($matches)->toBeFalse();
+
+        });
+
     });
 
-    describe('Validation', function () {
-
-        //        it('does not trigger a rule when the payload condition is satisfied.', function () {
-        //
-        //            // Given
-        //            $event = Event::fromPrimitives(
-        //                id: 'EVT123',
-        //                external_id: 'EXT123',
-        //                type: 'order.completed',
-        //                source: 'shopify',
-        //                occurred_at: now()->toISOString(),
-        //                payload: [
-        //                    'order_total' => 500,
-        //                ]
-        //            );
-        //
-        //            // And
-        //            $rule = Rule::whenEventType('order.completed')
-        //                ->whenPayloadAtLeast('order_total', 1000)
-        //                ->givePoints(10);
-        //
-        //            // When
-        //            $evaluator = new RuleEvaluator;
-        //            $results = $evaluator->evaluate($event, [$rule]);
-        //
-        //            // Then
-        //            expect($results)->toBeEmpty();
-        //        });
-
-        //        it('does not trigger a rule when the rule is disabled.', function () {
-        //
-        //            // Given
-        //            $event = Event::fromPrimitives(
-        //                id: 'EVT123',
-        //                external_id: 'EXT123',
-        //                type: 'order.completed',
-        //                source: 'shopify',
-        //                occurred_at: now()->toISOString(),
-        //                payload: [
-        //                    'order_total' => 1500,
-        //                ]
-        //            );
-        //
-        //            // And
-        //            $rule = Rule::whenEventType('order.completed')
-        //                ->givePoints(10)
-        //                ->disable();
-        //
-        //            // When
-        //            $evaluator = new RuleEvaluator;
-        //            $results = $evaluator->evaluate($event, [$rule]);
-        //
-        //            // Then
-        //            expect($results)->toBeEmpty();
-        //        });
-    });
+    describe('Validation', function () {});
 
 });

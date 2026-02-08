@@ -3,22 +3,21 @@
 namespace App\Domain\Rewards\Entities;
 
 use App\Domain\Events\Entities\Event;
-use App\Domain\Rewards\Conditions\GreaterThanOrEqualCondition;
 
 readonly class RewardRule
 {
     public function __construct(
-        private string $id,
+        private int $id,
         private string $event_type,
         private string $reward_type,
         private int $reward_value,
         private bool $is_active,
-        private string $starts_at,
-        private string $ends_at,
-        private ?GreaterThanOrEqualCondition $condition = null
+        private ?string $starts_at = null,
+        private ?string $ends_at = null,
+        private ?array $conditions = []
     ) {}
 
-    public static function create(string $id, string $event_type, string $reward_type, int $reward_value, string $starts_at, $ends_at, bool $is_active, ?GreaterThanOrEqualCondition $condition = null): self
+    public static function create(string $id, string $event_type, string $reward_type, int $reward_value, bool $is_active, ?string $starts_at = null, ?string $ends_at = null, ?array $conditions = []): self
     {
         return new self(
             id: $id,
@@ -28,7 +27,7 @@ readonly class RewardRule
             is_active: $is_active,
             starts_at: $starts_at,
             ends_at: $ends_at,
-            condition: $condition
+            conditions: $conditions
         );
     }
 
@@ -46,26 +45,36 @@ readonly class RewardRule
             return false;
         }
 
-        if (!$this->isWithinDateRange($event)) {
+        if (! $this->isWithinDateRange($event)) {
             return false;
         }
 
-        if (is_null($this->condition)) {
-            return false;
+        if (empty($this->conditions)) {
+            return true;
         }
 
-        return $this->condition->isSatisfiedBy($event);
+        foreach ($this->conditions as $condition) {
+            if (! $condition->isSatisfiedBy($event)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private function isWithinDateRange(Event $event): bool
     {
         $occurred_at = $event->occurred_at();
 
-        if ($this->starts_at && $occurred_at < $this->starts_at) {
+        if (! $this->starts_at || ! $this->ends_at) {
+            return true;
+        }
+
+        if ($occurred_at < $this->starts_at) {
             return false;
         }
 
-        if ($this->ends_at && $occurred_at > $this->ends_at) {
+        if ($occurred_at > $this->ends_at) {
             return false;
         }
 

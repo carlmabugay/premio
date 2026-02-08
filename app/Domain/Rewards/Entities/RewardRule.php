@@ -3,6 +3,7 @@
 namespace App\Domain\Rewards\Entities;
 
 use App\Domain\Events\Entities\Event;
+use App\Exceptions\UnsupportedOperator;
 
 readonly class RewardRule
 {
@@ -41,25 +42,12 @@ readonly class RewardRule
             return false;
         }
 
-        if (! $event->payload()) {
-            return false;
-        }
-
         if (! $this->isWithinDateRange($event)) {
             return false;
         }
 
-        if (empty($this->conditions)) {
-            return true;
-        }
+        return $this->evaluateConditions($event->payload());
 
-        foreach ($this->conditions as $condition) {
-            if (! $condition->isSatisfiedBy($event)) {
-                return false;
-            }
-        }
-
-        return true;
     }
 
     private function isWithinDateRange(Event $event): bool
@@ -79,5 +67,46 @@ readonly class RewardRule
         }
 
         return true;
+    }
+
+    /**
+     * @throws UnsupportedOperator
+     */
+    private function evaluateConditions(array $payload): bool
+    {
+        foreach ($this->conditions as $condition) {
+
+            $field = $condition['field'] ?? null;
+            $operator = $condition['operator'] ?? null;
+            $value = $condition['value'] ?? null;
+
+            if(! array_key_exists($field, $payload)) {
+                return false;
+            }
+
+            $actual = $payload[$field];
+
+            if (!$this->evaluateOperator($actual, $operator, $value)) {
+                return false;
+            }
+
+        }
+
+        return true;
+    }
+
+    /**
+     * @throws UnsupportedOperator
+     */
+    private function evaluateOperator($actual, string $operator, $expected): bool
+    {
+        return match ($operator) {
+            'eq' => $actual == $expected,
+            'gt' => is_numeric($actual) && $actual > $expected,
+            'gte' => is_numeric($actual) && $actual >= $expected,
+            'lt' => is_numeric($actual) && $actual < $expected,
+            'lte' => is_numeric($actual) && $actual <= $expected,
+            default => throw new UnsupportedOperator($operator)
+        };
     }
 }

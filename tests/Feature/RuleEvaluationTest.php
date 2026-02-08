@@ -4,13 +4,14 @@ use App\Domain\Events\Entities\Event;
 use App\Domain\Rewards\Conditions\EqualCondition;
 use App\Domain\Rewards\Conditions\GreaterThanOrEqualCondition;
 use App\Domain\Rewards\Entities\RewardRule;
+use App\Exceptions\UnsupportedOperator;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
 describe('Rule Evaluation', function () {
 
-    describe('Payload & Process', function () {
+    describe('Positive', function () {
 
         it('matches when the event type matches.', function () {
 
@@ -185,7 +186,7 @@ describe('Rule Evaluation', function () {
 
         });
 
-        it('matches when rule has no date range', function () {
+        it('matches when rule has no date range.', function () {
 
             // Given
             $event = Event::record(
@@ -214,6 +215,10 @@ describe('Rule Evaluation', function () {
 
         });
 
+    });
+
+    describe('Negative', function () {
+
         it('does not match when event type differs.', function () {
 
             // Given
@@ -232,9 +237,9 @@ describe('Rule Evaluation', function () {
                 event_type: 'order.completed',
                 reward_type: 'fixed',
                 reward_value: 100,
+                is_active: true,
                 starts_at: now()->subMonths(1)->format('Y-m-d H:i:s'),
                 ends_at: now()->addMonths(6)->format('Y-m-d H:i:s'),
-                is_active: true,
             );
 
             // When
@@ -263,9 +268,9 @@ describe('Rule Evaluation', function () {
                 event_type: 'order.completed',
                 reward_type: 'fixed',
                 reward_value: 100,
+                is_active: false,
                 starts_at: now()->subMonths(1)->format('Y-m-d H:i:s'),
                 ends_at: now()->addMonths(6)->format('Y-m-d H:i:s'),
-                is_active: false,
             );
 
             // When
@@ -294,9 +299,9 @@ describe('Rule Evaluation', function () {
                 event_type: 'order.completed',
                 reward_type: 'fixed',
                 reward_value: 100,
+                is_active: true,
                 starts_at: now()->addMonths(2)->format('Y-m-d H:i:s'),
                 ends_at: now()->addMonths(6)->format('Y-m-d H:i:s'),
-                is_active: true,
             );
 
             // When
@@ -331,9 +336,9 @@ describe('Rule Evaluation', function () {
                 event_type: 'order.completed',
                 reward_type: 'fixed',
                 reward_value: 100,
+                is_active: true,
                 starts_at: now()->subMonths(1)->format('Y-m-d H:i:s'),
                 ends_at: now()->addMonths(6)->format('Y-m-d H:i:s'),
-                is_active: true,
                 conditions: $conditions,
             );
 
@@ -362,9 +367,9 @@ describe('Rule Evaluation', function () {
                 event_type: 'order.completed',
                 reward_type: 'fixed',
                 reward_value: 100,
+                is_active: true,
                 starts_at: now()->subMonths(1)->format('Y-m-d H:i:s'),
                 ends_at: now()->addMonths(6)->format('Y-m-d H:i:s'),
-                is_active: true,
             );
 
             // When
@@ -395,13 +400,13 @@ describe('Rule Evaluation', function () {
 
             // And
             $rule = RewardRule::create(
-                id: '1',
+                id: 1,
                 event_type: 'order.completed',
                 reward_type: 'fixed',
                 reward_value: 100,
+                is_active: true,
                 starts_at: now()->subMonths(1)->format('Y-m-d H:i:s'),
                 ends_at: now()->addMonths(6)->format('Y-m-d H:i:s'),
-                is_active: true,
                 conditions: $conditions,
             );
 
@@ -476,6 +481,43 @@ describe('Rule Evaluation', function () {
 
     });
 
-    describe('Validation', function () {});
+    describe('Edge Cases', function () {
+
+        it('does not match when operator is unsupported.', function () {
+
+            // Given
+            $event = new Event(
+                id: Str::uuid()->toString(),
+                external_id : 'EXT-123',
+                type : 'order.completed',
+                source: 'shopify',
+                payload: ['order_total' => 1500],
+                occurred_at: now()->format('Y-m-d H:i:s'),
+            );
+
+            // And
+            $rule = new RewardRule(
+                id: 1,
+                event_type: 'order.completed',
+                reward_type: 'fixed',
+                reward_value: 100,
+                is_active: true,
+                conditions: [
+                    [
+                        'field' => 'order_total',
+                        'operator' => 'approximately',
+                        'value' => 2000,
+                    ],
+                ]
+            );
+
+            // When
+            $rule->matches($event);
+
+
+            // Then
+        })->throws(UnsupportedOperator::class);
+
+    });
 
 });

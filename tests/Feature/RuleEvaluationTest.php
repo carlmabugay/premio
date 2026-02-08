@@ -1,8 +1,6 @@
 <?php
 
 use App\Domain\Events\Entities\Event;
-use App\Domain\Rewards\Conditions\EqualCondition;
-use App\Domain\Rewards\Conditions\GreaterThanOrEqualCondition;
 use App\Domain\Rewards\Entities\RewardRule;
 use App\Exceptions\UnsupportedOperator;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -11,12 +9,12 @@ uses(RefreshDatabase::class);
 
 describe('Rule Evaluation', function () {
 
-    describe('Positive', function () {
+    describe('Positives', function () {
 
         it('matches when the event type matches.', function () {
 
             // Given
-            $event = Event::record(
+            $event = new Event(
                 id: Str::uuid()->toString(),
                 external_id : 'EXT-123',
                 type : 'order.completed',
@@ -26,7 +24,7 @@ describe('Rule Evaluation', function () {
             );
 
             // And
-            $rule = RewardRule::create(
+            $rule = new RewardRule(
                 id: 1,
                 event_type: 'order.completed',
                 reward_type: 'fixed',
@@ -44,7 +42,7 @@ describe('Rule Evaluation', function () {
         it('matches when payload condition satisfies.', function () {
 
             // Given
-            $event = Event::record(
+            $event = new Event(
                 id: Str::uuid()->toString(),
                 external_id : 'EXT-123',
                 type : 'order.completed',
@@ -53,22 +51,20 @@ describe('Rule Evaluation', function () {
                 occurred_at: now()->format('Y-m-d H:i:s'),
             );
 
-            $conditions = [
-                new GreaterThanOrEqualCondition(
-                    field: 'order_total',
-                    value: 1000),
-            ];
-
             // And
-            $rule = RewardRule::create(
+            $rule = new RewardRule(
                 id: 1,
                 event_type: 'order.completed',
                 reward_type: 'fixed',
                 reward_value: 100,
-                starts_at: now()->format('Y-m-d H:i:s'),
-                ends_at: now()->addMonths(6)->format('Y-m-d H:i:s'),
                 is_active: true,
-                conditions: $conditions,
+                conditions: [
+                    [
+                        'field' => 'order_total',
+                        'operator' => 'gte',
+                        'value' => 1000,
+                    ],
+                ],
             );
 
             // When
@@ -81,7 +77,7 @@ describe('Rule Evaluation', function () {
         it('matches when multiple conditions all satisfy.', function () {
 
             // Given
-            $event = Event::record(
+            $event = new Event(
                 id: Str::uuid()->toString(),
                 external_id : 'EXT-123',
                 type : 'order.completed',
@@ -93,20 +89,8 @@ describe('Rule Evaluation', function () {
                 occurred_at: now()->format('Y-m-d H:i:s'),
             );
 
-            $conditions = [
-                new GreaterThanOrEqualCondition(
-                    field: 'order_total',
-                    value: 1000,
-                ),
-
-                new EqualCondition(
-                    field: 'customer_tier',
-                    value: 'gold',
-                ),
-            ];
-
             // And
-            $rule = RewardRule::create(
+            $rule = new RewardRule(
                 id: 1,
                 event_type: 'order.completed',
                 reward_type: 'fixed',
@@ -114,7 +98,18 @@ describe('Rule Evaluation', function () {
                 is_active: true,
                 starts_at: now()->subMonths(1)->format('Y-m-d H:i:s'),
                 ends_at: now()->addMonths(6)->format('Y-m-d H:i:s'),
-                conditions: $conditions,
+                conditions: [
+                    [
+                        'field' => 'order_total',
+                        'operator' => 'gte',
+                        'value' => 1000,
+                    ],
+                    [
+                        'field' => 'customer_tier',
+                        'operator' => 'eq',
+                        'value' => 'gold',
+                    ],
+                ],
             );
 
             // When
@@ -128,7 +123,7 @@ describe('Rule Evaluation', function () {
         it('matches when event occurred inside date range.', function () {
 
             // Given
-            $event = Event::record(
+            $event = new Event(
                 id: Str::uuid()->toString(),
                 external_id : 'EXT-123',
                 type : 'order.completed',
@@ -138,7 +133,7 @@ describe('Rule Evaluation', function () {
             );
 
             // And
-            $rule = RewardRule::create(
+            $rule = new RewardRule(
                 id: 1,
                 event_type: 'order.completed',
                 reward_type: 'fixed',
@@ -158,7 +153,7 @@ describe('Rule Evaluation', function () {
         it('matches when rule has no payload conditions.', function () {
 
             // Given
-            $event = Event::record(
+            $event = new Event(
                 id: Str::uuid()->toString(),
                 external_id : 'EXT-123',
                 type : 'order.completed',
@@ -168,14 +163,14 @@ describe('Rule Evaluation', function () {
             );
 
             // And
-            $rule = RewardRule::create(
+            $rule = new RewardRule(
                 id: 1,
                 event_type: 'order.completed',
                 reward_type: 'fixed',
                 reward_value: 100,
+                is_active: true,
                 starts_at: now()->subMonths(1)->format('Y-m-d H:i:s'),
                 ends_at: now()->addMonths(6)->format('Y-m-d H:i:s'),
-                is_active: true,
             );
 
             // When
@@ -189,7 +184,7 @@ describe('Rule Evaluation', function () {
         it('matches when rule has no date range.', function () {
 
             // Given
-            $event = Event::record(
+            $event = new Event(
                 id: Str::uuid()->toString(),
                 external_id : 'EXT-123',
                 type : 'order.completed',
@@ -199,7 +194,7 @@ describe('Rule Evaluation', function () {
             );
 
             // And
-            $rule = RewardRule::create(
+            $rule = new RewardRule(
                 id: 1,
                 event_type: 'order.completed',
                 reward_type: 'fixed',
@@ -217,12 +212,12 @@ describe('Rule Evaluation', function () {
 
     });
 
-    describe('Negative', function () {
+    describe('Negatives', function () {
 
         it('does not match when event type differs.', function () {
 
             // Given
-            $event = Event::record(
+            $event = new Event(
                 id: Str::uuid()->toString(),
                 external_id : 'EXT-123',
                 type : 'order.received',
@@ -232,7 +227,7 @@ describe('Rule Evaluation', function () {
             );
 
             // And
-            $rule = RewardRule::create(
+            $rule = new RewardRule(
                 id: 1,
                 event_type: 'order.completed',
                 reward_type: 'fixed',
@@ -253,7 +248,7 @@ describe('Rule Evaluation', function () {
         it('does not match when rule inactive.', function () {
 
             // Given
-            $event = Event::record(
+            $event = new Event(
                 id: Str::uuid()->toString(),
                 external_id : 'EXT-123',
                 type : 'order.completed',
@@ -263,7 +258,7 @@ describe('Rule Evaluation', function () {
             );
 
             // And
-            $rule = RewardRule::create(
+            $rule = new RewardRule(
                 id: 1,
                 event_type: 'order.completed',
                 reward_type: 'fixed',
@@ -284,7 +279,7 @@ describe('Rule Evaluation', function () {
         it('does not match when event occurred outside date range.', function () {
 
             // Given
-            $event = Event::record(
+            $event = new Event(
                 id: Str::uuid()->toString(),
                 external_id : 'EXT-123',
                 type : 'order.completed',
@@ -294,7 +289,7 @@ describe('Rule Evaluation', function () {
             );
 
             // And
-            $rule = RewardRule::create(
+            $rule = new RewardRule(
                 id: 1,
                 event_type: 'order.completed',
                 reward_type: 'fixed',
@@ -314,7 +309,7 @@ describe('Rule Evaluation', function () {
         it('does not match when payload condition fails.', function () {
 
             // Given
-            $event = Event::record(
+            $event = new Event(
                 id: Str::uuid()->toString(),
                 external_id : 'EXT-123',
                 type : 'order.completed',
@@ -323,15 +318,8 @@ describe('Rule Evaluation', function () {
                 occurred_at: now()->format('Y-m-d H:i:s'),
             );
 
-            $conditions = [
-                new GreaterThanOrEqualCondition(
-                    field: 'order_total',
-                    value: 2000,
-                ),
-            ];
-
             // And
-            $rule = RewardRule::create(
+            $rule = new RewardRule(
                 id: 1,
                 event_type: 'order.completed',
                 reward_type: 'fixed',
@@ -339,7 +327,13 @@ describe('Rule Evaluation', function () {
                 is_active: true,
                 starts_at: now()->subMonths(1)->format('Y-m-d H:i:s'),
                 ends_at: now()->addMonths(6)->format('Y-m-d H:i:s'),
-                conditions: $conditions,
+                conditions: [
+                    [
+                        'field' => 'order_total',
+                        'operator' => 'gte',
+                        'value' => 2000,
+                    ],
+                ]
             );
 
             // When
@@ -352,7 +346,7 @@ describe('Rule Evaluation', function () {
         it('does not match when payload condition field missing.', function () {
 
             // Given
-            $event = Event::record(
+            $event = new Event(
                 id: Str::uuid()->toString(),
                 external_id : 'EXT-123',
                 type : 'order.completed',
@@ -362,7 +356,7 @@ describe('Rule Evaluation', function () {
             );
 
             // And
-            $rule = RewardRule::create(
+            $rule = new RewardRule(
                 id: 1,
                 event_type: 'order.completed',
                 reward_type: 'fixed',
@@ -382,7 +376,7 @@ describe('Rule Evaluation', function () {
         it('does not match when condition value is not numeric.', function () {
 
             // Given
-            $event = Event::record(
+            $event = new Event(
                 id: Str::uuid()->toString(),
                 external_id : 'EXT-123',
                 type : 'order.completed',
@@ -391,15 +385,8 @@ describe('Rule Evaluation', function () {
                 occurred_at: now()->format('Y-m-d H:i:s'),
             );
 
-            $conditions = [
-                new GreaterThanOrEqualCondition(
-                    field: 'order_total',
-                    value: '2000',
-                ),
-            ];
-
             // And
-            $rule = RewardRule::create(
+            $rule = new RewardRule(
                 id: 1,
                 event_type: 'order.completed',
                 reward_type: 'fixed',
@@ -407,7 +394,13 @@ describe('Rule Evaluation', function () {
                 is_active: true,
                 starts_at: now()->subMonths(1)->format('Y-m-d H:i:s'),
                 ends_at: now()->addMonths(6)->format('Y-m-d H:i:s'),
-                conditions: $conditions,
+                conditions: [
+                    [
+                        'field' => 'order_total',
+                        'operator' => 'gte',
+                        'value' => '2000',
+                    ],
+                ],
             );
 
             // When
@@ -420,7 +413,7 @@ describe('Rule Evaluation', function () {
         it('does not match when rule has expired.', function () {
 
             // Given
-            $event = Event::record(
+            $event = new Event(
                 id: Str::uuid()->toString(),
                 external_id : 'EXT-123',
                 type : 'order.completed',
@@ -430,7 +423,7 @@ describe('Rule Evaluation', function () {
             );
 
             // And
-            $rule = RewardRule::create(
+            $rule = new RewardRule(
                 id: 1,
                 event_type: 'order.completed',
                 reward_type: 'fixed',
@@ -451,7 +444,7 @@ describe('Rule Evaluation', function () {
         it('does not match when rule not yet started.', function () {
 
             // Given
-            $event = Event::record(
+            $event = new Event(
                 id: Str::uuid()->toString(),
                 external_id : 'EXT-123',
                 type : 'order.completed',
@@ -461,7 +454,7 @@ describe('Rule Evaluation', function () {
             );
 
             // And
-            $rule = RewardRule::create(
+            $rule = new RewardRule(
                 id: 1,
                 event_type: 'order.completed',
                 reward_type: 'fixed',
@@ -483,7 +476,7 @@ describe('Rule Evaluation', function () {
 
     describe('Edge Cases', function () {
 
-        it('does not match when operator is unsupported.', function () {
+        it('throws when operator is unsupported.', function () {
 
             // Given
             $event = new Event(
@@ -513,7 +506,6 @@ describe('Rule Evaluation', function () {
 
             // When
             $rule->matches($event);
-
 
             // Then
         })->throws(UnsupportedOperator::class);

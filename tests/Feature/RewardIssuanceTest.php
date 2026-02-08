@@ -6,7 +6,9 @@ uses(RefreshDatabase::class);
 
 describe('Reward Issuance', function () {
 
-    describe('Payload & Process', function () {});
+    describe('Positives', function () {});
 
-    describe('Validation', function () {});
+    describe('Negatives', function () {});
+
+    describe('Edge Cases', function () {});
 });

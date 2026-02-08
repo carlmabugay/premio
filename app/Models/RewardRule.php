@@ -11,6 +11,6 @@ class RewardRule extends Model
     protected $guarded = [];
 
     protected $casts = [
-      'conditions' => 'array',
+        'conditions' => 'array',
     ];
 }

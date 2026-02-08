@@ -6,7 +6,7 @@ uses(RefreshDatabase::class);
 
 describe('Event Ingestion Feature', function () {
 
-    describe('Positive', function () {
+    describe('Positives', function () {
 
         it('saves when event payload is valid.', function () {
 
@@ -57,7 +57,7 @@ describe('Event Ingestion Feature', function () {
 
     });
 
-    describe('Negative', function () {
+    describe('Negatives', function () {
 
         it('fails when external_id field is missing.', function () {
 

@@ -18,20 +18,9 @@ readonly class RewardRule
         private ?array $conditions = []
     ) {}
 
-    public static function create(string $id, string $event_type, string $reward_type, int $reward_value, bool $is_active, ?string $starts_at = null, ?string $ends_at = null, ?array $conditions = []): self
-    {
-        return new self(
-            id: $id,
-            event_type: $event_type,
-            reward_type: $reward_type,
-            reward_value: $reward_value,
-            is_active: $is_active,
-            starts_at: $starts_at,
-            ends_at: $ends_at,
-            conditions: $conditions
-        );
-    }
-
+    /**
+     * @throws UnsupportedOperator
+     */
     public function matches(Event $event): bool
     {
         if (! $this->is_active) {
@@ -39,6 +28,10 @@ readonly class RewardRule
         }
 
         if ($this->event_type !== $event->type()) {
+            return false;
+        }
+
+        if (empty($event->payload())) {
             return false;
         }
 
@@ -80,13 +73,13 @@ readonly class RewardRule
             $operator = $condition['operator'] ?? null;
             $value = $condition['value'] ?? null;
 
-            if(! array_key_exists($field, $payload)) {
+            if (! array_key_exists($field, $payload)) {
                 return false;
             }
 
             $actual = $payload[$field];
 
-            if (!$this->evaluateOperator($actual, $operator, $value)) {
+            if (! $this->evaluateOperator($actual, $operator, $value)) {
                 return false;
             }
 

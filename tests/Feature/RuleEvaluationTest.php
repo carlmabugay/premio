@@ -563,7 +563,7 @@ describe('Rule Evaluation', function () {
                 source: 'shopify',
                 payload: [
                     'order_total' => 1500,
-                    'notes' => 'VIP order'
+                    'notes' => 'VIP order',
                 ],
                 occurred_at: now()->format('Y-m-d H:i:s'),
             );
@@ -580,7 +580,7 @@ describe('Rule Evaluation', function () {
                         'field' => 'order_total',
                         'operator' => 'gte',
                         'value' => 1000,
-                    ]
+                    ],
                 ],
             );
 
@@ -591,7 +591,7 @@ describe('Rule Evaluation', function () {
             expect($matches)->toBeTrue();
         });
 
-        it ('matches correctly when payload value is string and rule expects string.', function () {
+        it('matches correctly when payload value is string and rule expects string.', function () {
             // Given
             $event = new Event(
                 id: Str::uuid()->toString(),
@@ -616,7 +616,44 @@ describe('Rule Evaluation', function () {
                         'field' => 'customer_tier',
                         'operator' => 'eq',
                         'value' => 'gold',
-                    ]
+                    ],
+                ],
+            );
+
+            // When
+            $matches = $rule->matches($event);
+
+            // Then
+            expect($matches)->toBeTrue();
+        });
+
+        it('matches correctly when payload value is numeric string and rule expects numeric.', function () {
+            // Given
+            $event = new Event(
+                id: Str::uuid()->toString(),
+                external_id : 'EXT-123',
+                type : 'order.completed',
+                source: 'shopify',
+                payload: [
+                    'order_total' => 1500,
+                    'order_quantity' => 2,
+                ],
+                occurred_at: now()->format('Y-m-d H:i:s'),
+            );
+
+            // And
+            $rule = new RewardRule(
+                id: 1,
+                event_type: 'order.completed',
+                reward_type: 'fixed',
+                reward_value: 100,
+                is_active: true,
+                conditions: [
+                    [
+                        'field' => 'order_quantity',
+                        'operator' => 'gte',
+                        'value' => 2,
+                    ],
                 ],
             );
 

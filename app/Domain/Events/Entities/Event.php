@@ -9,7 +9,7 @@ readonly class Event
         private string $external_id,
         private string $type,
         private string $source,
-        private ?array $payload = null,
+        private ?array $payload,
         private string $occurred_at,
     ) {}
 

@@ -698,6 +698,71 @@ describe('Rule Evaluation', function () {
             expect($matches)->toBeFalse();
         });
 
+        it('handles boolean comparisons correctly.', function () {
+            // Given
+            $eventTrue = new Event(
+                id: Str::uuid()->toString(),
+                external_id : 'EXT-123',
+                type : 'order.completed',
+                source: 'shopify',
+                payload: [
+                    'is_authenticated' => true,
+                ],
+                occurred_at: now()->format('Y-m-d H:i:s'),
+            );
+
+            // And
+            $eventFalse = new Event(
+                id: Str::uuid()->toString(),
+                external_id : 'EXT-123',
+                type : 'order.completed',
+                source: 'shopify',
+                payload: [
+                    'is_authenticated' => false,
+                ],
+                occurred_at: now()->format('Y-m-d H:i:s'),
+            );
+
+            // And
+            $ruleTrue = new RewardRule(
+                id: 1,
+                event_type: 'order.completed',
+                reward_type: 'fixed',
+                reward_value: 100,
+                is_active: true,
+                conditions: [
+                    [
+                        'field' => 'is_authenticated',
+                        'operator' => 'eq',
+                        'value' => true,
+                    ],
+                ],
+            );
+
+            // And
+            $ruleFalse = new RewardRule(
+                id: 1,
+                event_type: 'order.completed',
+                reward_type: 'fixed',
+                reward_value: 100,
+                is_active: true,
+                conditions: [
+                    [
+                        'field' => 'is_authenticated',
+                        'operator' => 'eq',
+                        'value' => false,
+                    ],
+                ],
+            );
+
+            // Then
+            expect($ruleTrue->matches($eventTrue))->toBeTrue()
+                ->and($ruleTrue->matches($eventFalse))->toBeFalse()
+                ->and($ruleFalse->matches($eventFalse))->toBeTrue()
+                ->and($ruleFalse->matches($eventTrue))->toBeFalse();
+
+        });
+
     });
 
 });

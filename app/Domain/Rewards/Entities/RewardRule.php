@@ -3,6 +3,7 @@
 namespace App\Domain\Rewards\Entities;
 
 use App\Domain\Events\Entities\Event;
+use App\Exceptions\MalformedCondition;
 use App\Exceptions\UnsupportedOperator;
 
 readonly class RewardRule
@@ -64,6 +65,7 @@ readonly class RewardRule
 
     /**
      * @throws UnsupportedOperator
+     * @throws MalformedCondition
      */
     private function evaluateConditions(array $payload): bool
     {
@@ -72,6 +74,10 @@ readonly class RewardRule
             $field = $condition['field'] ?? null;
             $operator = $condition['operator'] ?? null;
             $value = $condition['value'] ?? null;
+
+            if (! $field || ! $operator || ! array_key_exists('value', $condition)) {
+                throw new MalformedCondition(json_encode($condition));
+            }
 
             if (! array_key_exists($field, $payload)) {
                 return false;

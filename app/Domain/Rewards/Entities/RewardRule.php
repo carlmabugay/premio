@@ -100,7 +100,7 @@ readonly class RewardRule
     private function evaluateOperator($actual, string $operator, $expected): bool
     {
         return match ($operator) {
-            'eq' => $actual == $expected,
+            'eq' => $actual === $expected,
             'gt' => is_numeric($actual) && $actual > $expected,
             'gte' => is_numeric($actual) && $actual >= $expected,
             'lt' => is_numeric($actual) && $actual < $expected,

@@ -9,7 +9,7 @@ readonly class Event
         private string $external_id,
         private string $type,
         private string $source,
-        private array $payload,
+        private ?array $payload = null,
         private string $occurred_at,
     ) {}
 
@@ -33,7 +33,7 @@ readonly class Event
         return $this->source;
     }
 
-    public function payload(): array
+    public function payload(): ?array
     {
         return $this->payload;
     }

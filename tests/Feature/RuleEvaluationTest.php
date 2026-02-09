@@ -344,7 +344,7 @@ describe('Rule Evaluation', function () {
             expect($matches)->toBeFalse();
         });
 
-        it('does not match when payload condition field missing.', function () {
+        it('does not match when payload field missing.', function () {
 
             // Given
             $event = new Event(
@@ -662,6 +662,40 @@ describe('Rule Evaluation', function () {
 
             // Then
             expect($matches)->toBeTrue();
+        });
+
+        it('handles null payload values safely.', function () {
+            // Given
+            $event = new Event(
+                id: Str::uuid()->toString(),
+                external_id : 'EXT-123',
+                type : 'order.completed',
+                source: 'shopify',
+                payload: null,
+                occurred_at: now()->format('Y-m-d H:i:s'),
+            );
+
+            // And
+            $rule = new RewardRule(
+                id: 1,
+                event_type: 'order.completed',
+                reward_type: 'fixed',
+                reward_value: 100,
+                is_active: true,
+                conditions: [
+                    [
+                        'field' => 'order_quantity',
+                        'operator' => 'gte',
+                        'value' => 2,
+                    ],
+                ],
+            );
+
+            // When
+            $matches = $rule->matches($event);
+
+            // Then
+            expect($matches)->toBeFalse();
         });
 
     });

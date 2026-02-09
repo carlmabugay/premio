@@ -554,6 +554,42 @@ describe('Rule Evaluation', function () {
             // Then
         })->throws(MalformedCondition::class);
 
+        it('ignores unknown payload fields safely', function () {
+            // Given
+            $event = new Event(
+                id: Str::uuid()->toString(),
+                external_id : 'EXT-123',
+                type : 'order.completed',
+                source: 'shopify',
+                payload: [
+                    'order_total' => 1500,
+                    'notes' => 'VIP order'
+                ],
+                occurred_at: now()->format('Y-m-d H:i:s'),
+            );
+
+            // And
+            $rule = new RewardRule(
+                id: 1,
+                event_type: 'order.completed',
+                reward_type: 'fixed',
+                reward_value: 100,
+                is_active: true,
+                conditions: [
+                    [
+                        'field' => 'order_total',
+                        'operator' => 'gte',
+                        'value' => 1000,
+                    ]
+                ],
+            );
+
+            // When
+            $matches = $rule->matches($event);
+
+            // Then
+            expect($matches)->toBeTrue();
+        });
     });
 
 });

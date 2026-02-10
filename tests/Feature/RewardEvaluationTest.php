@@ -68,7 +68,7 @@ describe('Reward Evaluation Feature', function () {
 
         });
 
-        it('evaluates multiple rules where some match and some don’t', function () {
+        it('evaluates multiple rules where some match and some don’t.', function () {
             // Given
             $event = new Event(
                 id: Str::uuid()->toString(),
@@ -128,6 +128,66 @@ describe('Reward Evaluation Feature', function () {
             expect($result)->toHaveCount(1)
                 ->and($result[0]->id())->toBe(1);
 
+        });
+
+        it('returns empty result when no rules match.', function () {
+            // Given
+            $event = new Event(
+                id: Str::uuid()->toString(),
+                external_id : 'EXT-123',
+                type : 'order.completed',
+                source: 'shopify',
+                payload: [
+                    'amount' => 150,
+                    'currency' => 'USD',
+                ],
+                occurred_at: now()->format('Y-m-d H:i:s'),
+            );
+
+            // And
+            $nonMatchingRuleOne = new RewardRule(
+                id: 2,
+                event_type: 'order.completed',
+                reward_type: 'fixed',
+                reward_value: 100,
+                is_active: true,
+                conditions: [
+                    [
+                        'field' => 'amount',
+                        'operator' => 'gte',
+                        'value' => 500,
+                    ],
+                ],
+            );
+
+            // And
+            $nonMatchingRuleTwo = new RewardRule(
+                id: 2,
+                event_type: 'order.completed',
+                reward_type: 'fixed',
+                reward_value: 100,
+                is_active: true,
+                conditions: [
+                    [
+                        'field' => 'amount',
+                        'operator' => 'lte',
+                        'value' => 50,
+                    ],
+                ],
+            );
+
+            // When
+            $repository = Mockery::mock(RewardRuleRepositoryInterface::class);
+            $repository->shouldReceive('findActive')
+                ->once()
+                ->andReturn([$nonMatchingRuleOne, $nonMatchingRuleTwo]);
+
+            $useCase = new EvaluateRules($repository);
+
+            $result = $useCase->execute($event);
+
+            expect($result)->toBeArray()
+                ->and($result)->toHaveCount(0);
         });
 
     });

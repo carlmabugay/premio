@@ -68,6 +68,68 @@ describe('Reward Evaluation Feature', function () {
 
         });
 
+        it('evaluates multiple rules where some match and some don’t', function () {
+            // Given
+            $event = new Event(
+                id: Str::uuid()->toString(),
+                external_id : 'EXT-123',
+                type : 'order.completed',
+                source: 'shopify',
+                payload: [
+                    'amount' => 150,
+                    'currency' => 'USD',
+                ],
+                occurred_at: now()->format('Y-m-d H:i:s'),
+            );
+
+            // And
+            $matchingRule = new RewardRule(
+                id: 1,
+                event_type: 'order.completed',
+                reward_type: 'fixed',
+                reward_value: 100,
+                is_active: true,
+                conditions: [
+                    [
+                        'field' => 'amount',
+                        'operator' => 'gte',
+                        'value' => 100,
+                    ],
+                ]
+            );
+
+            // And
+            $nonMatchingRule = new RewardRule(
+                id: 2,
+                event_type: 'order.completed',
+                reward_type: 'fixed',
+                reward_value: 100,
+                is_active: true,
+                conditions: [
+                    [
+                        'field' => 'amount',
+                        'operator' => 'gte',
+                        'value' => 500,
+                    ],
+                ],
+            );
+
+            // When
+            $repository = Mockery::mock(RewardRuleRepositoryInterface::class);
+            $repository->shouldReceive('findActive')
+                ->once()
+                ->andReturn([$matchingRule, $nonMatchingRule]);
+
+            $useCase = new EvaluateRules($repository);
+
+            $result = $useCase->execute($event);
+
+            // Then
+            expect($result)->toHaveCount(1)
+                ->and($result[0]->id())->toBe(1);
+
+        });
+
     });
 
     describe('Negatives', function () {});

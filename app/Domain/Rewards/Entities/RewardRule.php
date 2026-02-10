@@ -19,8 +19,13 @@ readonly class RewardRule
         private ?array $conditions = []
     ) {}
 
+    public function id(): int
+    {
+        return $this->id;
+    }
+
     /**
-     * @throws UnsupportedOperator
+     * @throws UnsupportedOperator|MalformedCondition
      */
     public function matches(Event $event): bool
     {

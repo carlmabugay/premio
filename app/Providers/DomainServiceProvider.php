@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use App\Domain\Events\Contracts\EventRepositoryInterface;
+use App\Domain\Rewards\Contracts\RewardRuleRepositoryInterface;
 use App\Infrastructure\Persistence\Eloquent\EloquentEventRepository;
+use App\Infrastructure\Persistence\Eloquent\EloquentRewardRuleRepository;
 use Illuminate\Support\ServiceProvider;
 
 class DomainServiceProvider extends ServiceProvider
@@ -14,6 +16,7 @@ class DomainServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind(EventRepositoryInterface::class, EloquentEventRepository::class);
+        $this->app->bind(RewardRuleRepositoryInterface::class, EloquentRewardRuleRepository::class);
     }
 
     /**

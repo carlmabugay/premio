@@ -4,9 +4,6 @@ use App\Domain\Events\Entities\Event;
 use App\Domain\Rewards\Entities\RewardRule;
 use App\Exceptions\MalformedCondition;
 use App\Exceptions\UnsupportedOperator;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-
-uses(RefreshDatabase::class);
 
 describe('Rule Evaluation', function () {
 

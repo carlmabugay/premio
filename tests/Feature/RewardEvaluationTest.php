@@ -1,0 +1,77 @@
+<?php
+
+use App\Application\UseCases\EvaluateRules;
+use App\Domain\Events\Entities\Event;
+use App\Domain\Rewards\Contracts\RewardRuleRepositoryInterface;
+use App\Domain\Rewards\Entities\RewardRule;
+
+describe('Reward Evaluation Feature', function () {
+
+    describe('Positives', function () {
+
+        it('evaluates multiple rules and returns only matching rules.', function () {
+
+            // Given
+            $event = new Event(
+                id: Str::uuid()->toString(),
+                external_id : 'EXT-123',
+                type : 'order.completed',
+                source: 'shopify',
+                payload: ['order_total' => 1500],
+                occurred_at: now()->format('Y-m-d H:i:s'),
+            );
+
+            // And
+            $matchingRule = new RewardRule(
+                id: 1,
+                event_type: 'order.completed',
+                reward_type: 'fixed',
+                reward_value: 100,
+                is_active: true,
+                conditions: [
+                    [
+                        'field' => 'order_total',
+                        'operator' => 'gte',
+                        'value' => 1000,
+                    ],
+                ]
+            );
+
+            $nonMatchingRule = new RewardRule(
+                id: 2,
+                event_type: 'order.completed',
+                reward_type: 'fixed',
+                reward_value: 100,
+                is_active: true,
+                conditions: [
+                    [
+                        'field' => 'order_total',
+                        'operator' => 'gte',
+                        'value' => 2000,
+                    ],
+                ]
+            );
+
+            // When
+            $repository = Mockery::mock(RewardRuleRepositoryInterface::class);
+            $repository->shouldReceive('findActive')
+                ->once()
+                ->andReturn([$matchingRule, $nonMatchingRule]);
+
+            $useCase = new EvaluateRules($repository);
+
+            $result = $useCase->execute($event);
+
+            // Then
+            expect($result)->toHaveCount(1)
+                ->and($result[0]->id())->toBe(1);
+
+        });
+
+    });
+
+    describe('Negatives', function () {});
+
+    describe('Edge Cases', function () {});
+
+});

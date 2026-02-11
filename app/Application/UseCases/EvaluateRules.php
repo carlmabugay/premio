@@ -15,6 +15,8 @@ readonly class EvaluateRules
     {
         $active_rules = $this->rules->findActive();
 
+        usort($active_rules, fn ($a, $b) => $a->priority <=> $b->priority);
+
         $matching = [];
 
         foreach ($active_rules as $rule) {

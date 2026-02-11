@@ -6,17 +6,18 @@ use App\Domain\Events\Entities\Event;
 use App\Exceptions\MalformedCondition;
 use App\Exceptions\UnsupportedOperator;
 
-readonly class RewardRule
+class RewardRule
 {
     public function __construct(
         private int $id,
-        private string $event_type,
+        private readonly string $event_type,
         private string $reward_type,
         private int $reward_value,
-        private bool $is_active,
-        private ?string $starts_at = null,
-        private ?string $ends_at = null,
-        private ?array $conditions = []
+        private readonly bool $is_active,
+        private readonly ?string $starts_at = null,
+        private readonly ?string $ends_at = null,
+        private readonly ?array $conditions = [],
+        public int $priority = 100,
     ) {}
 
     public function id(): int

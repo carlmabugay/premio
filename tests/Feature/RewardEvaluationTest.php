@@ -294,6 +294,49 @@ describe('Reward Evaluation Feature', function () {
             expect($result)->toHaveCount(1);
         });
 
+        it('evaluates rules in deterministic order (if order matters).', function () {
+
+            // Given
+            $event = new Event(
+                id: Str::uuid()->toString(),
+                external_id : 'EXT-123',
+                type : 'order.completed',
+                source: 'shopify',
+                payload: [
+                    'amount' => 150,
+                    'currency' => 'USD',
+                ],
+                occurred_at: now()->format('Y-m-d H:i:s'),
+            );
+
+            $ruleLowPriority = Mockery::mock(RewardRule::class);
+            $ruleLowPriority->priority = 20;
+            $ruleLowPriority->shouldReceive('matches')
+                ->once()
+                ->ordered()
+                ->andReturn(true);
+
+            $ruleHighPriority = Mockery::mock(RewardRule::class);
+            $ruleHighPriority->priority = 10;
+            $ruleHighPriority->shouldReceive('matches')
+                ->once()
+                ->ordered()
+                ->andReturn(true);
+
+            $repository = Mockery::mock(RewardRuleRepositoryInterface::class);
+            $repository
+                ->shouldReceive('findActive')
+                ->once()
+                ->andReturn([
+                    $ruleLowPriority,
+                    $ruleHighPriority,
+                ]);
+
+            $useCase = new EvaluateRules($repository);
+
+            $useCase->execute($event);
+        });
+
     });
 
     describe('Negatives', function () {});

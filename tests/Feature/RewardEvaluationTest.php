@@ -190,6 +190,65 @@ describe('Reward Evaluation Feature', function () {
                 ->and($result)->toHaveCount(0);
         });
 
+        it('only evaluates active rules.', function () {
+
+            // Given
+            $event = new Event(
+                id: Str::uuid()->toString(),
+                external_id : 'EXT-123',
+                type : 'order.completed',
+                source: 'shopify',
+                payload: [
+                    'amount' => 150,
+                    'currency' => 'USD',
+                ],
+                occurred_at: now()->format('Y-m-d H:i:s'),
+            );
+
+            $inactiveRule = new RewardRule(
+                id: 1,
+                event_type: 'order.completed',
+                reward_type: 'fixed',
+                reward_value: 100,
+                is_active: false,
+                conditions: [
+                    [
+                        'field' => 'amount',
+                        'operator' => 'gte',
+                        'value' => 50,
+                    ],
+                ],
+            );
+
+            $activeRule = new RewardRule(
+                id: 2,
+                event_type: 'order.completed',
+                reward_type: 'fixed',
+                reward_value: 100,
+                is_active: true,
+                conditions: [
+                    [
+                        'field' => 'currency',
+                        'operator' => 'eq',
+                        'value' => 'USD',
+                    ],
+                ],
+            );
+
+            // When
+            $repository = Mockery::mock(RewardRuleRepositoryInterface::class);
+            $repository->shouldReceive('findActive')
+                ->once()
+                ->andReturn([$inactiveRule, $activeRule]);
+
+            $useCase = new EvaluateRules($repository);
+
+            $result = $useCase->execute($event);
+
+            expect($result)->toHaveCount(1)
+                ->and($result[0]->id())->toBe(2);
+        });
+
     });
 
     describe('Negatives', function () {});

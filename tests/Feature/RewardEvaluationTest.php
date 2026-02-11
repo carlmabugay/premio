@@ -249,6 +249,51 @@ describe('Reward Evaluation Feature', function () {
                 ->and($result[0]->id())->toBe(2);
         });
 
+        it('does not evaluate inactive rules at all (repository filter).', function () {
+
+            // Given
+            $event = new Event(
+                id: Str::uuid()->toString(),
+                external_id : 'EXT-123',
+                type : 'order.completed',
+                source: 'shopify',
+                payload: [
+                    'amount' => 150,
+                    'currency' => 'USD',
+                ],
+                occurred_at: now()->format('Y-m-d H:i:s'),
+            );
+
+            $activeRule = new RewardRule(
+                id: 2,
+                event_type: 'order.completed',
+                reward_type: 'fixed',
+                reward_value: 100,
+                is_active: true,
+                conditions: [
+                    [
+                        'field' => 'amount',
+                        'operator' => 'gte',
+                        'value' => 100,
+                    ],
+                ],
+            );
+
+            // When
+            $repository = Mockery::mock(RewardRuleRepositoryInterface::class);
+            $repository->shouldReceive('findActive')
+                ->once()
+                ->andReturn([$activeRule]);
+
+            $repository->shouldNotReceive('findAll');
+
+            $useCase = new EvaluateRules($repository);
+
+            $result = $useCase->execute($event);
+
+            expect($result)->toHaveCount(1);
+        });
+
     });
 
     describe('Negatives', function () {});

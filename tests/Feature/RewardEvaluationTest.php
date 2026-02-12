@@ -3,6 +3,7 @@
 use App\Application\UseCases\EvaluateRules;
 use App\Domain\Events\Contracts\EventRepositoryInterface;
 use App\Domain\Events\Entities\Event;
+use App\Domain\Rewards\Contracts\RewardIssueRepositoryInterface;
 use App\Domain\Rewards\Contracts\RewardRuleRepositoryInterface;
 use App\Domain\Rewards\Entities\RewardRule;
 
@@ -56,6 +57,7 @@ describe('Reward Evaluation Feature', function () {
             // When
             $eventRepository = Mockery::mock(EventRepositoryInterface::class);
             $ruleRepository = Mockery::mock(RewardRuleRepositoryInterface::class);
+            $issueRepository = Mockery::mock(RewardIssueRepositoryInterface::class);
 
             $eventRepository->shouldReceive('exists')
                 ->once()
@@ -64,14 +66,17 @@ describe('Reward Evaluation Feature', function () {
 
             $eventRepository->shouldReceive('save')
                 ->once()
-                ->with($event)
-                ->andReturn(true);
+                ->with($event);
 
             $ruleRepository->shouldReceive('findActive')
                 ->once()
                 ->andReturn([$matchingRule, $nonMatchingRule]);
 
-            $useCase = new EvaluateRules($eventRepository, $ruleRepository);
+            $issueRepository->shouldReceive('issue')
+                ->once()
+                ->with($event, $matchingRule);
+
+            $useCase = new EvaluateRules($eventRepository, $ruleRepository, $issueRepository);
 
             $result = $useCase->execute($event);
 
@@ -130,24 +135,26 @@ describe('Reward Evaluation Feature', function () {
             // When
             $eventRepository = Mockery::mock(EventRepositoryInterface::class);
             $ruleRepository = Mockery::mock(RewardRuleRepositoryInterface::class);
+            $issueRepository = Mockery::mock(RewardIssueRepositoryInterface::class);
 
-            $eventRepository
-                ->shouldReceive('exists')
+            $eventRepository->shouldReceive('exists')
                 ->once()
                 ->with($event)
                 ->andReturn(false);
 
-            $eventRepository
-                ->shouldReceive('save')
+            $eventRepository->shouldReceive('save')
                 ->once()
-                ->with($event)
-                ->andReturn(true);
+                ->with($event);
 
             $ruleRepository->shouldReceive('findActive')
                 ->once()
                 ->andReturn([$matchingRule, $nonMatchingRule]);
 
-            $useCase = new EvaluateRules($eventRepository, $ruleRepository);
+            $issueRepository->shouldReceive('issue')
+                ->once()
+                ->with($event, $matchingRule);
+
+            $useCase = new EvaluateRules($eventRepository, $ruleRepository, $issueRepository);
 
             $result = $useCase->execute($event);
 
@@ -206,24 +213,24 @@ describe('Reward Evaluation Feature', function () {
             // When
             $eventRepository = Mockery::mock(EventRepositoryInterface::class);
             $ruleRepository = Mockery::mock(RewardRuleRepositoryInterface::class);
+            $issueRepository = Mockery::mock(RewardIssueRepositoryInterface::class);
 
-            $eventRepository
-                ->shouldReceive('exists')
+            $eventRepository->shouldReceive('exists')
                 ->once()
                 ->with($event)
                 ->andReturn(false);
 
-            $eventRepository
-                ->shouldReceive('save')
+            $eventRepository->shouldReceive('save')
                 ->once()
-                ->with($event)
-                ->andReturn(true);
+                ->with($event);
 
             $ruleRepository->shouldReceive('findActive')
                 ->once()
                 ->andReturn([$nonMatchingRuleOne, $nonMatchingRuleTwo]);
 
-            $useCase = new EvaluateRules($eventRepository, $ruleRepository);
+            $issueRepository->shouldNotReceive('issue');
+
+            $useCase = new EvaluateRules($eventRepository, $ruleRepository, $issueRepository);
 
             $result = $useCase->execute($event);
 
@@ -280,24 +287,26 @@ describe('Reward Evaluation Feature', function () {
             // When
             $eventRepository = Mockery::mock(EventRepositoryInterface::class);
             $ruleRepository = Mockery::mock(RewardRuleRepositoryInterface::class);
+            $issueRepository = Mockery::mock(RewardIssueRepositoryInterface::class);
 
-            $eventRepository
-                ->shouldReceive('exists')
+            $eventRepository->shouldReceive('exists')
                 ->once()
                 ->with($event)
                 ->andReturn(false);
 
-            $eventRepository
-                ->shouldReceive('save')
+            $eventRepository->shouldReceive('save')
                 ->once()
-                ->with($event)
-                ->andReturn(true);
+                ->with($event);
 
             $ruleRepository->shouldReceive('findActive')
                 ->once()
                 ->andReturn([$inactiveRule, $activeRule]);
 
-            $useCase = new EvaluateRules($eventRepository, $ruleRepository);
+            $issueRepository->shouldReceive('issue')
+                ->once()
+                ->with($event, $activeRule);
+
+            $useCase = new EvaluateRules($eventRepository, $ruleRepository, $issueRepository);
 
             $result = $useCase->execute($event);
 
@@ -337,18 +346,16 @@ describe('Reward Evaluation Feature', function () {
 
             $eventRepository = Mockery::mock(EventRepositoryInterface::class);
             $ruleRepository = Mockery::mock(RewardRuleRepositoryInterface::class);
+            $issueRepository = Mockery::mock(RewardIssueRepositoryInterface::class);
 
-            $eventRepository
-                ->shouldReceive('exists')
+            $eventRepository->shouldReceive('exists')
                 ->once()
                 ->with($event)
                 ->andReturn(false);
 
-            $eventRepository
-                ->shouldReceive('save')
+            $eventRepository->shouldReceive('save')
                 ->once()
-                ->with($event)
-                ->andReturn(true);
+                ->with($event);
 
             $ruleRepository->shouldReceive('findActive')
                 ->once()
@@ -357,75 +364,15 @@ describe('Reward Evaluation Feature', function () {
                     $ruleHighPriority,
                 ]);
 
-            $useCase = new EvaluateRules($eventRepository, $ruleRepository);
+            $issueRepository->shouldReceive('issue')
+                ->twice();
+
+            $useCase = new EvaluateRules($eventRepository, $ruleRepository, $issueRepository);
 
             $result = $useCase->execute($event);
 
             expect($result->already_evaluated)->toBeFalse()
                 ->and($result->matched_rules)->toBe(2);
-        });
-
-        it('handles large number of rules without failure (basic performance sanity).', function () {
-
-            // Given
-            $event = new Event(
-                id: Str::uuid()->toString(),
-                external_id : 'EXT-123',
-                type : 'order.completed',
-                source: 'shopify',
-                payload: [
-                    'amount' => 150,
-                    'currency' => 'USD',
-                ],
-                occurred_at: now()->format('Y-m-d H:i:s'),
-            );
-
-            $rules = [];
-
-            for ($i = 0; $i < 100000; $i++) {
-                $rules[] = new RewardRule(
-                    id: $i,
-                    event_type: 'order.completed',
-                    reward_type: 'fixed',
-                    reward_value: 100,
-                    is_active: true,
-                    conditions: [
-                        [
-                            'field' => 'amount',
-                            'operator' => 'gte',
-                            'value' => 100,
-                        ],
-                    ],
-                );
-            }
-
-            // When
-            $eventRepository = Mockery::mock(EventRepositoryInterface::class);
-            $ruleRepository = Mockery::mock(RewardRuleRepositoryInterface::class);
-
-            $eventRepository
-                ->shouldReceive('exists')
-                ->once()
-                ->with($event)
-                ->andReturn(false);
-
-            $eventRepository
-                ->shouldReceive('save')
-                ->once()
-                ->with($event)
-                ->andReturn(true);
-
-            $ruleRepository->shouldReceive('findActive')
-                ->once()
-                ->andReturn($rules);
-
-            $useCase = new EvaluateRules($eventRepository, $ruleRepository);
-
-            $result = $useCase->execute($event);
-
-            expect($result->already_evaluated)->toBeFalse()
-                ->and($result->matched_rules)->toBe(100000);
-
         });
 
     });
@@ -465,15 +412,14 @@ describe('Reward Evaluation Feature', function () {
             // When
             $eventRepository = Mockery::mock(EventRepositoryInterface::class);
             $ruleRepository = Mockery::mock(RewardRuleRepositoryInterface::class);
+            $issueRepository = Mockery::mock(RewardIssueRepositoryInterface::class);
 
-            $eventRepository
-                ->shouldReceive('exists')
+            $eventRepository->shouldReceive('exists')
                 ->once()
                 ->with($event)
                 ->andReturn(false);
 
-            $eventRepository
-                ->shouldReceive('save')
+            $eventRepository->shouldReceive('save')
                 ->once()
                 ->with($event)
                 ->andReturn(true);
@@ -484,7 +430,10 @@ describe('Reward Evaluation Feature', function () {
 
             $ruleRepository->shouldNotReceive('findAll');
 
-            $useCase = new EvaluateRules($eventRepository, $ruleRepository);
+            $issueRepository->shouldReceive('issue')
+                ->with($event, $activeRule);
+
+            $useCase = new EvaluateRules($eventRepository, $ruleRepository, $issueRepository);
 
             $result = $useCase->execute($event);
 
@@ -510,24 +459,127 @@ describe('Reward Evaluation Feature', function () {
 
             $eventRepository = Mockery::mock(EventRepositoryInterface::class);
             $ruleRepository = Mockery::mock(RewardRuleRepositoryInterface::class);
+            $issueRepository = Mockery::mock(RewardIssueRepositoryInterface::class);
 
-            $eventRepository
-                ->shouldReceive('exists')
+            $eventRepository->shouldReceive('exists')
                 ->once()
                 ->with($event)
                 ->andReturn(true);
 
             $ruleRepository->shouldNotReceive('findActive');
 
-            $useCase = new EvaluateRules($eventRepository, $ruleRepository);
+            $issueRepository->shouldNotReceive('issue');
+
+            $useCase = new EvaluateRules($eventRepository, $ruleRepository, $issueRepository);
 
             $result = $useCase->execute($event);
 
             expect($result->already_evaluated)->toBeTrue()
                 ->and($result->matched_rules)->toBe(0);
         });
+
+        it('does not issue duplicate reward when event already processed.', function () {
+
+            // Given
+            $event = new Event(
+                id: Str::uuid()->toString(),
+                external_id : 'EXT-123',
+                type : 'order.completed',
+                source: 'shopify',
+                payload: [
+                    'amount' => 150,
+                    'currency' => 'USD',
+                ],
+                occurred_at: now()->format('Y-m-d H:i:s'),
+            );
+
+            $eventRepository = Mockery::mock(EventRepositoryInterface::class);
+            $ruleRepository = Mockery::mock(RewardRuleRepositoryInterface::class);
+            $issueRepository = Mockery::mock(RewardIssueRepositoryInterface::class);
+
+            $eventRepository->shouldReceive('exists')
+                ->once()
+                ->with($event)
+                ->andReturn(true);
+
+            $ruleRepository->shouldNotReceive('findActive');
+
+            $useCase = new EvaluateRules($eventRepository, $ruleRepository, $issueRepository);
+
+            $result = $useCase->execute($event);
+
+            expect($result->already_evaluated)->toBeTrue()
+                ->and($result->issued_rewards)->toBe(0);
+
+        });
     });
 
-    describe('Edge Cases', function () {});
+    describe('Edge Cases', function () {
+
+        it('handles large number of rules without failure (basic performance sanity).', function () {
+
+            // Given
+            $event = new Event(
+                id: Str::uuid()->toString(),
+                external_id : 'EXT-123',
+                type : 'order.completed',
+                source: 'shopify',
+                payload: [
+                    'amount' => 150,
+                    'currency' => 'USD',
+                ],
+                occurred_at: now()->format('Y-m-d H:i:s'),
+            );
+
+            $rules = [];
+
+            for ($i = 0; $i < 100000; $i++) {
+                $rules[] = new RewardRule(
+                    id: $i,
+                    event_type: 'order.completed',
+                    reward_type: 'fixed',
+                    reward_value: 100,
+                    is_active: true,
+                    conditions: [
+                        [
+                            'field' => 'amount',
+                            'operator' => 'gte',
+                            'value' => 100,
+                        ],
+                    ],
+                );
+            }
+
+            // When
+            $eventRepository = Mockery::mock(EventRepositoryInterface::class);
+            $ruleRepository = Mockery::mock(RewardRuleRepositoryInterface::class);
+            $issueRepository = Mockery::mock(RewardIssueRepositoryInterface::class);
+
+            $eventRepository->shouldReceive('exists')
+                ->once()
+                ->with($event)
+                ->andReturn(false);
+
+            $eventRepository->shouldReceive('save')
+                ->once()
+                ->with($event);
+
+            $ruleRepository->shouldReceive('findActive')
+                ->once()
+                ->andReturn($rules);
+
+            $issueRepository->shouldReceive('issue')
+                ->times(100000);
+
+            $useCase = new EvaluateRules($eventRepository, $ruleRepository, $issueRepository);
+
+            $result = $useCase->execute($event);
+
+            expect($result->already_evaluated)->toBeFalse()
+                ->and($result->matched_rules)->toBe(100000);
+
+        });
+
+    });
 
 });

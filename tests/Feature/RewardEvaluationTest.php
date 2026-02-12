@@ -337,6 +337,54 @@ describe('Reward Evaluation Feature', function () {
             $useCase->execute($event);
         });
 
+        it('handles large number of rules without failure (basic performance sanity).', function () {
+
+            // Given
+            $event = new Event(
+                id: Str::uuid()->toString(),
+                external_id : 'EXT-123',
+                type : 'order.completed',
+                source: 'shopify',
+                payload: [
+                    'amount' => 150,
+                    'currency' => 'USD',
+                ],
+                occurred_at: now()->format('Y-m-d H:i:s'),
+            );
+
+            $rules = [];
+
+            for ($i = 0; $i < 100000; $i++) {
+                $rules[] = new RewardRule(
+                    id: $i,
+                    event_type: 'order.completed',
+                    reward_type: 'fixed',
+                    reward_value: 100,
+                    is_active: true,
+                    conditions: [
+                        [
+                            'field' => 'amount',
+                            'operator' => 'gte',
+                            'value' => 100,
+                        ],
+                    ],
+                );
+            }
+
+            // When
+            $repository = Mockery::mock(RewardRuleRepositoryInterface::class);
+            $repository->shouldReceive('findActive')
+                ->once()
+                ->andReturn($rules);
+
+            $useCase = new EvaluateRules($repository);
+
+            $result = $useCase->execute($event);
+
+            expect($result)->toHaveCount(100000);
+
+        });
+
     });
 
     describe('Negatives', function () {});

@@ -1,7 +1,10 @@
 <?php
 
 use App\Domain\Events\Entities\Event;
+use App\Domain\Rewards\Contracts\RewardRuleRepositoryInterface;
 use App\Domain\Rewards\Entities\RewardRule;
+use App\Domain\Rewards\Services\ConditionEngine;
+use App\Domain\Rewards\Services\RewardEngine;
 use App\Exceptions\MalformedCondition;
 use App\Exceptions\UnsupportedOperator;
 
@@ -120,6 +123,8 @@ describe('Rule Evaluation', function () {
 
         it('matches when event occurred inside date range.', function () {
 
+            $now = new DateTimeImmutable('2026-01-01 12:00:00');
+
             // Given
             $event = new Event(
                 id: Str::uuid()->toString(),
@@ -127,7 +132,7 @@ describe('Rule Evaluation', function () {
                 type : 'order.completed',
                 source: 'shopify',
                 payload: ['order_total' => 1500],
-                occurred_at: now()->format('Y-m-d H:i:s'),
+                occurred_at: $now,
             );
 
             // And
@@ -137,15 +142,24 @@ describe('Rule Evaluation', function () {
                 reward_type: 'fixed',
                 reward_value: 100,
                 is_active: true,
-                starts_at: now()->subMonths(1)->format('Y-m-d H:i:s'),
-                ends_at: now()->addMonths(6)->format('Y-m-d H:i:s'),
+                starts_at: new DateTimeImmutable('2026-01-01 00:00:00'),
+                ends_at: new DateTimeImmutable('2026-06-01 00:00:00'),
             );
 
+            $repository = Mockery::mock(RewardRuleRepositoryInterface::class);
+            $repository->shouldReceive('findActive')
+                ->once()
+                ->andReturn([$rule]);
+
+            $conditionEngine = new ConditionEngine();
+
+            $engine = new RewardEngine($repository, $conditionEngine);
+
             // When
-            $matches = $rule->matches($event);
+            $matches = $engine->evaluate($event);
 
             // Then
-            expect($matches)->toBeTrue();
+            expect($matches)->toHaveCount(1);
         });
 
         it('matches when rule has no payload conditions.', function () {

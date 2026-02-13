@@ -2,6 +2,8 @@
 
 namespace App\Domain\Events\Entities;
 
+use DateTimeImmutable;
+
 readonly class Event
 {
     public function __construct(
@@ -10,7 +12,7 @@ readonly class Event
         private string $type,
         private string $source,
         private ?array $payload,
-        private string $occurred_at,
+        private DateTimeImmutable $occurred_at,
     ) {}
 
     public function id(): string
@@ -38,7 +40,7 @@ readonly class Event
         return $this->payload;
     }
 
-    public function occurred_at(): string
+    public function occurredAt(): DateTimeImmutable
     {
         return $this->occurred_at;
     }

@@ -5,6 +5,7 @@ namespace App\Domain\Rewards\Entities;
 use App\Domain\Events\Entities\Event;
 use App\Exceptions\MalformedCondition;
 use App\Exceptions\UnsupportedOperator;
+use DateTimeImmutable;
 
 class RewardRule
 {
@@ -14,8 +15,8 @@ class RewardRule
         private string $reward_type,
         private int $reward_value,
         private readonly bool $is_active,
-        private readonly ?string $starts_at = null,
-        private readonly ?string $ends_at = null,
+        private readonly ?DateTimeImmutable $starts_at = null,
+        private readonly ?DateTimeImmutable $ends_at = null,
         private readonly ?array $conditions = [],
         public int $priority = 100,
     ) {}
@@ -23,6 +24,26 @@ class RewardRule
     public function id(): int
     {
         return $this->id;
+    }
+
+    public function isActive(): bool
+    {
+        return $this->is_active;
+    }
+
+    public function startsAt(): DateTimeImmutable
+    {
+        return $this->starts_at;
+    }
+
+    public function endsAt(): DateTimeImmutable
+    {
+        return $this->ends_at;
+    }
+
+    public function conditions(): array
+    {
+        return $this->conditions;
     }
 
     /**
@@ -52,7 +73,7 @@ class RewardRule
 
     private function isWithinDateRange(Event $event): bool
     {
-        $occurred_at = $event->occurred_at();
+        $occurred_at = $event->occurredAt();
 
         if (! $this->starts_at || ! $this->ends_at) {
             return true;
@@ -113,5 +134,18 @@ class RewardRule
             'lte' => is_numeric($actual) && $actual <= $expected,
             default => throw new UnsupportedOperator($operator)
         };
+    }
+
+    public function isWithinWindow(DateTimeImmutable $occurredAt): bool
+    {
+        if ($this->startsAt() && $occurredAt < $this->startsAt()) {
+            return false;
+        }
+
+        if ($this->endsAt() && $occurredAt > $this->endsAt()) {
+            return false;
+        }
+
+        return true;
     }
 }

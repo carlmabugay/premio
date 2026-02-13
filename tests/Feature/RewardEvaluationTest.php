@@ -375,6 +375,46 @@ describe('Reward Evaluation Feature', function () {
                 ->and($result->matched_rules)->toBe(2);
         });
 
+        it('produces consistent result when re-evaluating.', function () {
+
+            // Given
+            $event = new Event(
+                id: Str::uuid()->toString(),
+                external_id : 'EXT-123',
+                type : 'order.completed',
+                source: 'shopify',
+                payload: [
+                    'amount' => 150,
+                    'currency' => 'USD',
+                ],
+                occurred_at: now()->format('Y-m-d H:i:s'),
+            );
+
+            // And
+            $rule = new RewardRule(
+                id: 1,
+                event_type: 'order.completed',
+                reward_type: 'fixed',
+                reward_value: 100,
+                is_active: true,
+                conditions: [
+                    [
+                        'field' => 'amount',
+                        'operator' => 'gte',
+                        'value' => 100,
+                    ],
+                ],
+            );
+
+            $firstResult = $rule->matches($event);
+            $secondResult = $rule->matches($event);
+
+            expect($firstResult)->toBeTrue()
+                ->and($secondResult)->toBeTrue()
+                ->and($firstResult)->toEqual($secondResult);
+
+        });
+
     });
 
     describe('Negatives', function () {

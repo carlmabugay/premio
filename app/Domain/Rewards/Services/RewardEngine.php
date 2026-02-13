@@ -4,7 +4,6 @@ namespace App\Domain\Rewards\Services;
 
 use App\Domain\Events\Entities\Event;
 use App\Domain\Rewards\Contracts\RewardRuleRepositoryInterface;
-use App\Domain\Rewards\Entities\RewardRule;
 
 readonly class RewardEngine
 {
@@ -21,11 +20,15 @@ readonly class RewardEngine
 
         foreach ($rules as $rule) {
 
-            if (!$rule->isActive()) {
+            if (! $rule->isActive()) {
                 continue;
             }
 
-            if (!$rule->isWithinWindow($event->occurredAt())) {
+            if ($rule->eventType() !== $event->type()) {
+                continue;
+            }
+
+            if (! $rule->isWithinWindow($event->occurredAt())) {
                 continue;
             }
 

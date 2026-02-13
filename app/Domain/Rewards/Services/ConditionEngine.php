@@ -12,13 +12,13 @@ class ConditionEngine
             $operator = $condition['operator'];
             $value = $condition['value'];
 
-            if (!array_key_exists($field, $payload)) {
+            if (! array_key_exists($field, $payload)) {
                 continue;
             }
 
             $actual = $payload[$field];
 
-            if (!$this->compare($actual, $operator, $value)) {
+            if (! $this->compare($actual, $operator, $value)) {
                 return false;
             }
         }
@@ -29,14 +29,13 @@ class ConditionEngine
     private function compare(mixed $actual, string $operator, mixed $expected): bool
     {
         return match ($operator) {
-            '='  => $actual == $expected,
+            '=' => $actual == $expected,
             '!=' => $actual != $expected,
-            '>'  => $actual > $expected,
-            '<'  => $actual < $expected,
+            '>' => $actual > $expected,
+            '<' => $actual < $expected,
             '>=' => $actual >= $expected,
             '<=' => $actual <= $expected,
             default => false,
         };
     }
 }
-

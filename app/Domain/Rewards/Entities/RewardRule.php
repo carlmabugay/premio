@@ -26,17 +26,22 @@ class RewardRule
         return $this->id;
     }
 
+    public function eventType(): string
+    {
+        return $this->event_type;
+    }
+
     public function isActive(): bool
     {
         return $this->is_active;
     }
 
-    public function startsAt(): DateTimeImmutable
+    public function startsAt(): ?DateTimeImmutable
     {
         return $this->starts_at;
     }
 
-    public function endsAt(): DateTimeImmutable
+    public function endsAt(): ?DateTimeImmutable
     {
         return $this->ends_at;
     }

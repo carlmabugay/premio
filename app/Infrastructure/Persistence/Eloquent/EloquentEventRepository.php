@@ -23,7 +23,7 @@ class EloquentEventRepository implements EventRepositoryInterface
             'type' => $event->type(),
             'source' => $event->source(),
             'payload' => $event->payload(),
-            'occurred_at' => $event->occurred_at(),
+            'occurred_at' => $event->occurredAt(),
         ]);
     }
 }

@@ -20,7 +20,7 @@ describe('Reward Evaluation Feature', function () {
                 type : 'order.completed',
                 source: 'shopify',
                 payload: ['order_total' => 1500],
-                occurred_at: now()->format('Y-m-d H:i:s'),
+                occurred_at: new DateTimeImmutable('2026-01-01 12:00:00'),
             );
 
             // And
@@ -97,7 +97,7 @@ describe('Reward Evaluation Feature', function () {
                     'amount' => 150,
                     'currency' => 'USD',
                 ],
-                occurred_at: now()->format('Y-m-d H:i:s'),
+                occurred_at: new DateTimeImmutable('2026-01-01 12:00:00'),
             );
 
             // And
@@ -175,7 +175,7 @@ describe('Reward Evaluation Feature', function () {
                     'amount' => 150,
                     'currency' => 'USD',
                 ],
-                occurred_at: now()->format('Y-m-d H:i:s'),
+                occurred_at: new DateTimeImmutable('2026-01-01 12:00:00'),
             );
 
             // And
@@ -251,7 +251,7 @@ describe('Reward Evaluation Feature', function () {
                     'amount' => 150,
                     'currency' => 'USD',
                 ],
-                occurred_at: now()->format('Y-m-d H:i:s'),
+                occurred_at: new DateTimeImmutable('2026-01-01 12:00:00'),
             );
 
             $inactiveRule = new RewardRule(
@@ -326,8 +326,9 @@ describe('Reward Evaluation Feature', function () {
                 payload: [
                     'amount' => 150,
                     'currency' => 'USD',
+                    'customer_tier' => 'VIP',
                 ],
-                occurred_at: now()->format('Y-m-d H:i:s'),
+                occurred_at: new DateTimeImmutable('2026-01-01 12:00:00'),
             );
 
             $ruleLowPriority = Mockery::mock(RewardRule::class);
@@ -387,7 +388,7 @@ describe('Reward Evaluation Feature', function () {
                     'amount' => 150,
                     'currency' => 'USD',
                 ],
-                occurred_at: now()->format('Y-m-d H:i:s'),
+                occurred_at: new DateTimeImmutable('2026-01-01 12:00:00'),
             );
 
             // And
@@ -431,7 +432,7 @@ describe('Reward Evaluation Feature', function () {
                     'amount' => 150,
                     'currency' => 'USD',
                 ],
-                occurred_at: now()->format('Y-m-d H:i:s'),
+                occurred_at: new DateTimeImmutable('2026-01-01 12:00:00'),
             );
 
             $activeRule = new RewardRule(
@@ -494,7 +495,7 @@ describe('Reward Evaluation Feature', function () {
                     'amount' => 150,
                     'currency' => 'USD',
                 ],
-                occurred_at: now()->format('Y-m-d H:i:s'),
+                occurred_at: new DateTimeImmutable('2026-01-01 12:00:00'),
             );
 
             $eventRepository = Mockery::mock(EventRepositoryInterface::class);
@@ -530,7 +531,7 @@ describe('Reward Evaluation Feature', function () {
                     'amount' => 150,
                     'currency' => 'USD',
                 ],
-                occurred_at: now()->format('Y-m-d H:i:s'),
+                occurred_at: new DateTimeImmutable('2026-01-01 12:00:00'),
             );
 
             $eventRepository = Mockery::mock(EventRepositoryInterface::class);
@@ -568,7 +569,7 @@ describe('Reward Evaluation Feature', function () {
                     'amount' => 150,
                     'currency' => 'USD',
                 ],
-                occurred_at: now()->format('Y-m-d H:i:s'),
+                occurred_at: new DateTimeImmutable('2026-01-01 12:00:00'),
             );
 
             $rules = [];

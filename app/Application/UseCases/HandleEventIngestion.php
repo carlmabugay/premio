@@ -7,6 +7,8 @@ use App\Application\Results\IngestionResult;
 use App\Domain\Events\Entities\Event;
 use App\Domain\Events\Services\EventService;
 use App\Exceptions\DuplicateEvent;
+use DateTimeImmutable;
+use Exception;
 use Illuminate\Support\Str;
 
 readonly class HandleEventIngestion
@@ -15,6 +17,9 @@ readonly class HandleEventIngestion
         private EventService $eventService
     ) {}
 
+    /**
+     * @throws Exception
+     */
     public function handle(CreateEventDTO $dto): IngestionResult
     {
         $event = new Event(
@@ -23,7 +28,7 @@ readonly class HandleEventIngestion
             type: $dto->type,
             source: $dto->source,
             payload: $dto->payload,
-            occurred_at: $dto->occurred_at,
+            occurred_at: new DateTimeImmutable($dto->occurred_at),
         );
 
         try {

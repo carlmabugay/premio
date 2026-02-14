@@ -18,7 +18,7 @@ describe('Event Ingestion Feature', function () {
                 'payload' => [
                     'customer_id' => 'CST-123',
                 ],
-                'occurred_at' => now()->toISOString(),
+                'occurred_at' => now()->format('Y-m-d H:i:s'),
             ];
 
             // When
@@ -44,7 +44,7 @@ describe('Event Ingestion Feature', function () {
                 'payload' => [
                     'customer_id' => 'CST-123',
                 ],
-                'occurred_at' => now()->toISOString(),
+                'occurred_at' => now()->format('Y-m-d H:i:s'),
             ];
 
             // When
@@ -68,7 +68,7 @@ describe('Event Ingestion Feature', function () {
                 'payload' => [
                     'customer_id' => 'CST-123',
                 ],
-                'occurred_at' => now()->toISOString(),
+                'occurred_at' => now()->format('Y-m-d H:i:s'),
             ];
 
             // When
@@ -95,7 +95,7 @@ describe('Event Ingestion Feature', function () {
                 'payload' => [
                     'customer_id' => 'CST-123',
                 ],
-                'occurred_at' => now()->toISOString(),
+                'occurred_at' => now()->format('Y-m-d H:i:s'),
             ];
 
             // When
@@ -122,7 +122,7 @@ describe('Event Ingestion Feature', function () {
                 'payload' => [
                     'customer_id' => 'CST-123',
                 ],
-                'occurred_at' => now()->toISOString(),
+                'occurred_at' => now()->format('Y-m-d H:i:s'),
             ];
 
             // When
@@ -146,7 +146,7 @@ describe('Event Ingestion Feature', function () {
                 'external_id' => 'EXT-123',
                 'type' => 'order.complete',
                 'source' => 'shopify',
-                'occurred_at' => now()->toISOString(),
+                'occurred_at' => now()->format('Y-m-d H:i:s'),
             ];
 
             // When
@@ -172,7 +172,7 @@ describe('Event Ingestion Feature', function () {
                 'source' => 'shopify',
                 'type' => 'order.completed',
                 'payload' => 'invalid',
-                'occurred_at' => now()->toISOString(),
+                'occurred_at' => now()->format('Y-m-d H:i:s'),
             ];
 
             // When

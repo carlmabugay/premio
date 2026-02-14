@@ -11,13 +11,13 @@ class RewardRule
 {
     public function __construct(
         private readonly int $id,
-        private string $name,
+        private readonly string $name,
         private readonly string $event_type,
-        private string $reward_type,
-        private int $reward_value,
+        private readonly string $reward_type,
+        private readonly int $reward_value,
         private readonly bool $is_active,
-        private ?DateTimeImmutable $starts_at = null,
-        private ?DateTimeImmutable $ends_at = null,
+        private readonly ?DateTimeImmutable $starts_at = null,
+        private readonly ?DateTimeImmutable $ends_at = null,
         private readonly ?array $conditions = [],
         public int $priority = 100,
     ) {}
@@ -27,9 +27,24 @@ class RewardRule
         return $this->id;
     }
 
+    public function name(): string
+    {
+        return $this->name;
+    }
+
     public function eventType(): string
     {
         return $this->event_type;
+    }
+
+    public function rewardType(): string
+    {
+        return $this->reward_type;
+    }
+
+    public function rewardValue(): int
+    {
+        return $this->reward_value;
     }
 
     public function isActive(): bool
@@ -50,6 +65,11 @@ class RewardRule
     public function conditions(): array
     {
         return $this->conditions;
+    }
+
+    public function priority(): int
+    {
+        return $this->priority;
     }
 
     /**

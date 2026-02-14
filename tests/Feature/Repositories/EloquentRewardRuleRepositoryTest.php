@@ -14,6 +14,9 @@ describe('EloquentRewardRuleRepository Feature', function () {
             EloquentRewardRule::create([
                 'name' => 'Active Rule',
                 'event_type' => 'order.created',
+                'is_active' => true,
+                'starts_at' => null,
+                'ends_at' => null,
                 'conditions' => json_encode([
                     [
                         'field' => 'amount',
@@ -21,9 +24,6 @@ describe('EloquentRewardRuleRepository Feature', function () {
                         'value' => 100,
                     ],
                 ]),
-                'is_active' => true,
-                'starts_at' => null,
-                'ends_at' => null,
                 'priority' => 10,
             ]);
 
@@ -31,6 +31,9 @@ describe('EloquentRewardRuleRepository Feature', function () {
             EloquentRewardRule::create([
                 'name' => 'Inactive Rule',
                 'event_type' => 'order.created',
+                'is_active' => false,
+                'starts_at' => null,
+                'ends_at' => null,
                 'conditions' => json_encode([
                     [
                         'field' => 'amount',
@@ -38,9 +41,6 @@ describe('EloquentRewardRuleRepository Feature', function () {
                         'value' => 200,
                     ],
                 ]),
-                'is_active' => false,
-                'starts_at' => null,
-                'ends_at' => null,
                 'priority' => 20,
             ]);
 
@@ -52,9 +52,145 @@ describe('EloquentRewardRuleRepository Feature', function () {
                 ->and($rules[0]->eventType())->toBe('order.created')
                 ->and($rules[0]->isActive())->toBeTrue();
         });
+
+        it('findActive filters by event_type correctly', function () {
+
+            EloquentRewardRule::create([
+                'name' => 'Order Rule',
+                'event_type' => 'order.created',
+                'is_active' => true,
+                'starts_at' => null,
+                'ends_at' => null,
+                'conditions' => json_encode([]),
+                'priority' => 1,
+            ]);
+
+            EloquentRewardRule::create([
+                'name' => 'Signup Rule',
+                'event_type' => 'user.registered',
+                'is_active' => true,
+                'starts_at' => null,
+                'ends_at' => null,
+                'conditions' => json_encode([]),
+                'priority' => 1,
+            ]);
+
+            $repository = new EloquentRewardRuleRepository;
+
+            $rules = $repository->findActive('order.created');
+
+            expect($rules)->toHaveCount(1)
+                ->and($rules[0]->eventType())->toBe('order.created');
+
+        });
+
+        it('findActive respects priority ordering (ascending)', function () {
+
+            EloquentRewardRule::create([
+                'name' => 'Low Priority Rule',
+                'event_type' => 'order.created',
+                'is_active' => true,
+                'starts_at' => null,
+                'ends_at' => null,
+                'conditions' => json_encode([]),
+                'priority' => 50,
+            ]);
+
+            EloquentRewardRule::create([
+                'name' => 'High Priority Rule',
+                'event_type' => 'order.created',
+                'is_active' => true,
+                'starts_at' => null,
+                'ends_at' => null,
+                'conditions' => json_encode([]),
+                'priority' => 10,
+            ]);
+
+            EloquentRewardRule::create([
+                'name' => 'Mid Priority Rule',
+                'event_type' => 'order.created',
+                'is_active' => true,
+                'starts_at' => null,
+                'ends_at' => null,
+                'conditions' => json_encode([]),
+                'priority' => 30,
+            ]);
+
+            $repository = new EloquentRewardRuleRepository;
+
+            $rules = $repository->findActive('order.created');
+
+            expect($rules)->toHaveCount(3)
+                ->and($rules[0]->priority())->toBe(10)
+                ->and($rules[1]->priority())->toBe(30)
+                ->and($rules[2]->priority())->toBe(50);
+
+        });
+
+        it('findActive correctly hydrates DateTimeImmutable', function () {
+
+            EloquentRewardRule::create([
+                'name' => 'Date Rule',
+                'event_type' => 'order.created',
+                'is_active' => true,
+                'starts_at' => '2026-01-01 10:00:00',
+                'ends_at' => '2026-01-05 18:30:00',
+                'conditions' => json_encode([]),
+                'priority' => 50,
+            ]);
+
+            $repository = new EloquentRewardRuleRepository;
+
+            $rules = $repository->findActive('order.created');
+
+            expect($rules)->toHaveCount(1);
+
+            $rule = $rules[0];
+
+            expect($rule->startsAt())->toBeInstanceOf(DateTimeImmutable::class)
+                ->and($rule->endsAt())->toBeInstanceOf(DateTimeImmutable::class)
+                ->and($rule->startsAt()->format('Y-m-d H:i:s'))
+                ->toBe('2026-01-01 10:00:00')
+                ->and($rule->endsAt()->format('Y-m-d H:i:s'))
+                ->toBe('2026-01-05 18:30:00');
+
+        });
     });
 
-    describe('Negatives', function () {});
+    describe('Negatives', function () {
+
+        it('findActive returns empty array when no active rules exist', function () {
+
+            EloquentRewardRule::create([
+                'name' => 'Inactive Rule',
+                'event_type' => 'order.created',
+                'is_active' => false,
+                'starts_at' => null,
+                'ends_at' => null,
+                'conditions' => json_encode([]),
+                'priority' => 1,
+            ]);
+
+            EloquentRewardRule::create([
+                'name' => 'Different Event Rule',
+                'event_type' => 'user.registered',
+                'is_active' => true,
+                'starts_at' => null,
+                'ends_at' => null,
+                'conditions' => json_encode([]),
+                'priority' => 1,
+            ]);
+
+            $repository = new EloquentRewardRuleRepository;
+
+            $rules = $repository->findActive('order.created');
+
+            expect($rules)->toBeArray()
+                ->and($rules)->toBeEmpty();
+
+        });
+
+    });
 
     describe('Edge Cases', function () {});
 

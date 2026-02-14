@@ -274,7 +274,7 @@ describe('Rule Evaluation', function () {
                 type : 'order.received',
                 source: 'shopify',
                 payload: ['order_total' => 1500],
-                occurred_at: now()->format('Y-m-d H:i:s'),
+                occurred_at: new DateTimeImmutable('2026-01-01 12:00:00'),
             );
 
             // And
@@ -284,15 +284,22 @@ describe('Rule Evaluation', function () {
                 reward_type: 'fixed',
                 reward_value: 100,
                 is_active: true,
-                starts_at: now()->subMonths(1)->format('Y-m-d H:i:s'),
-                ends_at: now()->addMonths(6)->format('Y-m-d H:i:s'),
             );
 
+            $repository = Mockery::mock(RewardRuleRepositoryInterface::class);
+            $repository->shouldReceive('findActive')
+                ->once()
+                ->andReturn([$rule]);
+
+            $conditionEngine = new ConditionEngine;
+
+            $engine = new RewardEngine($repository, $conditionEngine);
+
             // When
-            $matches = $rule->matches($event);
+            $matches = $engine->evaluate($event);
 
             // Then
-            expect($matches)->toBeFalse();
+            expect($matches)->toBeEmpty();
 
         });
 
@@ -305,7 +312,7 @@ describe('Rule Evaluation', function () {
                 type : 'order.completed',
                 source: 'shopify',
                 payload: ['order_total' => 1500],
-                occurred_at: now()->format('Y-m-d H:i:s'),
+                occurred_at: new DateTimeImmutable('2026-01-01 12:00:00'),
             );
 
             // And
@@ -315,15 +322,22 @@ describe('Rule Evaluation', function () {
                 reward_type: 'fixed',
                 reward_value: 100,
                 is_active: false,
-                starts_at: now()->subMonths(1)->format('Y-m-d H:i:s'),
-                ends_at: now()->addMonths(6)->format('Y-m-d H:i:s'),
             );
 
+            $repository = Mockery::mock(RewardRuleRepositoryInterface::class);
+            $repository->shouldReceive('findActive')
+                ->once()
+                ->andReturn([$rule]);
+
+            $conditionEngine = new ConditionEngine;
+
+            $engine = new RewardEngine($repository, $conditionEngine);
+
             // When
-            $matches = $rule->matches($event);
+            $matches = $engine->evaluate($event);
 
             // Then
-            expect($matches)->toBeFalse();
+            expect($matches)->toBeEmpty();
 
         });
 
@@ -336,7 +350,7 @@ describe('Rule Evaluation', function () {
                 type : 'order.completed',
                 source: 'shopify',
                 payload: ['order_total' => 1500],
-                occurred_at: now()->format('Y-m-d H:i:s'),
+                occurred_at: new DateTimeImmutable('2026-01-01 12:00:00'),
             );
 
             // And
@@ -346,15 +360,24 @@ describe('Rule Evaluation', function () {
                 reward_type: 'fixed',
                 reward_value: 100,
                 is_active: true,
-                starts_at: now()->addMonths(2)->format('Y-m-d H:i:s'),
-                ends_at: now()->addMonths(6)->format('Y-m-d H:i:s'),
+                starts_at: new DateTimeImmutable('2026-02-01 00:00:00'),
+                ends_at: new DateTimeImmutable('2026-03-01 00:00:00'),
             );
 
+            $repository = Mockery::mock(RewardRuleRepositoryInterface::class);
+            $repository->shouldReceive('findActive')
+                ->once()
+                ->andReturn([$rule]);
+
+            $conditionEngine = new ConditionEngine;
+
+            $engine = new RewardEngine($repository, $conditionEngine);
+
             // When
-            $matches = $rule->matches($event);
+            $matches = $engine->evaluate($event);
 
             // Then
-            expect($matches)->toBeFalse();
+            expect($matches)->toBeEmpty();
         });
 
         it('does not match when payload condition fails.', function () {
@@ -366,7 +389,7 @@ describe('Rule Evaluation', function () {
                 type : 'order.completed',
                 source: 'shopify',
                 payload: ['order_total' => 1500],
-                occurred_at: now()->format('Y-m-d H:i:s'),
+                occurred_at: new DateTimeImmutable('2026-01-01 12:00:00'),
             );
 
             // And
@@ -376,22 +399,29 @@ describe('Rule Evaluation', function () {
                 reward_type: 'fixed',
                 reward_value: 100,
                 is_active: true,
-                starts_at: now()->subMonths(1)->format('Y-m-d H:i:s'),
-                ends_at: now()->addMonths(6)->format('Y-m-d H:i:s'),
                 conditions: [
                     [
                         'field' => 'order_total',
-                        'operator' => 'gte',
+                        'operator' => '>',
                         'value' => 2000,
                     ],
                 ]
             );
 
+            $repository = Mockery::mock(RewardRuleRepositoryInterface::class);
+            $repository->shouldReceive('findActive')
+                ->once()
+                ->andReturn([$rule]);
+
+            $conditionEngine = new ConditionEngine;
+
+            $engine = new RewardEngine($repository, $conditionEngine);
+
             // When
-            $matches = $rule->matches($event);
+            $matches = $engine->evaluate($event);
 
             // Then
-            expect($matches)->toBeFalse();
+            expect($matches)->toBeEmpty();
         });
 
         it('does not match when payload field missing.', function () {
@@ -403,7 +433,7 @@ describe('Rule Evaluation', function () {
                 type : 'order.completed',
                 source: 'shopify',
                 payload: [],
-                occurred_at: now()->format('Y-m-d H:i:s'),
+                occurred_at: new DateTimeImmutable('2026-01-01 12:00:00'),
             );
 
             // And
@@ -413,15 +443,22 @@ describe('Rule Evaluation', function () {
                 reward_type: 'fixed',
                 reward_value: 100,
                 is_active: true,
-                starts_at: now()->subMonths(1)->format('Y-m-d H:i:s'),
-                ends_at: now()->addMonths(6)->format('Y-m-d H:i:s'),
             );
 
+            $repository = Mockery::mock(RewardRuleRepositoryInterface::class);
+            $repository->shouldReceive('findActive')
+                ->once()
+                ->andReturn([$rule]);
+
+            $conditionEngine = new ConditionEngine;
+
+            $engine = new RewardEngine($repository, $conditionEngine);
+
             // When
-            $matches = $rule->matches($event);
+            $matches = $engine->evaluate($event);
 
             // Then
-            expect($matches)->toBeFalse();
+            expect($matches)->toBeEmpty();
         });
 
         it('does not match when condition value is not numeric.', function () {
@@ -433,7 +470,7 @@ describe('Rule Evaluation', function () {
                 type : 'order.completed',
                 source: 'shopify',
                 payload: ['order_total' => 1500],
-                occurred_at: now()->format('Y-m-d H:i:s'),
+                occurred_at: new DateTimeImmutable('2026-01-01 12:00:00'),
             );
 
             // And
@@ -443,8 +480,6 @@ describe('Rule Evaluation', function () {
                 reward_type: 'fixed',
                 reward_value: 100,
                 is_active: true,
-                starts_at: now()->subMonths(1)->format('Y-m-d H:i:s'),
-                ends_at: now()->addMonths(6)->format('Y-m-d H:i:s'),
                 conditions: [
                     [
                         'field' => 'order_total',
@@ -454,11 +489,20 @@ describe('Rule Evaluation', function () {
                 ],
             );
 
+            $repository = Mockery::mock(RewardRuleRepositoryInterface::class);
+            $repository->shouldReceive('findActive')
+                ->once()
+                ->andReturn([$rule]);
+
+            $conditionEngine = new ConditionEngine;
+
+            $engine = new RewardEngine($repository, $conditionEngine);
+
             // When
-            $matches = $rule->matches($event);
+            $matches = $engine->evaluate($event);
 
             // Then
-            expect($matches)->toBeFalse();
+            expect($matches)->toBeEmpty();
         });
 
         it('does not match when rule has expired.', function () {
@@ -470,7 +514,7 @@ describe('Rule Evaluation', function () {
                 type : 'order.completed',
                 source: 'shopify',
                 payload: ['order_total' => 1500],
-                occurred_at: now()->format('Y-m-d H:i:s'),
+                occurred_at: new DateTimeImmutable('2026-01-01 12:00:00'),
             );
 
             // And
@@ -480,15 +524,24 @@ describe('Rule Evaluation', function () {
                 reward_type: 'fixed',
                 reward_value: 100,
                 is_active: true,
-                starts_at: now()->subMonths(2)->format('Y-m-d H:i:s'),
-                ends_at: now()->subMonths(3)->format('Y-m-d H:i:s'),
+                starts_at: new DateTimeImmutable('2025-11-01 00:00:00'),
+                ends_at: new DateTimeImmutable('2025-12-01 00:00:00'),
             );
 
+            $repository = Mockery::mock(RewardRuleRepositoryInterface::class);
+            $repository->shouldReceive('findActive')
+                ->once()
+                ->andReturn([$rule]);
+
+            $conditionEngine = new ConditionEngine;
+
+            $engine = new RewardEngine($repository, $conditionEngine);
+
             // When
-            $matches = $rule->matches($event);
+            $matches = $engine->evaluate($event);
 
             // Then
-            expect($matches)->toBeFalse();
+            expect($matches)->toBeEmpty();
 
         });
 
@@ -501,7 +554,7 @@ describe('Rule Evaluation', function () {
                 type : 'order.completed',
                 source: 'shopify',
                 payload: ['order_total' => 1500],
-                occurred_at: now()->format('Y-m-d H:i:s'),
+                occurred_at: new DateTimeImmutable('2026-01-01 12:00:00'),
             );
 
             // And
@@ -511,15 +564,24 @@ describe('Rule Evaluation', function () {
                 reward_type: 'fixed',
                 reward_value: 100,
                 is_active: true,
-                starts_at: now()->addMonths(1)->format('Y-m-d H:i:s'),
-                ends_at: now()->addMonths(2)->format('Y-m-d H:i:s'),
+                starts_at: new DateTimeImmutable('2026-05-01 00:00:00'),
+                ends_at: new DateTimeImmutable('2026-07-01 00:00:00'),
             );
 
+            $repository = Mockery::mock(RewardRuleRepositoryInterface::class);
+            $repository->shouldReceive('findActive')
+                ->once()
+                ->andReturn([$rule]);
+
+            $conditionEngine = new ConditionEngine;
+
+            $engine = new RewardEngine($repository, $conditionEngine);
+
             // When
-            $matches = $rule->matches($event);
+            $matches = $engine->evaluate($event);
 
             // Then
-            expect($matches)->toBeFalse();
+            expect($matches)->toBeEmpty();
 
         });
 

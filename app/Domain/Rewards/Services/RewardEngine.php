@@ -28,6 +28,10 @@ readonly class RewardEngine
                 continue;
             }
 
+            if (empty($event->payload())) {
+                continue;
+            }
+
             if (! $rule->isWithinWindow($event->occurredAt())) {
                 continue;
             }

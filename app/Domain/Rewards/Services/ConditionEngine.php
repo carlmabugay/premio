@@ -29,8 +29,8 @@ class ConditionEngine
     private function compare(mixed $actual, string $operator, mixed $expected): bool
     {
         return match ($operator) {
-            '=' => $actual == $expected,
-            '!=' => $actual != $expected,
+            '=' => $actual === $expected,
+            '!=' => $actual !== $expected,
             '>' => $actual > $expected,
             '<' => $actual < $expected,
             '>=' => $actual >= $expected,

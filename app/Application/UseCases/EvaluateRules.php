@@ -28,7 +28,7 @@ readonly class EvaluateRules
 
         $this->eventRepository->save($event);
 
-        $active_rules = $this->ruleRepository->findActive();
+        $active_rules = $this->ruleRepository->findActive($event->type());
 
         usort($active_rules, fn ($a, $b) => $a->priority <=> $b->priority);
 

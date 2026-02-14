@@ -4,5 +4,5 @@ namespace App\Domain\Rewards\Contracts;
 
 interface RewardRuleRepositoryInterface
 {
-    public function findActive(): array;
+    public function findActive(string $event_type): array;
 }

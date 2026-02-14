@@ -27,6 +27,7 @@ describe('Rule Evaluation', function () {
             // And
             $rule = new RewardRule(
                 id: 1,
+                name: 'Active Rule',
                 event_type: 'order.completed',
                 reward_type: 'fixed',
                 reward_value: 100,
@@ -64,6 +65,7 @@ describe('Rule Evaluation', function () {
             // And
             $rule = new RewardRule(
                 id: 1,
+                name: 'Active Rule',
                 event_type: 'order.completed',
                 reward_type: 'fixed',
                 reward_value: 100,
@@ -111,6 +113,7 @@ describe('Rule Evaluation', function () {
             // And
             $rule = new RewardRule(
                 id: 1,
+                name: 'Active Rule',
                 event_type: 'order.completed',
                 reward_type: 'fixed',
                 reward_value: 100,
@@ -161,6 +164,7 @@ describe('Rule Evaluation', function () {
             // And
             $rule = new RewardRule(
                 id: 1,
+                name: 'Active Rule',
                 event_type: 'order.completed',
                 reward_type: 'fixed',
                 reward_value: 100,
@@ -200,6 +204,7 @@ describe('Rule Evaluation', function () {
             // And
             $rule = new RewardRule(
                 id: 1,
+                name: 'Active Rule',
                 event_type: 'order.completed',
                 reward_type: 'fixed',
                 reward_value: 100,
@@ -238,6 +243,7 @@ describe('Rule Evaluation', function () {
             // And
             $rule = new RewardRule(
                 id: 1,
+                name: 'Active Rule',
                 event_type: 'order.completed',
                 reward_type: 'fixed',
                 reward_value: 100,
@@ -280,6 +286,7 @@ describe('Rule Evaluation', function () {
             // And
             $rule = new RewardRule(
                 id: 1,
+                name: 'Active Rule',
                 event_type: 'order.completed',
                 reward_type: 'fixed',
                 reward_value: 100,
@@ -318,6 +325,7 @@ describe('Rule Evaluation', function () {
             // And
             $rule = new RewardRule(
                 id: 1,
+                name: 'Active Rule',
                 event_type: 'order.completed',
                 reward_type: 'fixed',
                 reward_value: 100,
@@ -356,6 +364,7 @@ describe('Rule Evaluation', function () {
             // And
             $rule = new RewardRule(
                 id: 1,
+                name: 'Active Rule',
                 event_type: 'order.completed',
                 reward_type: 'fixed',
                 reward_value: 100,
@@ -395,6 +404,7 @@ describe('Rule Evaluation', function () {
             // And
             $rule = new RewardRule(
                 id: 1,
+                name: 'Active Rule',
                 event_type: 'order.completed',
                 reward_type: 'fixed',
                 reward_value: 100,
@@ -439,6 +449,7 @@ describe('Rule Evaluation', function () {
             // And
             $rule = new RewardRule(
                 id: 1,
+                name: 'Active Rule',
                 event_type: 'order.completed',
                 reward_type: 'fixed',
                 reward_value: 100,
@@ -476,6 +487,7 @@ describe('Rule Evaluation', function () {
             // And
             $rule = new RewardRule(
                 id: 1,
+                name: 'Active Rule',
                 event_type: 'order.completed',
                 reward_type: 'fixed',
                 reward_value: 100,
@@ -520,6 +532,7 @@ describe('Rule Evaluation', function () {
             // And
             $rule = new RewardRule(
                 id: 1,
+                name: 'Active Rule',
                 event_type: 'order.completed',
                 reward_type: 'fixed',
                 reward_value: 100,
@@ -560,6 +573,7 @@ describe('Rule Evaluation', function () {
             // And
             $rule = new RewardRule(
                 id: 1,
+                name: 'Active Rule',
                 event_type: 'order.completed',
                 reward_type: 'fixed',
                 reward_value: 100,
@@ -604,6 +618,7 @@ describe('Rule Evaluation', function () {
             // And
             $rule = new RewardRule(
                 id: 1,
+                name: 'Active Rule',
                 event_type: 'order.completed',
                 reward_type: 'fixed',
                 reward_value: 100,
@@ -662,6 +677,7 @@ describe('Rule Evaluation', function () {
                 // And
                 $rule = new RewardRule(
                     id: 1,
+                    name: 'Active Rule',
                     event_type: 'order.completed',
                     reward_type: 'fixed',
                     reward_value: 100,
@@ -702,6 +718,7 @@ describe('Rule Evaluation', function () {
             // And
             $rule = new RewardRule(
                 id: 1,
+                name: 'Active Rule',
                 event_type: 'order.completed',
                 reward_type: 'fixed',
                 reward_value: 100,
@@ -747,6 +764,7 @@ describe('Rule Evaluation', function () {
             // And
             $rule = new RewardRule(
                 id: 1,
+                name: 'Active Rule',
                 event_type: 'order.completed',
                 reward_type: 'fixed',
                 reward_value: 100,
@@ -794,6 +812,7 @@ describe('Rule Evaluation', function () {
             // And
             $rule = new RewardRule(
                 id: 1,
+                name: 'Active Rule',
                 event_type: 'order.completed',
                 reward_type: 'fixed',
                 reward_value: 100,
@@ -837,6 +856,7 @@ describe('Rule Evaluation', function () {
             // And
             $rule = new RewardRule(
                 id: 1,
+                name: 'Active Rule',
                 event_type: 'order.completed',
                 reward_type: 'fixed',
                 reward_value: 100,
@@ -882,6 +902,7 @@ describe('Rule Evaluation', function () {
             // And
             $rule = new RewardRule(
                 id: 1,
+                name: 'Active Rule',
                 event_type: 'order.completed',
                 reward_type: 'fixed',
                 reward_value: 100,

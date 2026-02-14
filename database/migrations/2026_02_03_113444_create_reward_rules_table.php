@@ -13,14 +13,16 @@ return new class extends Migration
     {
         Schema::create('reward_rules', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
             $table->string('event_type');
-            $table->json('conditions')->nullable();
             $table->enum('reward_type', ['fixed', 'percentage'])->default('fixed');
             $table->integer('reward_value')->default(0);
             $table->integer('cap')->default(0);
             $table->boolean('is_active')->default(true);
             $table->dateTime('starts_at')->nullable();
             $table->dateTime('ends_at')->nullable();
+            $table->json('conditions')->nullable();
+            $table->smallInteger('priority')->default(0);
         });
     }
 

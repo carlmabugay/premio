@@ -10,13 +10,14 @@ use DateTimeImmutable;
 class RewardRule
 {
     public function __construct(
-        private int $id,
+        private readonly int $id,
+        private string $name,
         private readonly string $event_type,
         private string $reward_type,
         private int $reward_value,
         private readonly bool $is_active,
-        private readonly ?DateTimeImmutable $starts_at = null,
-        private readonly ?DateTimeImmutable $ends_at = null,
+        private ?DateTimeImmutable $starts_at = null,
+        private ?DateTimeImmutable $ends_at = null,
         private readonly ?array $conditions = [],
         public int $priority = 100,
     ) {}

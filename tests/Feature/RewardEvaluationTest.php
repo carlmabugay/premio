@@ -26,6 +26,7 @@ describe('Reward Evaluation Feature', function () {
             // And
             $matchingRule = new RewardRule(
                 id: 1,
+                name: 'Matching Rule',
                 event_type: 'order.completed',
                 reward_type: 'fixed',
                 reward_value: 100,
@@ -41,6 +42,7 @@ describe('Reward Evaluation Feature', function () {
 
             $nonMatchingRule = new RewardRule(
                 id: 2,
+                name: 'Non Matching Rule',
                 event_type: 'order.completed',
                 reward_type: 'fixed',
                 reward_value: 100,
@@ -103,6 +105,7 @@ describe('Reward Evaluation Feature', function () {
             // And
             $matchingRule = new RewardRule(
                 id: 1,
+                name: 'Matching Rule',
                 event_type: 'order.completed',
                 reward_type: 'fixed',
                 reward_value: 100,
@@ -119,6 +122,7 @@ describe('Reward Evaluation Feature', function () {
             // And
             $nonMatchingRule = new RewardRule(
                 id: 2,
+                name: 'Non Matching Rule',
                 event_type: 'order.completed',
                 reward_type: 'fixed',
                 reward_value: 100,
@@ -181,6 +185,7 @@ describe('Reward Evaluation Feature', function () {
             // And
             $nonMatchingRuleOne = new RewardRule(
                 id: 2,
+                name: 'None Matching Rule One',
                 event_type: 'order.completed',
                 reward_type: 'fixed',
                 reward_value: 100,
@@ -197,6 +202,7 @@ describe('Reward Evaluation Feature', function () {
             // And
             $nonMatchingRuleTwo = new RewardRule(
                 id: 2,
+                name: 'None Matching Rule Two',
                 event_type: 'order.completed',
                 reward_type: 'fixed',
                 reward_value: 100,
@@ -256,6 +262,7 @@ describe('Reward Evaluation Feature', function () {
 
             $inactiveRule = new RewardRule(
                 id: 1,
+                name: 'Inactive Rule',
                 event_type: 'order.completed',
                 reward_type: 'fixed',
                 reward_value: 100,
@@ -271,6 +278,7 @@ describe('Reward Evaluation Feature', function () {
 
             $activeRule = new RewardRule(
                 id: 2,
+                name: 'Active Rule',
                 event_type: 'order.completed',
                 reward_type: 'fixed',
                 reward_value: 100,
@@ -394,6 +402,7 @@ describe('Reward Evaluation Feature', function () {
             // And
             $rule = new RewardRule(
                 id: 1,
+                name: 'Active Rule',
                 event_type: 'order.completed',
                 reward_type: 'fixed',
                 reward_value: 100,
@@ -437,6 +446,7 @@ describe('Reward Evaluation Feature', function () {
 
             $activeRule = new RewardRule(
                 id: 2,
+                name: 'Active Rule',
                 event_type: 'order.completed',
                 reward_type: 'fixed',
                 reward_value: 100,
@@ -577,6 +587,7 @@ describe('Reward Evaluation Feature', function () {
             for ($i = 0; $i < 100000; $i++) {
                 $rules[] = new RewardRule(
                     id: $i,
+                    name: sprintf('Rule #%d', $i),
                     event_type: 'order.completed',
                     reward_type: 'fixed',
                     reward_value: 100,

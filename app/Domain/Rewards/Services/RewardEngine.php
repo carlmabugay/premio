@@ -20,7 +20,7 @@ readonly class RewardEngine
      */
     public function evaluate(Event $event): array
     {
-        $rules = $this->ruleRepository->findActive();
+        $rules = $this->ruleRepository->findActive($event->type());
 
         $matches = [];
 

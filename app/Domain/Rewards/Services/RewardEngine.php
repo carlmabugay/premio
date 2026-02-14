@@ -7,10 +7,10 @@ use App\Domain\Rewards\Contracts\RewardRuleRepositoryInterface;
 use App\Exceptions\MalformedCondition;
 use App\Exceptions\UnsupportedOperator;
 
-readonly class RewardEngine
+class RewardEngine
 {
     public function __construct(
-        private RewardRuleRepositoryInterface $ruleRepository,
+        private readonly RewardRuleRepositoryInterface $ruleRepository,
         private ConditionEngine $conditionEngine,
     ) {}
 
@@ -26,25 +26,10 @@ readonly class RewardEngine
 
         foreach ($rules as $rule) {
 
-            if (! $rule->isActive()) {
-                continue;
-            }
-
-            if ($rule->eventType() !== $event->type()) {
-                continue;
-            }
-
-            if (empty($event->payload())) {
-                continue;
-            }
-
-            if (! $rule->isWithinWindow($event->occurredAt())) {
-                continue;
-            }
-
-            if ($this->conditionEngine->matches($rule->conditions(), $event->payload())) {
+            if ($rule->matches($event, $this->conditionEngine)) {
                 $matches[] = $rule;
             }
+
         }
 
         return $matches;

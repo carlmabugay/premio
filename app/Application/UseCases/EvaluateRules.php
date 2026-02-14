@@ -7,6 +7,7 @@ use App\Domain\Events\Contracts\EventRepositoryInterface;
 use App\Domain\Events\Entities\Event;
 use App\Domain\Rewards\Contracts\RewardIssueRepositoryInterface;
 use App\Domain\Rewards\Contracts\RewardRuleRepositoryInterface;
+use App\Domain\Rewards\Services\RewardEngine;
 
 readonly class EvaluateRules
 {
@@ -14,6 +15,7 @@ readonly class EvaluateRules
         private EventRepositoryInterface $eventRepository,
         private RewardRuleRepositoryInterface $ruleRepository,
         private RewardIssueRepositoryInterface $issueRepository,
+        private RewardEngine $rewardEngine,
     ) {}
 
     public function execute(Event $event): RuleEvaluationResult
@@ -28,17 +30,14 @@ readonly class EvaluateRules
 
         $this->eventRepository->save($event);
 
-        $active_rules = $this->ruleRepository->findActive($event->type());
-
-        usort($active_rules, fn ($a, $b) => $a->priority <=> $b->priority);
+        $matches = $this->rewardEngine->evaluate($event);
+        usort($matches, fn ($a, $b) => $a->priority <=> $b->priority);
 
         $issued = 0;
 
-        foreach ($active_rules as $rule) {
-            if ($rule->matches($event)) {
-                $this->issueRepository->issue($event, $rule);
-                $issued++;
-            }
+        foreach ($matches as $rule) {
+            $this->issueRepository->issue($event, $rule);
+            $issued++;
         }
 
         return new RuleEvaluationResult(

@@ -4,6 +4,8 @@ namespace App\Domain\Rewards\Services;
 
 use App\Domain\Events\Entities\Event;
 use App\Domain\Rewards\Contracts\RewardRuleRepositoryInterface;
+use App\Exceptions\MalformedCondition;
+use App\Exceptions\UnsupportedOperator;
 
 readonly class RewardEngine
 {
@@ -12,6 +14,10 @@ readonly class RewardEngine
         private ConditionEngine $conditionEngine,
     ) {}
 
+    /**
+     * @throws UnsupportedOperator
+     * @throws MalformedCondition
+     */
     public function evaluate(Event $event): array
     {
         $rules = $this->ruleRepository->findActive();

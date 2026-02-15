@@ -25,7 +25,6 @@ class RewardEngine
         $matches = [];
 
         foreach ($rules as $rule) {
-
             if ($rule->matches($event, $this->conditionEngine)) {
                 $matches[] = $rule;
             }

@@ -887,6 +887,7 @@ describe('Rule Evaluation', function () {
         });
 
         it('handles boolean comparisons correctly.', function () {
+
             // Given
             $event = new Event(
                 id: Str::uuid()->toString(),

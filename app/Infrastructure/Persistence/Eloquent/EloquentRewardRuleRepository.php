@@ -36,7 +36,7 @@ class EloquentRewardRuleRepository implements RewardRuleRepositoryInterface
             is_active: $model->is_active,
             starts_at: $model->starts_at ? new DateTimeImmutable($model->starts_at) : null,
             ends_at: $model->ends_at ? new DateTimeImmutable($model->ends_at) : null,
-            conditions: json_decode($model->condition),
+            conditions: json_decode($model->conditions),
             priority: $model->priority,
         );
     }

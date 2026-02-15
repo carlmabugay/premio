@@ -14,9 +14,9 @@ class ConditionEngine
     {
         foreach ($conditions as $condition) {
 
-            $field = $condition['field'] ?? null;
-            $operator = $condition['operator'] ?? null;
-            $value = $condition['value'] ?? null;
+            $field = $condition->field ?? null;
+            $operator = $condition->operator ?? null;
+            $value = $condition->value ?? null;
 
             if (! $field || ! $operator || ! array_key_exists($field, $payload)) {
                 throw new MalformedCondition(json_encode($condition));

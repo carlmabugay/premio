@@ -6,18 +6,21 @@ use App\Application\Results\RuleEvaluationResult;
 use App\Domain\Events\Contracts\EventRepositoryInterface;
 use App\Domain\Events\Entities\Event;
 use App\Domain\Rewards\Contracts\RewardIssueRepositoryInterface;
-use App\Domain\Rewards\Contracts\RewardRuleRepositoryInterface;
 use App\Domain\Rewards\Services\RewardEngine;
+use App\Exceptions\MalformedCondition;
+use App\Exceptions\UnsupportedOperator;
 
 readonly class EvaluateRules
 {
     public function __construct(
         private EventRepositoryInterface $eventRepository,
-        private RewardRuleRepositoryInterface $ruleRepository,
         private RewardIssueRepositoryInterface $issueRepository,
         private RewardEngine $rewardEngine,
     ) {}
 
+    /**
+     * @throws MalformedCondition | UnsupportedOperator
+     */
     public function execute(Event $event): RuleEvaluationResult
     {
         if ($this->eventRepository->exists($event)) {

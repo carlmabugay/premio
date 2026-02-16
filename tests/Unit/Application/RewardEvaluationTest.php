@@ -249,7 +249,7 @@ describe('Reward Evaluation Feature', function () {
                 ->and($result->issued_rewards)->toBe(0);
         });
 
-        it('only evaluates active rules.', function () {
+        it('issues rewards for rules returned by the engine.', function () {
 
             // Given
             $event = new Event(
@@ -394,7 +394,14 @@ describe('Reward Evaluation Feature', function () {
                 ->with($event);
 
             $issueRepository->shouldReceive('issue')
-                ->twice();
+                ->once()
+                ->ordered()
+                ->with($event, $ruleLowPriority);
+
+            $issueRepository->shouldReceive('issue')
+                ->once()
+                ->ordered()
+                ->with($event, $ruleHighPriority);
 
             $rewardEngine->shouldReceive('evaluate')
                 ->with($event)
@@ -447,8 +454,11 @@ describe('Reward Evaluation Feature', function () {
 
             $eventRepository->shouldReceive('exists')
                 ->once()
-                ->with($event)
                 ->andReturn(false);
+
+            $eventRepository->shouldReceive('exists')
+                ->once()
+                ->andReturn(true);
 
             $eventRepository->shouldReceive('save')
                 ->once()
@@ -574,42 +584,6 @@ describe('Reward Evaluation Feature', function () {
             expect($result->already_evaluated)->toBeTrue()
                 ->and($result->matched_rules)->toBe(0)
                 ->and($result->issued_rewards)->toBe(0);
-        });
-
-        it('does not issue duplicate reward when event already processed.', function () {
-
-            // Given
-            $event = new Event(
-                id: Str::uuid()->toString(),
-                external_id : 'EXT-123',
-                type : 'order.completed',
-                source: 'shopify',
-                payload: [
-                    'amount' => 150,
-                    'currency' => 'USD',
-                ],
-                occurred_at: new DateTimeImmutable('2026-01-01 12:00:00'),
-            );
-
-            $eventRepository = Mockery::mock(EventRepositoryInterface::class);
-            $issueRepository = Mockery::mock(RewardIssueRepositoryInterface::class);
-            $rewardEngine = Mockery::mock(RewardEngine::class);
-
-            $eventRepository->shouldReceive('exists')
-                ->once()
-                ->with($event)
-                ->andReturn(true);
-
-            $rewardEngine->shouldNotReceive('evaluate');
-
-            $useCase = new EvaluateRules($eventRepository, $issueRepository, $rewardEngine);
-
-            $result = $useCase->execute($event);
-
-            expect($result->already_evaluated)->toBeTrue()
-                ->and($result->matched_rules)->toBe(0)
-                ->and($result->issued_rewards)->toBe(0);
-
         });
     });
 

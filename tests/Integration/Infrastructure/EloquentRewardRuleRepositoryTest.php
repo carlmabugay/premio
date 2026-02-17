@@ -1,12 +1,13 @@
 <?php
 
+use App\Domain\Rewards\Entities\RewardRule;
 use App\Infrastructure\Persistence\Eloquent\EloquentRewardRuleRepository;
 use App\Models\RewardRule as EloquentRewardRule;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
-describe('EloquentRewardRuleRepository Feature', function () {
+describe('EloquentRewardRuleRepository Integration', function () {
 
     describe('Positives', function () {
         it('findActive returns only active rules', function () {
@@ -48,9 +49,18 @@ describe('EloquentRewardRuleRepository Feature', function () {
 
             $rules = $repository->findActive('order.created');
 
-            expect($rules)->toHaveCount(1)
+            expect($rules[0])->toBeInstanceOf(RewardRule::class)
+                ->and($rules[0]->conditions())->toBe([
+                    [
+                        'field' => 'amount',
+                        'operator' => '>=',
+                        'value' => 100,
+                    ],
+                ])
+                ->and($rules)->toHaveCount(1)
                 ->and($rules[0]->eventType())->toBe('order.created')
                 ->and($rules[0]->isActive())->toBeTrue();
+
         });
 
         it('findActive filters by event_type correctly', function () {
@@ -79,7 +89,8 @@ describe('EloquentRewardRuleRepository Feature', function () {
 
             $rules = $repository->findActive('order.created');
 
-            expect($rules)->toHaveCount(1)
+            expect($rules[0])->toBeInstanceOf(RewardRule::class)
+                ->and($rules)->toHaveCount(1)
                 ->and($rules[0]->eventType())->toBe('order.created');
 
         });
@@ -147,7 +158,8 @@ describe('EloquentRewardRuleRepository Feature', function () {
 
             $rule = $rules[0];
 
-            expect($rule->startsAt())->toBeInstanceOf(DateTimeImmutable::class)
+            expect($rule)->toBeInstanceOf(RewardRule::class)
+                ->and($rule->startsAt())->toBeInstanceOf(DateTimeImmutable::class)
                 ->and($rule->endsAt())->toBeInstanceOf(DateTimeImmutable::class)
                 ->and($rule->startsAt()->format('Y-m-d H:i:s'))
                 ->toBe('2026-01-01 10:00:00')
@@ -185,7 +197,8 @@ describe('EloquentRewardRuleRepository Feature', function () {
 
             $rules = $repository->findActive('order.created');
 
-            expect($rules)->toBeArray()
+            expect($rules[0])->toBeInstanceOf(RewardRule::class)
+                ->and($rules)->toBeArray()
                 ->and($rules)->toBeEmpty();
 
         });

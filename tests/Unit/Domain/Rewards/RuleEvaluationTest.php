@@ -7,6 +7,7 @@ use App\Domain\Rewards\Services\ConditionEngine;
 use App\Domain\Rewards\Services\RewardEngine;
 use App\Exceptions\MalformedCondition;
 use App\Exceptions\UnsupportedOperator;
+use Illuminate\Support\Str;
 
 beforeEach(function () {
     $this->repository = Mockery::mock(RewardRuleRepositoryInterface::class);
@@ -18,38 +19,38 @@ describe('Rule Evaluation', function () {
 
     describe('Positives', function () {
 
-        //        it('matches when the event type matches.', function () {
-        //
-        //            // Given
-        //            $event = new Event(
-        //                id: Str::uuid()->toString(),
-        //                external_id : 'EXT-123',
-        //                type : 'order.completed',
-        //                source: 'shopify',
-        //                payload: ['order_total' => 1500],
-        //                occurred_at: new DateTimeImmutable('2026-01-01 12:00:00'),
-        //            );
-        //
-        //            // And
-        //            $rule = new RewardRule(
-        //                id: 1,
-        //                name: 'Active Rule',
-        //                event_type: 'order.completed',
-        //                reward_type: 'fixed',
-        //                reward_value: 100,
-        //                is_active: true,
-        //            );
-        //
-        //            $this->repository->shouldReceive('findActive')
-        //                ->once()
-        //                ->andReturn([$rule]);
-        //
-        //            // When
-        //            $matches = $this->engine->evaluate($event);
-        //
-        //            // Then
-        //            expect($matches)->toHaveCount(1);
-        //        });
+        it('matches when the event type matches.', function () {
+
+            // Given
+            $event = new Event(
+                id: Str::uuid()->toString(),
+                external_id : 'EXT-123',
+                type : 'order.completed',
+                source: 'shopify',
+                payload: ['order_total' => 1500],
+                occurred_at: new DateTimeImmutable('2026-01-01 12:00:00'),
+            );
+
+            // And
+            $rule = new RewardRule(
+                id: 1,
+                name: 'Active Rule',
+                event_type: 'order.completed',
+                reward_type: 'fixed',
+                reward_value: 100,
+                is_active: true,
+            );
+
+            $this->repository->shouldReceive('findActive')
+                ->once()
+                ->andReturn([$rule]);
+
+            // When
+            $matches = $this->engine->evaluate($event);
+
+            // Then
+            expect($matches)->toHaveCount(1);
+        });
 
         it('matches when payload condition satisfies.', function () {
 

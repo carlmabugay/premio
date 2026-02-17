@@ -4,8 +4,9 @@ use App\Domain\Rewards\Entities\RewardRule;
 use App\Infrastructure\Persistence\Eloquent\EloquentRewardRuleRepository;
 use App\Models\RewardRule as EloquentRewardRule;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
-uses(RefreshDatabase::class);
+uses(TestCase::class, RefreshDatabase::class);
 
 describe('EloquentRewardRuleRepository Integration', function () {
 
@@ -50,12 +51,10 @@ describe('EloquentRewardRuleRepository Integration', function () {
             $rules = $repository->findActive('order.created');
 
             expect($rules[0])->toBeInstanceOf(RewardRule::class)
-                ->and($rules[0]->conditions())->toBe([
-                    [
-                        'field' => 'amount',
-                        'operator' => '>=',
-                        'value' => 100,
-                    ],
+                ->and(get_object_vars($rules[0]->conditions()[0]))->toBe([
+                    'field' => 'amount',
+                    'operator' => '>=',
+                    'value' => 100,
                 ])
                 ->and($rules)->toHaveCount(1)
                 ->and($rules[0]->eventType())->toBe('order.created')
@@ -197,8 +196,7 @@ describe('EloquentRewardRuleRepository Integration', function () {
 
             $rules = $repository->findActive('order.created');
 
-            expect($rules[0])->toBeInstanceOf(RewardRule::class)
-                ->and($rules)->toBeArray()
+            expect($rules)->toBeArray()
                 ->and($rules)->toBeEmpty();
 
         });

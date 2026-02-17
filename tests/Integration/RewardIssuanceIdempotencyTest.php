@@ -9,8 +9,10 @@ use App\Infrastructure\Persistence\Eloquent\EloquentRewardIssueRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentRewardRuleRepository;
 use App\Models\RewardRule as EloquentRewardRule;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Str;
+use Tests\TestCase;
 
-uses(RefreshDatabase::class);
+uses(TestCase::class, RefreshDatabase::class);
 
 describe('Reward Issuance Idempotency Feature', function () {
 

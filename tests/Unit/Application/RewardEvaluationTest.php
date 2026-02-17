@@ -7,6 +7,7 @@ use App\Domain\Rewards\Contracts\RewardIssueRepositoryInterface;
 use App\Domain\Rewards\Contracts\RewardRuleRepositoryInterface;
 use App\Domain\Rewards\Entities\RewardRule;
 use App\Domain\Rewards\Services\RewardEngine;
+use Illuminate\Support\Str;
 
 describe('Reward Evaluation Feature', function () {
 
@@ -455,10 +456,6 @@ describe('Reward Evaluation Feature', function () {
             $eventRepository->shouldReceive('exists')
                 ->once()
                 ->andReturn(false);
-
-            $eventRepository->shouldReceive('exists')
-                ->once()
-                ->andReturn(true);
 
             $eventRepository->shouldReceive('save')
                 ->once()

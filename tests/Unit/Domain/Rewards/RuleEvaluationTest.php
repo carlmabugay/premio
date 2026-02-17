@@ -15,7 +15,7 @@ beforeEach(function () {
     $this->engine = new RewardEngine($this->repository, $this->conditionEngine);
 });
 
-describe('Rule Evaluation', function () {
+describe('Unit: Rule Evaluation', function () {
 
     describe('Positives', function () {
 

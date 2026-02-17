@@ -8,7 +8,7 @@ use Tests\TestCase;
 
 uses(TestCase::class, RefreshDatabase::class);
 
-describe('EloquentRewardRuleRepository Integration', function () {
+describe('Integration: EloquentRewardRuleRepository', function () {
 
     describe('Positives', function () {
         it('findActive returns only active rules', function () {

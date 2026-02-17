@@ -4,7 +4,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
-describe('Event Ingestion Feature', function () {
+describe('Feature: Event Ingestion', function () {
 
     describe('Positives', function () {
 

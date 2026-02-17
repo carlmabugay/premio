@@ -14,7 +14,7 @@ use Tests\TestCase;
 
 uses(TestCase::class, RefreshDatabase::class);
 
-describe('Reward Issuance Idempotency Feature', function () {
+describe('Integration: Reward Issuance Idempotency', function () {
 
     describe('Positives', function () {});
 

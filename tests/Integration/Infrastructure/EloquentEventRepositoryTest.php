@@ -8,6 +8,10 @@ use Tests\TestCase;
 
 uses(TestCase::class, RefreshDatabase::class);
 
+beforeEach(function () {
+    $this->repository = new EloquentEventRepository;
+});
+
 describe('Integration: EloquentRewardRuleRepository', function () {
 
     describe('Positives', function () {
@@ -23,9 +27,7 @@ describe('Integration: EloquentRewardRuleRepository', function () {
                 occurred_at: new DateTimeImmutable('2026-01-01 12:00:00'),
             );
 
-            $repository = new EloquentEventRepository;
-
-            expect($repository->exists($event))->toBeFalse();
+            expect($this->repository->exists($event))->toBeFalse();
         });
 
         it('exists returns true after event is saved.', function () {
@@ -39,16 +41,12 @@ describe('Integration: EloquentRewardRuleRepository', function () {
                 occurred_at: new DateTimeImmutable('2026-01-01 12:00:00'),
             );
 
-            $repository = new EloquentEventRepository;
+            $this->repository->save($event);
 
-            $repository->save($event);
-
-            expect($repository->exists($event))->toBeTrue();
+            expect($this->repository->exists($event))->toBeTrue();
         });
 
         it('prevents duplicate persistence when using same external_id.', function () {
-
-            $repository = new EloquentEventRepository;
 
             $eventOne = new Event(
                 id: Str::uuid()->toString(),
@@ -68,12 +66,39 @@ describe('Integration: EloquentRewardRuleRepository', function () {
                 occurred_at: new DateTimeImmutable,
             );
 
-            $repository->save($eventOne);
+            $this->repository->save($eventOne);
 
-            expect($repository->exists($eventTwo))->toBeTrue();
+            expect($this->repository->exists($eventTwo))->toBeTrue();
 
             $this->assertDatabaseCount('events', 1);
         });
     });
 
+    it('allows same external_id for different sources.', function () {
+
+        $repository = new EloquentEventRepository;
+
+        $eventOne = new Event(
+            id: Str::uuid()->toString(),
+            external_id: 'EXT-123',
+            type: 'order.completed',
+            source: 'shopify',
+            payload: [],
+            occurred_at: new DateTimeImmutable(),
+        );
+
+        $eventTwo = new Event(
+            id: Str::uuid()->toString(),
+            external_id: 'EXT-123',
+            type: 'order.completed',
+            source: 'stripe',
+            payload: [],
+            occurred_at: new DateTimeImmutable(),
+        );
+
+        $this->repository->save($eventOne);
+        $this->repository->save($eventTwo);
+
+        $this->assertDatabaseCount('events', 2);
+    });
 });

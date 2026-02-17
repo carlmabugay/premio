@@ -68,6 +68,7 @@ describe('Reward Issuance Idempotency Feature', function () {
             expect($second->already_evaluated)->toBeTrue()
                 ->and($second->issued_rewards)->toBe(0);
 
+            $this->assertDatabaseCount('events', 1);
             $this->assertDatabaseCount('reward_issues', 1);
 
         });

@@ -2,10 +2,9 @@
 
 namespace App\Domain\Rewards\Contracts;
 
-use App\Domain\Events\Entities\Event;
-use App\Domain\Rewards\Entities\RewardRule;
+use App\Domain\Rewards\Entities\RewardIssue;
 
 interface RewardIssueRepositoryInterface
 {
-    public function issue(Event $event, RewardRule $rule): void;
+    public function issue(RewardIssue $rewardIssue): void;
 }

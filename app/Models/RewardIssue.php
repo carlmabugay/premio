@@ -12,4 +12,8 @@ class RewardIssue extends Model
         'reward_type',
         'reward_value',
     ];
+
+    protected $casts = [
+        'reward_value' => 'decimal:2',
+    ];
 }

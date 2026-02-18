@@ -4,6 +4,7 @@ use App\Application\UseCases\EvaluateRules;
 use App\Domain\Events\Contracts\EventRepositoryInterface;
 use App\Domain\Events\Entities\Event;
 use App\Domain\Rewards\Contracts\RewardIssueRepositoryInterface;
+use App\Domain\Rewards\Entities\RewardIssue;
 use App\Domain\Rewards\Entities\RewardRule;
 use App\Domain\Rewards\Services\RewardEngine;
 use Illuminate\Support\Str;
@@ -81,7 +82,7 @@ describe('Unit: Reward Evaluation', function () {
 
             $this->issueRepository->shouldReceive('issue')
                 ->once()
-                ->with($event, $matchingRule);
+                ->with(Mockery::type(RewardIssue::class));
 
             $result = $this->useCase->execute($event);
 
@@ -152,7 +153,7 @@ describe('Unit: Reward Evaluation', function () {
 
             $this->issueRepository->shouldReceive('issue')
                 ->once()
-                ->with($event, $matchingRule);
+                ->with(Mockery::type(RewardIssue::class));
 
             $this->rewardEngine->shouldReceive('evaluate')
                 ->with($event)
@@ -298,7 +299,7 @@ describe('Unit: Reward Evaluation', function () {
 
             $this->issueRepository->shouldReceive('issue')
                 ->once()
-                ->with($event, $activeRule);
+                ->with(Mockery::type(RewardIssue::class));
 
             $this->rewardEngine->shouldReceive('evaluate')
                 ->with($event)
@@ -377,12 +378,12 @@ describe('Unit: Reward Evaluation', function () {
             $this->issueRepository->shouldReceive('issue')
                 ->once()
                 ->ordered()
-                ->with($event, $ruleLowPriority);
+                ->with(Mockery::type(RewardIssue::class));
 
             $this->issueRepository->shouldReceive('issue')
                 ->once()
                 ->ordered()
-                ->with($event, $ruleHighPriority);
+                ->with(Mockery::type(RewardIssue::class));
 
             $this->rewardEngine->shouldReceive('evaluate')
                 ->with($event)
@@ -436,7 +437,8 @@ describe('Unit: Reward Evaluation', function () {
                 ->with($event);
 
             $this->issueRepository->shouldReceive('issue')
-                ->once();
+                ->once()
+                ->with(Mockery::type(RewardIssue::class));
 
             $this->rewardEngine->shouldReceive('evaluate')
                 ->with($event)
@@ -498,7 +500,8 @@ describe('Unit: Reward Evaluation', function () {
                 ->andReturn(true);
 
             $this->issueRepository->shouldReceive('issue')
-                ->with($event, $activeRule);
+                ->once()
+                ->with(Mockery::type(RewardIssue::class));
 
             $this->rewardEngine->shouldReceive('evaluate')
                 ->with($event)

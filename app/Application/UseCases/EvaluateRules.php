@@ -6,6 +6,7 @@ use App\Application\Results\RuleEvaluationResult;
 use App\Domain\Events\Contracts\EventRepositoryInterface;
 use App\Domain\Events\Entities\Event;
 use App\Domain\Rewards\Contracts\RewardIssueRepositoryInterface;
+use App\Domain\Rewards\Entities\RewardIssue;
 use App\Domain\Rewards\Services\RewardEngine;
 use App\Exceptions\MalformedCondition;
 use App\Exceptions\UnsupportedOperator;
@@ -39,7 +40,15 @@ readonly class EvaluateRules
         $issued = 0;
 
         foreach ($matches as $rule) {
-            $this->issueRepository->issue($event, $rule);
+
+            $issue = new RewardIssue(
+                event_id: $event->id(),
+                reward_rule_id: $rule->id(),
+                reward_type: $rule->rewardType(),
+                reward_value: $rule->rewardValue(),
+            );
+
+            $this->issueRepository->issue($issue);
             $issued++;
         }
 

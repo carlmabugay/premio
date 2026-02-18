@@ -45,38 +45,9 @@ describe('Integration: EloquentRewardRuleRepository', function () {
 
             expect($this->repository->exists($event))->toBeTrue();
         });
-
-        it('prevents duplicate persistence when using same external_id.', function () {
-
-            $eventOne = new Event(
-                id: Str::uuid()->toString(),
-                external_id: 'EXT-123',
-                type: 'order.completed',
-                source: 'shopify',
-                payload: [],
-                occurred_at: new DateTimeImmutable,
-            );
-
-            $eventTwo = new Event(
-                id: Str::uuid()->toString(),
-                external_id: 'EXT-123',
-                type: 'order.completed',
-                source: 'shopify',
-                payload: [],
-                occurred_at: new DateTimeImmutable,
-            );
-
-            $this->repository->save($eventOne);
-
-            expect($this->repository->exists($eventTwo))->toBeTrue();
-
-            $this->assertDatabaseCount('events', 1);
-        });
     });
 
     it('allows same external_id for different sources.', function () {
-
-        $repository = new EloquentEventRepository;
 
         $eventOne = new Event(
             id: Str::uuid()->toString(),
@@ -84,7 +55,7 @@ describe('Integration: EloquentRewardRuleRepository', function () {
             type: 'order.completed',
             source: 'shopify',
             payload: [],
-            occurred_at: new DateTimeImmutable(),
+            occurred_at: new DateTimeImmutable,
         );
 
         $eventTwo = new Event(
@@ -93,12 +64,39 @@ describe('Integration: EloquentRewardRuleRepository', function () {
             type: 'order.completed',
             source: 'stripe',
             payload: [],
-            occurred_at: new DateTimeImmutable(),
+            occurred_at: new DateTimeImmutable,
         );
 
         $this->repository->save($eventOne);
         $this->repository->save($eventTwo);
 
         $this->assertDatabaseCount('events', 2);
+    });
+
+    it('treats same external_id and source as already existing.', function () {
+
+        $eventOne = new Event(
+            id: Str::uuid()->toString(),
+            external_id: 'EXT-123',
+            type: 'order.completed',
+            source: 'shopify',
+            payload: [],
+            occurred_at: new DateTimeImmutable,
+        );
+
+        $eventTwo = new Event(
+            id: Str::uuid()->toString(),
+            external_id: 'EXT-123',
+            type: 'order.completed',
+            source: 'shopify',
+            payload: [],
+            occurred_at: new DateTimeImmutable,
+        );
+
+        $this->repository->save($eventOne);
+
+        expect($this->repository->exists($eventTwo))->toBeTrue();
+
+        $this->assertDatabaseCount('events', 1);
     });
 });

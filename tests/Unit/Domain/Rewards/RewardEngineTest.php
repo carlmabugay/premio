@@ -15,7 +15,7 @@ beforeEach(function () {
     $this->engine = new RewardEngine($this->repository, $this->conditionEngine);
 });
 
-describe('Unit: Rule Evaluation', function () {
+describe('Unit: Reward Engine', function () {
 
     describe('Positives', function () {
 
@@ -173,6 +173,70 @@ describe('Unit: Rule Evaluation', function () {
             $matches = $this->engine->evaluate($event);
 
             // Then
+            expect($matches)->toHaveCount(1);
+        });
+
+        it('matches when event occurred_at equals starts_at.', function () {
+
+            $event = new Event(
+                id: Str::uuid()->toString(),
+                external_id: 'EXT-123',
+                type: 'order.completed',
+                source: 'shopify',
+                payload: ['amount' => 1000],
+                occurred_at: new DateTimeImmutable('2026-01-01 12:00:00'),
+            );
+
+            $rule = new RewardRule(
+                id: 1,
+                name: 'Boundary Start Rule',
+                event_type: 'order.completed',
+                reward_type: 'fixed',
+                reward_value: 100,
+                is_active: true,
+                starts_at: new DateTimeImmutable('2026-01-01 12:00:00'),
+                ends_at: null,
+            );
+
+            $this->repository
+                ->shouldReceive('findActive')
+                ->once()
+                ->andReturn([$rule]);
+
+            $matches = $this->engine->evaluate($event);
+
+            expect($matches)->toHaveCount(1);
+        });
+
+        it('matches when event occurred_at equals ends_at.', function () {
+
+            $event = new Event(
+                id: Str::uuid()->toString(),
+                external_id: 'EXT-123',
+                type: 'order.completed',
+                source: 'shopify',
+                payload: ['amount' => 1000],
+                occurred_at: new DateTimeImmutable('2026-01-01 12:00:00'),
+            );
+
+            $rule = new RewardRule(
+                id: 1,
+                name: 'Boundary End Rule',
+                event_type: 'order.completed',
+                reward_type: 'fixed',
+                reward_value: 100,
+                is_active: true,
+                starts_at: null,
+                ends_at: new DateTimeImmutable('2026-01-01 12:00:00'),
+            );
+
+            $this->repository
+                ->shouldReceive('findActive')
+                ->once()
+                ->andReturn([$rule]);
+
+            $matches = $this->engine->evaluate($event);
+
             expect($matches)->toHaveCount(1);
         });
 
@@ -349,6 +413,70 @@ describe('Unit: Rule Evaluation', function () {
 
             // Then
             expect($matches)->toBeEmpty();
+        });
+
+        it('does not match when event occurred_at is before starts_at.', function () {
+
+            $event = new Event(
+                id: Str::uuid()->toString(),
+                external_id: 'EXT-123',
+                type: 'order.completed',
+                source: 'shopify',
+                payload: ['amount' => 1000],
+                occurred_at: new DateTimeImmutable('2025-12-31 23:59:59'),
+            );
+
+            $rule = new RewardRule(
+                id: 1,
+                name: 'Future Rule',
+                event_type: 'order.completed',
+                reward_type: 'fixed',
+                reward_value: 100,
+                is_active: true,
+                starts_at: new DateTimeImmutable('2026-01-01 00:00:00'),
+                ends_at: null,
+            );
+
+            $this->repository
+                ->shouldReceive('findActive')
+                ->once()
+                ->andReturn([$rule]);
+
+            $matches = $this->engine->evaluate($event);
+
+            expect($matches)->toHaveCount(0);
+        });
+
+        it('does not match rule when event occurred_at is after ends_at', function () {
+
+            $event = new Event(
+                id: Str::uuid()->toString(),
+                external_id: 'EXT-123',
+                type: 'order.completed',
+                source: 'shopify',
+                payload: ['amount' => 1000],
+                occurred_at: new DateTimeImmutable('2026-01-02 00:00:01'),
+            );
+
+            $rule = new RewardRule(
+                id: 1,
+                name: 'Expired Rule',
+                event_type: 'order.completed',
+                reward_type: 'fixed',
+                reward_value: 100,
+                is_active: true,
+                starts_at: null,
+                ends_at: new DateTimeImmutable('2026-01-02 00:00:00'),
+            );
+
+            $this->repository
+                ->shouldReceive('findActive')
+                ->once()
+                ->andReturn([$rule]);
+
+            $matches = $this->engine->evaluate($event);
+
+            expect($matches)->toHaveCount(0);
         });
 
         it('does not match when payload condition fails.', function () {

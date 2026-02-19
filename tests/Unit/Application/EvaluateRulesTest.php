@@ -17,7 +17,7 @@ beforeEach(function () {
     $this->useCase = new EvaluateRules($this->eventRepository, $this->issueRepository, $this->rewardEngine);
 });
 
-describe('Unit: Reward Evaluation', function () {
+describe('Unit: Evaluate Rules', function () {
 
     describe('Positives', function () {
 
@@ -82,7 +82,15 @@ describe('Unit: Reward Evaluation', function () {
 
             $this->issueRepository->shouldReceive('issue')
                 ->once()
-                ->with(Mockery::type(RewardIssue::class));
+                ->with(Mockery::on(function ($issue) use ($event, $matchingRule) {
+
+                    return $issue instanceof RewardIssue
+                        && $issue->eventId() === $event->id()
+                        && $issue->rewardRuleId() === $matchingRule->id()
+                        && $issue->rewardType() === $matchingRule->rewardType()
+                        && $issue->rewardValue() == $matchingRule->rewardValue();
+
+                }));
 
             $result = $this->useCase->execute($event);
 
@@ -153,7 +161,15 @@ describe('Unit: Reward Evaluation', function () {
 
             $this->issueRepository->shouldReceive('issue')
                 ->once()
-                ->with(Mockery::type(RewardIssue::class));
+                ->with(Mockery::on(function ($issue) use ($event, $matchingRule) {
+
+                    return $issue instanceof RewardIssue
+                        && $issue->eventId() === $event->id()
+                        && $issue->rewardRuleId() === $matchingRule->id()
+                        && $issue->rewardType() === $matchingRule->rewardType()
+                        && $issue->rewardValue() == $matchingRule->rewardValue();
+
+                }));
 
             $this->rewardEngine->shouldReceive('evaluate')
                 ->with($event)
@@ -299,7 +315,15 @@ describe('Unit: Reward Evaluation', function () {
 
             $this->issueRepository->shouldReceive('issue')
                 ->once()
-                ->with(Mockery::type(RewardIssue::class));
+                ->with(Mockery::on(function ($issue) use ($event, $activeRule) {
+
+                    return $issue instanceof RewardIssue
+                        && $issue->eventId() === $event->id()
+                        && $issue->rewardRuleId() === $activeRule->id()
+                        && $issue->rewardType() === $activeRule->rewardType()
+                        && $issue->rewardValue() == $activeRule->rewardValue();
+
+                }));
 
             $this->rewardEngine->shouldReceive('evaluate')
                 ->with($event)
@@ -438,7 +462,15 @@ describe('Unit: Reward Evaluation', function () {
 
             $this->issueRepository->shouldReceive('issue')
                 ->once()
-                ->with(Mockery::type(RewardIssue::class));
+                ->with(Mockery::on(function ($issue) use ($event, $rule) {
+
+                    return $issue instanceof RewardIssue
+                        && $issue->eventId() === $event->id()
+                        && $issue->rewardRuleId() === $rule->id()
+                        && $issue->rewardType() === $rule->rewardType()
+                        && $issue->rewardValue() == $rule->rewardValue();
+
+                }));
 
             $this->rewardEngine->shouldReceive('evaluate')
                 ->with($event)
@@ -501,7 +533,15 @@ describe('Unit: Reward Evaluation', function () {
 
             $this->issueRepository->shouldReceive('issue')
                 ->once()
-                ->with(Mockery::type(RewardIssue::class));
+                ->with(Mockery::on(function ($issue) use ($event, $activeRule) {
+
+                    return $issue instanceof RewardIssue
+                        && $issue->eventId() === $event->id()
+                        && $issue->rewardRuleId() === $activeRule->id()
+                        && $issue->rewardType() === $activeRule->rewardType()
+                        && $issue->rewardValue() == $activeRule->rewardValue();
+
+                }));
 
             $this->rewardEngine->shouldReceive('evaluate')
                 ->with($event)

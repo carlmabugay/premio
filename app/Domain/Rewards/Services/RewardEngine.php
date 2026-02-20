@@ -15,8 +15,7 @@ class RewardEngine
     ) {}
 
     /**
-     * @throws UnsupportedOperator
-     * @throws MalformedCondition
+     * @throws UnsupportedOperator | MalformedCondition
      */
     public function evaluate(Event $event): array
     {

@@ -10,7 +10,7 @@ describe('Feature: Event Ingestion', function () {
 
     describe('Positives', function () {
 
-        it('processes an event and issues rewards', function () {
+        it('processes an event and issues rewards.', function () {
 
             EloquentRewardRule::factory()->create([
                 'event_type' => 'order.completed',

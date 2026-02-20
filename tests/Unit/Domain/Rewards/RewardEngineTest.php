@@ -447,7 +447,7 @@ describe('Unit: Reward Engine', function () {
             expect($matches)->toHaveCount(0);
         });
 
-        it('does not match rule when event occurred_at is after ends_at', function () {
+        it('does not match rule when event occurred_at is after ends_at.', function () {
 
             $event = new Event(
                 id: Str::uuid()->toString(),

@@ -584,5 +584,6 @@ describe('Unit: Evaluate Rules', function () {
             $result = $this->useCase->execute($event);
 
         })->throws(DuplicateEvent::class);
+
     });
 });

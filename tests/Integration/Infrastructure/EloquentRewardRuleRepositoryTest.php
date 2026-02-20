@@ -11,7 +11,8 @@ uses(TestCase::class, RefreshDatabase::class);
 describe('Integration: EloquentRewardRuleRepository', function () {
 
     describe('Positives', function () {
-        it('findActive returns only active rules', function () {
+
+        it('findActive returns only active rules.', function () {
 
             EloquentRewardRule::create([
                 'name' => 'Active Rule',
@@ -62,7 +63,7 @@ describe('Integration: EloquentRewardRuleRepository', function () {
 
         });
 
-        it('findActive filters by event_type correctly', function () {
+        it('findActive filters by event_type correctly.', function () {
 
             EloquentRewardRule::create([
                 'name' => 'Order Rule',
@@ -94,7 +95,7 @@ describe('Integration: EloquentRewardRuleRepository', function () {
 
         });
 
-        it('findActive respects priority ordering (ascending)', function () {
+        it('findActive respects priority ordering (ascending).', function () {
 
             EloquentRewardRule::create([
                 'name' => 'Low Priority Rule',
@@ -137,7 +138,7 @@ describe('Integration: EloquentRewardRuleRepository', function () {
 
         });
 
-        it('findActive correctly hydrates DateTimeImmutable', function () {
+        it('findActive correctly hydrates DateTimeImmutable.', function () {
 
             EloquentRewardRule::create([
                 'name' => 'Date Rule',
@@ -166,11 +167,12 @@ describe('Integration: EloquentRewardRuleRepository', function () {
                 ->toBe('2026-01-05 18:30:00');
 
         });
+
     });
 
     describe('Negatives', function () {
 
-        it('findActive returns empty array when no active rules exist', function () {
+        it('findActive returns empty array when no active rules exist.', function () {
 
             EloquentRewardRule::create([
                 'name' => 'Inactive Rule',
@@ -202,7 +204,5 @@ describe('Integration: EloquentRewardRuleRepository', function () {
         });
 
     });
-
-    describe('Edge Cases', function () {});
 
 });

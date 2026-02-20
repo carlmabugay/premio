@@ -14,37 +14,34 @@ beforeEach(function () {
 
 describe('Integration: EloquentRewardRuleRepository', function () {
 
-    describe('Positives', function () {
+    it('exists returns false when event is not yet stored.', function () {
 
-        it('exists returns false when event is not yet stored.', function () {
+        $event = new Event(
+            id: Str::uuid()->toString(),
+            external_id: 'EXT-123',
+            type: 'order.completed',
+            source: 'shopify',
+            payload: ['amount' => 1000],
+            occurred_at: new DateTimeImmutable('2026-01-01 12:00:00'),
+        );
 
-            $event = new Event(
-                id: Str::uuid()->toString(),
-                external_id: 'EXT-123',
-                type: 'order.completed',
-                source: 'shopify',
-                payload: ['amount' => 1000],
-                occurred_at: new DateTimeImmutable('2026-01-01 12:00:00'),
-            );
+        expect($this->repository->exists($event))->toBeFalse();
+    });
 
-            expect($this->repository->exists($event))->toBeFalse();
-        });
+    it('exists returns true after event is saved.', function () {
 
-        it('exists returns true after event is saved.', function () {
+        $event = new Event(
+            id: Str::uuid()->toString(),
+            external_id: 'EXT-123',
+            type: 'order.completed',
+            source: 'shopify',
+            payload: ['amount' => 1000],
+            occurred_at: new DateTimeImmutable('2026-01-01 12:00:00'),
+        );
 
-            $event = new Event(
-                id: Str::uuid()->toString(),
-                external_id: 'EXT-123',
-                type: 'order.completed',
-                source: 'shopify',
-                payload: ['amount' => 1000],
-                occurred_at: new DateTimeImmutable('2026-01-01 12:00:00'),
-            );
+        $this->repository->save($event);
 
-            $this->repository->save($event);
-
-            expect($this->repository->exists($event))->toBeTrue();
-        });
+        expect($this->repository->exists($event))->toBeTrue();
     });
 
     it('allows same external_id for different sources.', function () {
@@ -99,4 +96,5 @@ describe('Integration: EloquentRewardRuleRepository', function () {
 
         $this->assertDatabaseCount('events', 1);
     });
+
 });

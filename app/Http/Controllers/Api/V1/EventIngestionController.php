@@ -22,6 +22,9 @@ class EventIngestionController extends Controller
         return response()->json([
             'data' => [
                 'event_id' => $result->event_id,
+                'already_evaluated' => $result->evaluation_result?->already_evaluated,
+                'matched_rules' => $result->evaluation_result?->matched_rules,
+                'issued_rewards' => $result->evaluation_result?->issued_rewards,
             ],
         ],
             $result->status_code,

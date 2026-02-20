@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Event as EloquentEvent;
+use App\Models\RewardRule as EloquentRewardRule;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -7,6 +9,54 @@ uses(RefreshDatabase::class);
 describe('Feature: Event Ingestion', function () {
 
     describe('Positives', function () {
+
+        it('processes an event and issues rewards', function () {
+
+            EloquentRewardRule::factory()->create([
+                'event_type' => 'order.completed',
+                'reward_type' => 'fixed',
+                'reward_value' => 100,
+                'is_active' => true,
+                'starts_at' => null,
+                'ends_at' => null,
+                'conditions' => json_encode([
+                    [
+                        'field' => 'order_total',
+                        'operator' => '>=',
+                        'value' => 100,
+                    ],
+                ]),
+            ]);
+
+            $payload = [
+                'external_id' => 'EXT-123',
+                'type' => 'order.completed',
+                'source' => 'shopify',
+                'payload' => [
+                    'order_total' => 1500,
+                ],
+                'occurred_at' => '2026-01-01 12:00:00',
+            ];
+
+            // When
+            $response = $this->postJson('/api/v1/events', $payload);
+
+            $event = EloquentEvent::first();
+
+            // Then
+            $response->assertStatus(201)
+                ->assertJson([
+                    'data' => [
+                        'event_id' => $event->id,
+                        'already_evaluated' => false,
+                        'matched_rules' => 1,
+                        'issued_rewards' => 1,
+                    ],
+                ]);
+
+            $this->assertDatabaseCount('events', 1);
+            $this->assertDatabaseCount('reward_issues', 1);
+        });
 
         it('saves when event payload is valid.', function () {
 

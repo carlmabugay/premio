@@ -5,7 +5,6 @@ namespace App\Application\UseCases;
 use App\Application\DTOs\CreateEventDTO;
 use App\Application\Results\IngestionResult;
 use App\Domain\Events\Entities\Event;
-use App\Domain\Events\Services\EventService;
 use App\Exceptions\DuplicateEvent;
 use DateTimeImmutable;
 use Exception;
@@ -14,7 +13,7 @@ use Illuminate\Support\Str;
 readonly class HandleEventIngestion
 {
     public function __construct(
-        private EventService $eventService
+        private EvaluateRules $evaluateRules,
     ) {}
 
     /**
@@ -33,9 +32,9 @@ readonly class HandleEventIngestion
 
         try {
 
-            $this->eventService->record($event);
+            $result = $this->evaluateRules->execute($event);
 
-            return IngestionResult::created($event->id());
+            return IngestionResult::created($event->id(), $result);
 
         } catch (DuplicateEvent $e) {
             return IngestionResult::duplicate($event->id());

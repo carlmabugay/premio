@@ -7,6 +7,7 @@ use App\Domain\Rewards\Contracts\RewardIssueRepositoryInterface;
 use App\Domain\Rewards\Entities\RewardIssue;
 use App\Domain\Rewards\Entities\RewardRule;
 use App\Domain\Rewards\Services\RewardEngine;
+use App\Exceptions\DuplicateEvent;
 use Illuminate\Support\Str;
 
 beforeEach(function () {
@@ -582,9 +583,6 @@ describe('Unit: Evaluate Rules', function () {
 
             $result = $this->useCase->execute($event);
 
-            expect($result->already_evaluated)->toBeTrue()
-                ->and($result->matched_rules)->toBe(0)
-                ->and($result->issued_rewards)->toBe(0);
-        });
+        })->throws(DuplicateEvent::class);
     });
 });

@@ -25,13 +25,13 @@ class RewardRuleFactory extends Factory
             'is_active' => true,
             'starts_at' => null,
             'ends_at' => null,
-            'conditions' => [
+            'conditions' => json_encode([
                 [
                     'field' => 'amount',
                     'operator' => '>=',
                     'value' => 100,
                 ],
-            ],
+            ]),
             'priority' => $this->faker->numberBetween(1, 100),
         ];
     }

@@ -8,6 +8,7 @@ use App\Domain\Events\Entities\Event;
 use App\Domain\Rewards\Contracts\RewardIssueRepositoryInterface;
 use App\Domain\Rewards\Entities\RewardIssue;
 use App\Domain\Rewards\Services\RewardEngine;
+use App\Exceptions\DuplicateEvent;
 use App\Exceptions\MalformedCondition;
 use App\Exceptions\UnsupportedOperator;
 
@@ -20,16 +21,12 @@ readonly class EvaluateRules
     ) {}
 
     /**
-     * @throws MalformedCondition | UnsupportedOperator
+     * @throws MalformedCondition | UnsupportedOperator| DuplicateEvent
      */
     public function execute(Event $event): RuleEvaluationResult
     {
         if ($this->eventRepository->exists($event)) {
-            return new RuleEvaluationResult(
-                already_evaluated: true,
-                matched_rules: 0,
-                issued_rewards: 0,
-            );
+            throw new DuplicateEvent;
         }
 
         $this->eventRepository->save($event);

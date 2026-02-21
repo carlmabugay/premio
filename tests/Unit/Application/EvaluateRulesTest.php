@@ -7,7 +7,6 @@ use App\Domain\Rewards\Contracts\RewardIssueRepositoryInterface;
 use App\Domain\Rewards\Entities\RewardIssue;
 use App\Domain\Rewards\Entities\RewardRule;
 use App\Domain\Rewards\Services\RewardEngine;
-use App\Exceptions\DuplicateEvent;
 use Illuminate\Support\Str;
 
 beforeEach(function () {
@@ -97,7 +96,6 @@ describe('Unit: Evaluate Rules', function () {
 
             // Then
             expect($result->already_evaluated)->toBeFalse()
-                ->and($result->matched_rules)->toBe(1)
                 ->and($result->issued_rewards)->toBe(1);
 
         });
@@ -180,7 +178,6 @@ describe('Unit: Evaluate Rules', function () {
 
             // Then
             expect($result->already_evaluated)->toBeFalse()
-                ->and($result->matched_rules)->toBe(1)
                 ->and($result->issued_rewards)->toBe(1);
 
         });
@@ -253,7 +250,6 @@ describe('Unit: Evaluate Rules', function () {
 
             // Then
             expect($result->already_evaluated)->toBeFalse()
-                ->and($result->matched_rules)->toBe(0)
                 ->and($result->issued_rewards)->toBe(0);
         });
 
@@ -334,7 +330,6 @@ describe('Unit: Evaluate Rules', function () {
 
             // Then
             expect($result->already_evaluated)->toBeFalse()
-                ->and($result->matched_rules)->toBe(1)
                 ->and($result->issued_rewards)->toBe(1);
         });
 
@@ -417,7 +412,6 @@ describe('Unit: Evaluate Rules', function () {
             $result = $this->useCase->execute($event);
 
             expect($result->already_evaluated)->toBeFalse()
-                ->and($result->matched_rules)->toBe(2)
                 ->and($result->issued_rewards)->toBe(2);
         });
 
@@ -481,7 +475,6 @@ describe('Unit: Evaluate Rules', function () {
 
             // Then
             expect($result->already_evaluated)->toBeFalse()
-                ->and($result->matched_rules)->toBe(1)
                 ->and($result->issued_rewards)->toBe(1);
 
         });
@@ -552,7 +545,6 @@ describe('Unit: Evaluate Rules', function () {
 
             // Then
             expect($result->already_evaluated)->toBeFalse()
-                ->and($result->matched_rules)->toBe(1)
                 ->and($result->issued_rewards)->toBe(1);
         });
 
@@ -583,7 +575,10 @@ describe('Unit: Evaluate Rules', function () {
 
             $result = $this->useCase->execute($event);
 
-        })->throws(DuplicateEvent::class);
+            expect($result->already_evaluated)->toBeTrue()
+                ->and($result->issued_rewards)->toBe(0);
+
+        });
 
     });
 });

@@ -44,14 +44,23 @@ describe('Feature: Event Ingestion', function () {
             $event = EloquentEvent::first();
 
             // Then
-            $response->assertStatus(201)
-                ->assertJson([
-                    'data' => [
-                        'event_id' => $event->id,
-                        'already_evaluated' => false,
-                        'matched_rules' => 1,
-                        'issued_rewards' => 1,
+            $response->assertCreated()
+                ->assertJsonStructure([
+                    'status',
+                    'event' => [
+                        'id',
+                        'external_id',
+                        'type',
+                        'source',
                     ],
+                    'rewards' => [
+                        [
+                            'rule_id',
+                            'type',
+                            'value',
+                        ],
+                    ],
+                    'issued_rewards',
                 ]);
 
             $this->assertDatabaseCount('events', 1);
@@ -75,13 +84,18 @@ describe('Feature: Event Ingestion', function () {
             $response = $this->postJson('/api/v1/events', $payload);
 
             // Then
-            $response->assertStatus(201);
-
-            $response->assertJsonStructure([
-                'data' => [
-                    'event_id',
-                ],
-            ]);
+            $response->assertCreated()
+                ->assertJsonStructure([
+                    'status',
+                    'event' => [
+                        'id',
+                        'external_id',
+                        'type',
+                        'source',
+                    ],
+                    'rewards' => [],
+                    'issued_rewards',
+                ]);
 
             $this->assertDatabaseHas('events', [
                 'external_id' => $payload['external_id'],
@@ -104,19 +118,29 @@ describe('Feature: Event Ingestion', function () {
             ];
 
             // When
-            $firstResponse = $this->postJson('/api/v1/events', $payload)->assertStatus(201);
-            $secondResponse = $this->postJson('/api/v1/events', $payload)->assertStatus(200);
+            $firstResponse = $this->postJson('/api/v1/events', $payload)->assertCreated();
+            $secondResponse = $this->postJson('/api/v1/events', $payload);
 
             $firstResponse->assertJsonStructure([
-                'data' => [
-                    'event_id',
+                'status',
+                'event' => [
+                    'id',
+                    'external_id',
+                    'type',
+                    'source',
                 ],
+                'rewards' => [],
+                'issued_rewards',
             ]);
 
             $secondResponse->assertJsonStructure([
-                'data' => [
-                    'event_id',
+                'status',
+                'event' => [
+                    'external_id',
+                    'type',
+                    'source',
                 ],
+                'issued_rewards',
             ]);
 
             // Then

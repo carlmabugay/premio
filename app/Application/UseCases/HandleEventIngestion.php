@@ -3,9 +3,8 @@
 namespace App\Application\UseCases;
 
 use App\Application\DTOs\CreateEventDTO;
-use App\Application\Results\IngestionResult;
+use App\Application\Results\RuleEvaluationResult;
 use App\Domain\Events\Entities\Event;
-use App\Exceptions\DuplicateEvent;
 use DateTimeImmutable;
 use Exception;
 use Illuminate\Support\Str;
@@ -19,7 +18,7 @@ readonly class HandleEventIngestion
     /**
      * @throws Exception
      */
-    public function handle(CreateEventDTO $dto): IngestionResult
+    public function handle(CreateEventDTO $dto): RuleEvaluationResult
     {
         $event = new Event(
             id: Str::uuid()->toString(),
@@ -30,15 +29,6 @@ readonly class HandleEventIngestion
             occurred_at: new DateTimeImmutable($dto->occurred_at),
         );
 
-        try {
-
-            $result = $this->evaluateRules->execute($event);
-
-            return IngestionResult::created($event->id(), $result);
-
-        } catch (DuplicateEvent $e) {
-            return IngestionResult::duplicate($event->id());
-        }
-
+        return $this->evaluateRules->execute($event);
     }
 }

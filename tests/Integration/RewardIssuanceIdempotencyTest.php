@@ -4,7 +4,6 @@ use App\Application\UseCases\EvaluateRules;
 use App\Domain\Events\Entities\Event;
 use App\Domain\Rewards\Services\ConditionEngine;
 use App\Domain\Rewards\Services\RewardEngine;
-use App\Exceptions\DuplicateEvent;
 use App\Infrastructure\Persistence\Eloquent\EloquentEventRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentRewardIssueRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentRewardRuleRepository;
@@ -74,7 +73,7 @@ describe('Integration: Reward Issuance Idempotency', function () {
             $this->assertDatabaseCount('events', 1);
             $this->assertDatabaseCount('reward_issues', 1);
 
-        })->throws(DuplicateEvent::class);
+        });
 
     });
 

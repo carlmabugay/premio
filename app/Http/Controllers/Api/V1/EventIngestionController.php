@@ -6,6 +6,8 @@ use App\Application\DTOs\CreateEventDTO;
 use App\Application\UseCases\HandleEventIngestion;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\IngestEventRequest;
+use App\Http\Responses\EventIngestionResponse;
+use Illuminate\Http\JsonResponse;
 use Throwable;
 
 class EventIngestionController extends Controller
@@ -13,21 +15,14 @@ class EventIngestionController extends Controller
     /**
      * @throws Throwable
      */
-    public function __invoke(IngestEventRequest $request, HandleEventIngestion $handler)
+    public function __invoke(IngestEventRequest $request, HandleEventIngestion $handler): JsonResponse
     {
         $dto = CreateEventDTO::fromArray($request->validated());
 
         $result = $handler->handle($dto);
 
-        return response()->json([
-            'data' => [
-                'event_id' => $result->event_id,
-                'already_evaluated' => $result->evaluation_result?->already_evaluated,
-                'matched_rules' => $result->evaluation_result?->matched_rules,
-                'issued_rewards' => $result->evaluation_result?->issued_rewards,
-            ],
-        ],
-            $result->status_code,
-        );
+        $response = new EventIngestionResponse($request->validated(), $result);
+
+        return $response->make();
     }
 }

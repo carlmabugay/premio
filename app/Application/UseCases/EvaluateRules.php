@@ -8,7 +8,6 @@ use App\Domain\Events\Entities\Event;
 use App\Domain\Rewards\Contracts\RewardIssueRepositoryInterface;
 use App\Domain\Rewards\Entities\RewardIssue;
 use App\Domain\Rewards\Services\RewardEngine;
-use App\Exceptions\DuplicateEvent;
 use App\Exceptions\MalformedCondition;
 use App\Exceptions\UnsupportedOperator;
 
@@ -21,20 +20,20 @@ readonly class EvaluateRules
     ) {}
 
     /**
-     * @throws MalformedCondition | UnsupportedOperator| DuplicateEvent
+     * @throws MalformedCondition | UnsupportedOperator
      */
     public function execute(Event $event): RuleEvaluationResult
     {
+        $issues = [];
+
         if ($this->eventRepository->exists($event)) {
-            throw new DuplicateEvent;
+            return RuleEvaluationResult::alreadyProcessed($event->id());
         }
 
         $this->eventRepository->save($event);
 
         $matches = $this->rewardEngine->evaluate($event);
         usort($matches, fn ($a, $b) => $a->priority <=> $b->priority);
-
-        $issued = 0;
 
         foreach ($matches as $rule) {
 
@@ -46,13 +45,9 @@ readonly class EvaluateRules
             );
 
             $this->issueRepository->issue($issue);
-            $issued++;
+            $issues[] = $issue;
         }
 
-        return new RuleEvaluationResult(
-            already_evaluated: false,
-            matched_rules: $issued,
-            issued_rewards: $issued,
-        );
+        return RuleEvaluationResult::processed($event->id(), $issues);
     }
 }

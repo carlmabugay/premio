@@ -1,6 +1,7 @@
 <?php
 
 use App\Exceptions\DuplicateEvent;
+use App\Http\Middleware\EnsureApiKeyIsValid;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -13,7 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        $middleware->append(EnsureApiKeyIsValid::class);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->report(function (DuplicateEvent $event): void {});

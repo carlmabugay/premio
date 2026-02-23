@@ -20,7 +20,7 @@ class ApiKeyFactory extends Factory
         return [
             'name' => $this->faker->name(),
             'key' => $this->faker->md5(),
-            'is_active' => $this->faker->boolean(),
+            'is_active' => true,
         ];
     }
 }

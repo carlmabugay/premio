@@ -127,7 +127,7 @@ describe('Feature: Event Ingestion', function () {
             ];
 
             // When
-            $response = $this->withHeaders([
+            $firstResponse = $this->withHeaders([
                 'X-API-KEY' => $this->api->key,
             ])->postJson('/api/v1/events', $payload)->assertCreated();
 

@@ -13,9 +13,16 @@ return new class extends Migration
     {
         Schema::create('reward_issues', function (Blueprint $table) {
             $table->id();
+            $table->foreignUuid('event_id')
+                ->references('id')
+                ->on('events')
+                ->cascadeOnDelete();
 
-            $table->uuid('event_id');
-            $table->unsignedBigInteger('reward_rule_id');
+            $table->foreignId('reward_rule_id')
+                ->references('id')
+                ->on('reward_rules')
+                ->cascadeOnDelete();
+
 
             $table->string('reward_type');
             $table->decimal('reward_value', 10, 2)->default(0);
@@ -24,15 +31,6 @@ return new class extends Migration
 
             $table->unique(['event_id', 'reward_rule_id']);
 
-            $table->foreign('event_id')
-                ->references('id')
-                ->on('events')
-                ->cascadeOnDelete();
-
-            $table->foreign('reward_rule_id')
-                ->references('id')
-                ->on('reward_rules')
-                ->cascadeOnDelete();
         });
     }
 

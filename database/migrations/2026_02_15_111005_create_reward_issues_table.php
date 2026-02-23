@@ -23,7 +23,6 @@ return new class extends Migration
                 ->on('reward_rules')
                 ->cascadeOnDelete();
 
-
             $table->string('reward_type');
             $table->decimal('reward_value', 10, 2)->default(0);
 

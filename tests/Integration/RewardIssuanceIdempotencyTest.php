@@ -27,6 +27,7 @@ describe('Integration: Reward Issuance Idempotency', function () {
 
             // Given
             EloquentRewardRule::create([
+                'merchant_id' => $merchant->id,
                 'name' => 'Active Rule',
                 'event_type' => 'order.completed',
                 'is_active' => true,

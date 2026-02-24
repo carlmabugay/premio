@@ -11,9 +11,21 @@ class RewardRule extends Model
 
     public $timestamps = false;
 
-    protected $guarded = [];
+    protected $fillable = [
+        'merchant_id',
+        'name',
+        'event_type',
+        'reward_type',
+        'reward_value',
+        'is_active',
+        'starts_at',
+        'ends_at',
+        'conditions',
+        'priority',
+    ];
 
     protected $casts = [
+        'is_active' => 'boolean',
         'conditions' => 'array',
         'starts_at' => 'datetime',
         'ends_at' => 'datetime',

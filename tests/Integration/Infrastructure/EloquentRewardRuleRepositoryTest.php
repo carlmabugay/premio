@@ -2,11 +2,16 @@
 
 use App\Domain\Rewards\Entities\RewardRule;
 use App\Infrastructure\Persistence\Eloquent\EloquentRewardRuleRepository;
+use App\Models\Merchant;
 use App\Models\RewardRule as EloquentRewardRule;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 uses(TestCase::class, RefreshDatabase::class);
+
+beforeEach(function () {
+    $this->merchant = Merchant::factory()->active()->create();
+});
 
 describe('Integration: EloquentRewardRuleRepository', function () {
 
@@ -15,6 +20,7 @@ describe('Integration: EloquentRewardRuleRepository', function () {
         it('findActive returns only active rules.', function () {
 
             EloquentRewardRule::create([
+                'merchant_id' => $this->merchant->id,
                 'name' => 'Active Rule',
                 'event_type' => 'order.created',
                 'is_active' => true,
@@ -32,6 +38,7 @@ describe('Integration: EloquentRewardRuleRepository', function () {
 
             // Inactive rule
             EloquentRewardRule::create([
+                'merchant_id' => $this->merchant->id,
                 'name' => 'Inactive Rule',
                 'event_type' => 'order.created',
                 'is_active' => false,
@@ -66,6 +73,7 @@ describe('Integration: EloquentRewardRuleRepository', function () {
         it('findActive filters by event_type correctly.', function () {
 
             EloquentRewardRule::create([
+                'merchant_id' => $this->merchant->id,
                 'name' => 'Order Rule',
                 'event_type' => 'order.created',
                 'is_active' => true,
@@ -76,6 +84,7 @@ describe('Integration: EloquentRewardRuleRepository', function () {
             ]);
 
             EloquentRewardRule::create([
+                'merchant_id' => $this->merchant->id,
                 'name' => 'Signup Rule',
                 'event_type' => 'user.registered',
                 'is_active' => true,
@@ -98,6 +107,7 @@ describe('Integration: EloquentRewardRuleRepository', function () {
         it('findActive respects priority ordering (ascending).', function () {
 
             EloquentRewardRule::create([
+                'merchant_id' => $this->merchant->id,
                 'name' => 'Low Priority Rule',
                 'event_type' => 'order.created',
                 'is_active' => true,
@@ -108,6 +118,7 @@ describe('Integration: EloquentRewardRuleRepository', function () {
             ]);
 
             EloquentRewardRule::create([
+                'merchant_id' => $this->merchant->id,
                 'name' => 'High Priority Rule',
                 'event_type' => 'order.created',
                 'is_active' => true,
@@ -118,6 +129,7 @@ describe('Integration: EloquentRewardRuleRepository', function () {
             ]);
 
             EloquentRewardRule::create([
+                'merchant_id' => $this->merchant->id,
                 'name' => 'Mid Priority Rule',
                 'event_type' => 'order.created',
                 'is_active' => true,
@@ -141,6 +153,7 @@ describe('Integration: EloquentRewardRuleRepository', function () {
         it('findActive correctly hydrates DateTimeImmutable.', function () {
 
             EloquentRewardRule::create([
+                'merchant_id' => $this->merchant->id,
                 'name' => 'Date Rule',
                 'event_type' => 'order.created',
                 'is_active' => true,
@@ -175,6 +188,7 @@ describe('Integration: EloquentRewardRuleRepository', function () {
         it('findActive returns empty array when no active rules exist.', function () {
 
             EloquentRewardRule::create([
+                'merchant_id' => $this->merchant->id,
                 'name' => 'Inactive Rule',
                 'event_type' => 'order.created',
                 'is_active' => false,
@@ -185,6 +199,7 @@ describe('Integration: EloquentRewardRuleRepository', function () {
             ]);
 
             EloquentRewardRule::create([
+                'merchant_id' => $this->merchant->id,
                 'name' => 'Different Event Rule',
                 'event_type' => 'user.registered',
                 'is_active' => true,

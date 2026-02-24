@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Merchant;
 use App\Models\RewardRule;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -20,6 +21,7 @@ class RewardRuleFactory extends Factory
     public function definition(): array
     {
         return [
+            'merchant_id' => Merchant::factory(),
             'name' => 'Reward Rule '.$this->faker->word(),
             'event_type' => 'order.completed',
             'is_active' => true,

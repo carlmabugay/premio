@@ -17,12 +17,13 @@ return new class extends Migration
             $table->string('event_type');
             $table->enum('reward_type', ['fixed', 'percentage'])->default('fixed');
             $table->integer('reward_value')->default(0);
-            $table->integer('cap')->default(0);
             $table->boolean('is_active')->default(true);
             $table->dateTime('starts_at')->nullable();
             $table->dateTime('ends_at')->nullable();
             $table->json('conditions')->nullable();
             $table->smallInteger('priority')->default(0);
+
+            $table->index(['event_type']);
         });
     }
 

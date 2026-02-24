@@ -24,11 +24,13 @@ describe('Unit: Reward Engine', function () {
             // Given
             $event = new Event(
                 id: Str::uuid()->toString(),
+                merchant_id: Str::uuid()->toString(),
                 external_id : 'EXT-123',
                 type : 'order.completed',
                 source: 'shopify',
                 payload: ['order_total' => 1500],
                 occurred_at: new DateTimeImmutable('2026-01-01 12:00:00'),
+                processed_at: null,
             );
 
             // And
@@ -57,11 +59,13 @@ describe('Unit: Reward Engine', function () {
             // Given
             $event = new Event(
                 id: Str::uuid()->toString(),
+                merchant_id: Str::uuid()->toString(),
                 external_id : 'EXT-123',
                 type : 'order.completed',
                 source: 'shopify',
                 payload: ['order_total' => 1500],
                 occurred_at: new DateTimeImmutable('2026-01-01 12:00:00'),
+                processed_at: null,
             );
 
             // And
@@ -97,6 +101,7 @@ describe('Unit: Reward Engine', function () {
             // Given
             $event = new Event(
                 id: Str::uuid()->toString(),
+                merchant_id: Str::uuid()->toString(),
                 external_id : 'EXT-123',
                 type : 'order.completed',
                 source: 'shopify',
@@ -105,6 +110,7 @@ describe('Unit: Reward Engine', function () {
                     'customer_tier' => 'gold',
                 ],
                 occurred_at: new DateTimeImmutable('2026-01-01 12:00:00'),
+                processed_at: null,
             );
 
             // And
@@ -146,11 +152,13 @@ describe('Unit: Reward Engine', function () {
             // Given
             $event = new Event(
                 id: Str::uuid()->toString(),
+                merchant_id: Str::uuid()->toString(),
                 external_id : 'EXT-123',
                 type : 'order.completed',
                 source: 'shopify',
                 payload: ['order_total' => 1500],
                 occurred_at: new DateTimeImmutable('2026-01-01 12:00:00'),
+                processed_at: null,
             );
 
             // And
@@ -180,11 +188,13 @@ describe('Unit: Reward Engine', function () {
 
             $event = new Event(
                 id: Str::uuid()->toString(),
+                merchant_id: Str::uuid()->toString(),
                 external_id: 'EXT-123',
                 type: 'order.completed',
                 source: 'shopify',
                 payload: ['amount' => 1000],
                 occurred_at: new DateTimeImmutable('2026-01-01 12:00:00'),
+                processed_at: null,
             );
 
             $rule = new RewardRule(
@@ -212,11 +222,13 @@ describe('Unit: Reward Engine', function () {
 
             $event = new Event(
                 id: Str::uuid()->toString(),
+                merchant_id: Str::uuid()->toString(),
                 external_id: 'EXT-123',
                 type: 'order.completed',
                 source: 'shopify',
                 payload: ['amount' => 1000],
                 occurred_at: new DateTimeImmutable('2026-01-01 12:00:00'),
+                processed_at: null,
             );
 
             $rule = new RewardRule(
@@ -245,11 +257,13 @@ describe('Unit: Reward Engine', function () {
             // Given
             $event = new Event(
                 id: Str::uuid()->toString(),
+                merchant_id: Str::uuid()->toString(),
                 external_id : 'EXT-123',
                 type : 'order.completed',
                 source: 'shopify',
                 payload: ['order_total' => 1500],
                 occurred_at: new DateTimeImmutable('2026-01-01 12:00:00'),
+                processed_at: null,
             );
 
             // And
@@ -279,11 +293,13 @@ describe('Unit: Reward Engine', function () {
             // Given
             $event = new Event(
                 id: Str::uuid()->toString(),
+                merchant_id: Str::uuid()->toString(),
                 external_id : 'EXT-123',
                 type : 'order.completed',
                 source: 'shopify',
                 payload: ['order_total' => 1500],
                 occurred_at: new DateTimeImmutable('2026-01-01 12:00:00'),
+                processed_at: null,
             );
 
             // And
@@ -317,11 +333,13 @@ describe('Unit: Reward Engine', function () {
             // Given
             $event = new Event(
                 id: Str::uuid()->toString(),
+                merchant_id: Str::uuid()->toString(),
                 external_id : 'EXT-123',
                 type : 'order.received',
                 source: 'shopify',
                 payload: ['order_total' => 1500],
                 occurred_at: new DateTimeImmutable('2026-01-01 12:00:00'),
+                processed_at: null,
             );
 
             // And
@@ -351,11 +369,13 @@ describe('Unit: Reward Engine', function () {
             // Given
             $event = new Event(
                 id: Str::uuid()->toString(),
+                merchant_id: Str::uuid()->toString(),
                 external_id : 'EXT-123',
                 type : 'order.completed',
                 source: 'shopify',
                 payload: ['order_total' => 1500],
                 occurred_at: new DateTimeImmutable('2026-01-01 12:00:00'),
+                processed_at: null,
             );
 
             // And
@@ -385,11 +405,13 @@ describe('Unit: Reward Engine', function () {
             // Given
             $event = new Event(
                 id: Str::uuid()->toString(),
+                merchant_id: Str::uuid()->toString(),
                 external_id : 'EXT-123',
                 type : 'order.completed',
                 source: 'shopify',
                 payload: ['order_total' => 1500],
                 occurred_at: new DateTimeImmutable('2026-01-01 12:00:00'),
+                processed_at: null,
             );
 
             // And
@@ -419,11 +441,13 @@ describe('Unit: Reward Engine', function () {
 
             $event = new Event(
                 id: Str::uuid()->toString(),
+                merchant_id: Str::uuid()->toString(),
                 external_id: 'EXT-123',
                 type: 'order.completed',
                 source: 'shopify',
                 payload: ['amount' => 1000],
                 occurred_at: new DateTimeImmutable('2025-12-31 23:59:59'),
+                processed_at: null,
             );
 
             $rule = new RewardRule(
@@ -451,11 +475,13 @@ describe('Unit: Reward Engine', function () {
 
             $event = new Event(
                 id: Str::uuid()->toString(),
+                merchant_id: Str::uuid()->toString(),
                 external_id: 'EXT-123',
                 type: 'order.completed',
                 source: 'shopify',
                 payload: ['amount' => 1000],
                 occurred_at: new DateTimeImmutable('2026-01-02 00:00:01'),
+                processed_at: null,
             );
 
             $rule = new RewardRule(
@@ -484,11 +510,13 @@ describe('Unit: Reward Engine', function () {
             // Given
             $event = new Event(
                 id: Str::uuid()->toString(),
+                merchant_id: Str::uuid()->toString(),
                 external_id : 'EXT-123',
                 type : 'order.completed',
                 source: 'shopify',
                 payload: ['order_total' => 1500],
                 occurred_at: new DateTimeImmutable('2026-01-01 12:00:00'),
+                processed_at: null,
             );
 
             // And
@@ -524,11 +552,13 @@ describe('Unit: Reward Engine', function () {
             // Given
             $event = new Event(
                 id: Str::uuid()->toString(),
+                merchant_id: Str::uuid()->toString(),
                 external_id : 'EXT-123',
                 type : 'order.completed',
                 source: 'shopify',
                 payload: [],
                 occurred_at: new DateTimeImmutable('2026-01-01 12:00:00'),
+                processed_at: null,
             );
 
             // And
@@ -557,11 +587,13 @@ describe('Unit: Reward Engine', function () {
             // Given
             $event = new Event(
                 id: Str::uuid()->toString(),
+                merchant_id: Str::uuid()->toString(),
                 external_id : 'EXT-123',
                 type : 'order.completed',
                 source: 'shopify',
                 payload: ['order_total' => 1500],
                 occurred_at: new DateTimeImmutable('2026-01-01 12:00:00'),
+                processed_at: null,
             );
 
             // And
@@ -597,11 +629,13 @@ describe('Unit: Reward Engine', function () {
             // Given
             $event = new Event(
                 id: Str::uuid()->toString(),
+                merchant_id: Str::uuid()->toString(),
                 external_id : 'EXT-123',
                 type : 'order.completed',
                 source: 'shopify',
                 payload: ['order_total' => 1500],
                 occurred_at: new DateTimeImmutable('2026-01-01 12:00:00'),
+                processed_at: null,
             );
 
             // And
@@ -633,11 +667,13 @@ describe('Unit: Reward Engine', function () {
             // Given
             $event = new Event(
                 id: Str::uuid()->toString(),
+                merchant_id: Str::uuid()->toString(),
                 external_id : 'EXT-123',
                 type : 'order.completed',
                 source: 'shopify',
                 payload: ['order_total' => 1500],
                 occurred_at: new DateTimeImmutable('2026-01-01 12:00:00'),
+                processed_at: null,
             );
 
             // And
@@ -673,11 +709,13 @@ describe('Unit: Reward Engine', function () {
             // Given
             $event = new Event(
                 id: Str::uuid()->toString(),
+                merchant_id: Str::uuid()->toString(),
                 external_id : 'EXT-123',
                 type : 'order.completed',
                 source: 'shopify',
                 payload: ['order_total' => 1500],
                 occurred_at: new DateTimeImmutable('2026-01-01 12:00:00'),
+                processed_at: null,
             );
 
             // And
@@ -712,11 +750,13 @@ describe('Unit: Reward Engine', function () {
             // Given
             $event = new Event(
                 id: Str::uuid()->toString(),
+                merchant_id: Str::uuid()->toString(),
                 external_id : 'EXT-123',
                 type : 'order.completed',
                 source: 'shopify',
                 payload: ['order_total' => 1500],
                 occurred_at: new DateTimeImmutable('2026-01-01 12:00:00'),
+                processed_at: null,
             );
 
             $malformedConditions = [
@@ -760,6 +800,7 @@ describe('Unit: Reward Engine', function () {
             // Given
             $event = new Event(
                 id: Str::uuid()->toString(),
+                merchant_id: Str::uuid()->toString(),
                 external_id : 'EXT-123',
                 type : 'order.completed',
                 source: 'shopify',
@@ -768,6 +809,7 @@ describe('Unit: Reward Engine', function () {
                     'notes' => 'VIP order',
                 ],
                 occurred_at: new DateTimeImmutable('2026-01-01 12:00:00'),
+                processed_at: null,
             );
 
             // And
@@ -802,6 +844,7 @@ describe('Unit: Reward Engine', function () {
             // Given
             $event = new Event(
                 id: Str::uuid()->toString(),
+                merchant_id: Str::uuid()->toString(),
                 external_id : 'EXT-123',
                 type : 'order.completed',
                 source: 'shopify',
@@ -809,6 +852,7 @@ describe('Unit: Reward Engine', function () {
                     'customer_tier' => 'gold',
                 ],
                 occurred_at: new DateTimeImmutable('2026-01-01 12:00:00'),
+                processed_at: null,
             );
 
             // And
@@ -844,6 +888,7 @@ describe('Unit: Reward Engine', function () {
             // Given
             $event = new Event(
                 id: Str::uuid()->toString(),
+                merchant_id: Str::uuid()->toString(),
                 external_id : 'EXT-123',
                 type : 'order.completed',
                 source: 'shopify',
@@ -852,6 +897,7 @@ describe('Unit: Reward Engine', function () {
                     'order_quantity' => 2,
                 ],
                 occurred_at: new DateTimeImmutable('2026-01-01 12:00:00'),
+                processed_at: null,
             );
 
             // And
@@ -885,11 +931,13 @@ describe('Unit: Reward Engine', function () {
             // Given
             $event = new Event(
                 id: Str::uuid()->toString(),
+                merchant_id: Str::uuid()->toString(),
                 external_id : 'EXT-123',
                 type : 'order.completed',
                 source: 'shopify',
                 payload: null,
                 occurred_at: new DateTimeImmutable('2026-01-01 12:00:00'),
+                processed_at: null,
             );
 
             // And
@@ -924,6 +972,7 @@ describe('Unit: Reward Engine', function () {
             // Given
             $event = new Event(
                 id: Str::uuid()->toString(),
+                merchant_id: Str::uuid()->toString(),
                 external_id : 'EXT-123',
                 type : 'order.completed',
                 source: 'shopify',
@@ -931,6 +980,7 @@ describe('Unit: Reward Engine', function () {
                     'is_authenticated' => true,
                 ],
                 occurred_at: new DateTimeImmutable('2026-01-01 12:00:00'),
+                processed_at: null,
             );
 
             // And

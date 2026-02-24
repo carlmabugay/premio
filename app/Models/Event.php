@@ -10,10 +10,20 @@ class Event extends Model
 {
     use HasFactory, HasUuids;
 
-    protected $guarded = [];
+    protected $fillable = [
+        'id',
+        'merchant_id',
+        'external_id',
+        'type',
+        'source',
+        'payload',
+        'occurred_at',
+        'processed_at',
+    ];
 
     protected $casts = [
         'occurred_at' => 'datetime',
+        'processed_at' => 'datetime',
         'payload' => 'array',
     ];
 }

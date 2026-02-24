@@ -18,9 +18,11 @@ return new class extends Migration
             $table->string('source');
             $table->json('payload');
             $table->timestamp('occurred_at')->nullable();
+            $table->timestamp('processed_at')->nullable();
             $table->timestamps();
 
-            $table->unique(['external_id', 'source']);
+            $table->unique(['external_id']);
+            $table->index(['type']);
         });
     }
 

@@ -7,6 +7,7 @@ use App\Domain\Rewards\Services\RewardEngine;
 use App\Infrastructure\Persistence\Eloquent\EloquentEventRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentRewardIssueRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentRewardRuleRepository;
+use App\Models\Merchant;
 use App\Models\RewardRule as EloquentRewardRule;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
@@ -21,6 +22,8 @@ describe('Integration: Reward Issuance Idempotency', function () {
     describe('Negatives', function () {
 
         it('does not issue duplicate reward when event is processed twice', function () {
+
+            $merchant = Merchant::factory()->active()->create();
 
             // Given
             EloquentRewardRule::create([
@@ -42,6 +45,7 @@ describe('Integration: Reward Issuance Idempotency', function () {
             // And
             $event = new Event(
                 id: Str::uuid()->toString(),
+                merchant_id: $merchant->id,
                 external_id : 'EXT-123',
                 type : 'order.completed',
                 source: 'shopify',
@@ -49,6 +53,7 @@ describe('Integration: Reward Issuance Idempotency', function () {
                     'amount' => 1000,
                 ],
                 occurred_at: new DateTimeImmutable('2026-01-01 12:00:00'),
+                processed_at: null,
             );
 
             $useCase = new EvaluateRules(

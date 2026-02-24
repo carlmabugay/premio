@@ -19,6 +19,7 @@ class EloquentEventRepository implements EventRepositoryInterface
     {
         EloquentEvent::create([
             'id' => $event->id(),
+            'merchant_id' => $event->merchantId(),
             'external_id' => $event->externalId(),
             'type' => $event->type(),
             'source' => $event->source(),

@@ -23,6 +23,7 @@ class IngestEventRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'merchant_id' => 'required',
             'external_id' => 'required|string',
             'source' => 'required|string',
             'type' => 'required|string',

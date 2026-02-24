@@ -9,9 +9,9 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
-    $merchant = Merchant::factory()->active()->create();
+    $this->merchant = Merchant::factory()->active()->create();
     $this->api = ApiKey::factory()->create([
-        'merchant_id' => $merchant->id,
+        'merchant_id' => $this->merchant->id,
     ]);
 });
 
@@ -38,6 +38,7 @@ describe('Feature: Event Ingestion', function () {
             ]);
 
             $payload = [
+                'merchant_id' => $this->merchant->id,
                 'external_id' => 'EXT-123',
                 'type' => 'order.completed',
                 'source' => 'shopify',
@@ -82,6 +83,7 @@ describe('Feature: Event Ingestion', function () {
 
             // Given
             $payload = [
+                'merchant_id' => $this->merchant->id,
                 'external_id' => 'EXT-123',
                 'type' => 'order.completed',
                 'source' => 'shopify',
@@ -121,6 +123,7 @@ describe('Feature: Event Ingestion', function () {
 
             // Given
             $payload = [
+                'merchant_id' => $this->merchant->id,
                 'external_id' => 'EXT-123',
                 'type' => 'order.completed',
                 'source' => 'shopify',
@@ -173,6 +176,7 @@ describe('Feature: Event Ingestion', function () {
 
             // Given
             $payload = [
+                'merchant_id' => $this->merchant->id,
                 'type' => 'order.completed',
                 'source' => 'shopify',
                 'payload' => [
@@ -196,6 +200,7 @@ describe('Feature: Event Ingestion', function () {
 
             // Given
             $payload = [
+                'merchant_id' => $this->merchant->id,
                 'external_id' => 'EXT-123',
                 'source' => 'shopify',
                 'payload' => [
@@ -219,6 +224,7 @@ describe('Feature: Event Ingestion', function () {
 
             // Given
             $payload = [
+                'merchant_id' => $this->merchant->id,
                 'external_id' => 'EXT-123',
                 'type' => 'order.completed',
                 'payload' => [
@@ -242,6 +248,7 @@ describe('Feature: Event Ingestion', function () {
 
             // Given
             $payload = [
+                'merchant_id' => $this->merchant->id,
                 'external_id' => 'EXT-123',
                 'type' => 'order.completed',
                 'source' => 'shopify',
@@ -263,6 +270,7 @@ describe('Feature: Event Ingestion', function () {
 
             // Given
             $payload = [
+                'merchant_id' => $this->merchant->id,
                 'external_id' => 'EXT-123',
                 'source' => 'shopify',
                 'type' => 'order.completed',
@@ -284,6 +292,7 @@ describe('Feature: Event Ingestion', function () {
 
             // Given
             $payload = [
+                'merchant_id' => $this->merchant->id,
                 'external_id' => 'EXT-123',
                 'type' => 'order.completed',
                 'source' => 'shopify',
@@ -307,6 +316,7 @@ describe('Feature: Event Ingestion', function () {
 
             // Given
             $payload = [
+                'merchant_id' => $this->merchant->id,
                 'external_id' => 'EXT-123',
                 'type' => 'order.completed',
                 'source' => 'shopify',

@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Event;
+use App\Models\Merchant;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
@@ -22,6 +23,7 @@ class EventFactory extends Factory
     {
         return [
             'id' => (string) Str::uuid(),
+            'merchant_id' => Merchant::factory(),
             'external_id' => 'EXT-'.$this->faker->unique()->numerify('#####'),
             'type' => 'order.completed',
             'source' => $this->faker->randomElement(['shopify', 'stripe']),

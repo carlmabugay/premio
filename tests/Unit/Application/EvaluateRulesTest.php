@@ -26,11 +26,13 @@ describe('Unit: Evaluate Rules', function () {
             // Given
             $event = new Event(
                 id: Str::uuid()->toString(),
+                merchant_id: Str::uuid()->toString(),
                 external_id : 'EXT-123',
                 type : 'order.completed',
                 source: 'shopify',
                 payload: ['order_total' => 1500],
                 occurred_at: new DateTimeImmutable('2026-01-01 12:00:00'),
+                processed_at: null,
             );
 
             // And
@@ -104,6 +106,7 @@ describe('Unit: Evaluate Rules', function () {
             // Given
             $event = new Event(
                 id: Str::uuid()->toString(),
+                merchant_id: Str::uuid()->toString(),
                 external_id : 'EXT-123',
                 type : 'order.completed',
                 source: 'shopify',
@@ -112,6 +115,7 @@ describe('Unit: Evaluate Rules', function () {
                     'currency' => 'USD',
                 ],
                 occurred_at: new DateTimeImmutable('2026-01-01 12:00:00'),
+                processed_at: null,
             );
 
             // And
@@ -186,6 +190,7 @@ describe('Unit: Evaluate Rules', function () {
             // Given
             $event = new Event(
                 id: Str::uuid()->toString(),
+                merchant_id: Str::uuid()->toString(),
                 external_id : 'EXT-123',
                 type : 'order.completed',
                 source: 'shopify',
@@ -194,6 +199,7 @@ describe('Unit: Evaluate Rules', function () {
                     'currency' => 'USD',
                 ],
                 occurred_at: new DateTimeImmutable('2026-01-01 12:00:00'),
+                processed_at: null,
             );
 
             // And
@@ -258,6 +264,7 @@ describe('Unit: Evaluate Rules', function () {
             // Given
             $event = new Event(
                 id: Str::uuid()->toString(),
+                merchant_id: Str::uuid()->toString(),
                 external_id : 'EXT-123',
                 type : 'order.completed',
                 source: 'shopify',
@@ -266,6 +273,7 @@ describe('Unit: Evaluate Rules', function () {
                     'currency' => 'USD',
                 ],
                 occurred_at: new DateTimeImmutable('2026-01-01 12:00:00'),
+                processed_at: null,
             );
 
             $inactiveRule = new RewardRule(
@@ -338,6 +346,7 @@ describe('Unit: Evaluate Rules', function () {
             // Given
             $event = new Event(
                 id: Str::uuid()->toString(),
+                merchant_id: Str::uuid()->toString(),
                 external_id : 'EXT-123',
                 type : 'order.completed',
                 source: 'shopify',
@@ -347,6 +356,7 @@ describe('Unit: Evaluate Rules', function () {
                     'customer_tier' => 'VIP',
                 ],
                 occurred_at: new DateTimeImmutable('2026-01-01 12:00:00'),
+                processed_at: null,
             );
 
             // And
@@ -420,6 +430,7 @@ describe('Unit: Evaluate Rules', function () {
             // Given
             $event = new Event(
                 id: Str::uuid()->toString(),
+                merchant_id: Str::uuid()->toString(),
                 external_id : 'EXT-123',
                 type : 'order.completed',
                 source: 'shopify',
@@ -428,6 +439,7 @@ describe('Unit: Evaluate Rules', function () {
                     'currency' => 'USD',
                 ],
                 occurred_at: new DateTimeImmutable('2026-01-01 12:00:00'),
+                processed_at: null,
             );
 
             // And
@@ -488,6 +500,7 @@ describe('Unit: Evaluate Rules', function () {
             // Given
             $event = new Event(
                 id: Str::uuid()->toString(),
+                merchant_id: Str::uuid()->toString(),
                 external_id : 'EXT-123',
                 type : 'order.completed',
                 source: 'shopify',
@@ -496,6 +509,7 @@ describe('Unit: Evaluate Rules', function () {
                     'currency' => 'USD',
                 ],
                 occurred_at: new DateTimeImmutable('2026-01-01 12:00:00'),
+                processed_at: null,
             );
 
             $activeRule = new RewardRule(
@@ -553,6 +567,7 @@ describe('Unit: Evaluate Rules', function () {
             // Given
             $event = new Event(
                 id: Str::uuid()->toString(),
+                merchant_id: Str::uuid()->toString(),
                 external_id : 'EXT-123',
                 type : 'order.completed',
                 source: 'shopify',
@@ -561,6 +576,7 @@ describe('Unit: Evaluate Rules', function () {
                     'currency' => 'USD',
                 ],
                 occurred_at: new DateTimeImmutable('2026-01-01 12:00:00'),
+                processed_at: null,
             );
 
             // When

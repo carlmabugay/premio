@@ -24,7 +24,7 @@ class EnsureApiKeyIsValid
             ], 401);
         }
 
-        $exists = ApiKey::where('key', $key)
+        $exists = ApiKey::where('key_hash', $key)
             ->where('is_active', true)
             ->exists();
 

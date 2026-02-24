@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('api_keys', function (Blueprint $table) {
-            $table->foreignUuid('merchant_id')->constrained();
+            $table->foreignUuid('merchant_id')->after('id')->constrained();
         });
     }
 

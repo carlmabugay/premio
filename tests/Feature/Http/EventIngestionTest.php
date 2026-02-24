@@ -2,13 +2,17 @@
 
 use App\Models\ApiKey;
 use App\Models\Event as EloquentEvent;
+use App\Models\Merchant;
 use App\Models\RewardRule as EloquentRewardRule;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
-    $this->api = ApiKey::factory()->create();
+    $merchant = Merchant::factory()->active()->create();
+    $this->api = ApiKey::factory()->create([
+        'merchant_id' => $merchant->id,
+    ]);
 });
 
 describe('Feature: Event Ingestion', function () {
@@ -45,7 +49,7 @@ describe('Feature: Event Ingestion', function () {
 
             // When
             $response = $this->withHeaders([
-                'X-API-KEY' => $this->api->key,
+                'X-API-KEY' => $this->api->key_hash,
             ])->postJson('/api/v1/events', $payload);
 
             $event = EloquentEvent::first();
@@ -89,7 +93,7 @@ describe('Feature: Event Ingestion', function () {
 
             // When
             $response = $this->withHeaders([
-                'X-API-KEY' => $this->api->key,
+                'X-API-KEY' => $this->api->key_hash,
             ])->postJson('/api/v1/events', $payload);
 
             // Then
@@ -128,11 +132,11 @@ describe('Feature: Event Ingestion', function () {
 
             // When
             $firstResponse = $this->withHeaders([
-                'X-API-KEY' => $this->api->key,
+                'X-API-KEY' => $this->api->key_hash,
             ])->postJson('/api/v1/events', $payload)->assertCreated();
 
             $secondResponse = $this->withHeaders([
-                'X-API-KEY' => $this->api->key,
+                'X-API-KEY' => $this->api->key_hash,
             ])->postJson('/api/v1/events', $payload)->assertOk();
 
             $firstResponse->assertJsonStructure([
@@ -179,7 +183,7 @@ describe('Feature: Event Ingestion', function () {
 
             // When
             $response = $this->withHeaders([
-                'X-API-KEY' => $this->api->key,
+                'X-API-KEY' => $this->api->key_hash,
             ])->postJson('/api/v1/events', $payload);
 
             // Then
@@ -202,7 +206,7 @@ describe('Feature: Event Ingestion', function () {
 
             // When
             $response = $this->withHeaders([
-                'X-API-KEY' => $this->api->key,
+                'X-API-KEY' => $this->api->key_hash,
             ])->postJson('/api/v1/events', $payload);
 
             // Then
@@ -225,7 +229,7 @@ describe('Feature: Event Ingestion', function () {
 
             // When
             $response = $this->withHeaders([
-                'X-API-KEY' => $this->api->key,
+                'X-API-KEY' => $this->api->key_hash,
             ])->postJson('/api/v1/events', $payload);
 
             // Then
@@ -246,7 +250,7 @@ describe('Feature: Event Ingestion', function () {
 
             // When
             $response = $this->withHeaders([
-                'X-API-KEY' => $this->api->key,
+                'X-API-KEY' => $this->api->key_hash,
             ])->postJson('/api/v1/events', $payload);
 
             // Then
@@ -268,7 +272,7 @@ describe('Feature: Event Ingestion', function () {
 
             // When
             $response = $this->withHeaders([
-                'X-API-KEY' => $this->api->key,
+                'X-API-KEY' => $this->api->key_hash,
             ])->postJson('/api/v1/events', $payload);
 
             // Then
@@ -290,7 +294,7 @@ describe('Feature: Event Ingestion', function () {
 
             // When
             $response = $this->withHeaders([
-                'X-API-KEY' => $this->api->key,
+                'X-API-KEY' => $this->api->key_hash,
             ])->postJson('/api/v1/events', $payload);
 
             // Then
@@ -314,7 +318,7 @@ describe('Feature: Event Ingestion', function () {
 
             // When
             $response = $response = $this->withHeaders([
-                'X-API-KEY' => $this->api->key,
+                'X-API-KEY' => $this->api->key_hash,
             ])->postJson('/api/v1/events', $payload);
 
             // Then

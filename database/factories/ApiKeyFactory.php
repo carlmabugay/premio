@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\ApiKey;
+use App\Models\Merchant;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -19,7 +20,8 @@ class ApiKeyFactory extends Factory
     {
         return [
             'name' => $this->faker->name(),
-            'key' => $this->faker->md5(),
+            'merchant_id' => Merchant::factory(),
+            'key_hash' => $this->faker->sha256(),
             'is_active' => true,
         ];
     }

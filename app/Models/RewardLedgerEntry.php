@@ -9,6 +9,8 @@ class RewardLedgerEntry extends Model
 {
     use HasUuids;
 
+    public $timestamps = false;
+
     protected $fillable = [
         'merchant_id',
         'customer_id',
@@ -17,5 +19,9 @@ class RewardLedgerEntry extends Model
         'reference_id',
         'points',
         'created_at',
+    ];
+
+    protected $casts = [
+        'created_at' => 'datetime',
     ];
 }

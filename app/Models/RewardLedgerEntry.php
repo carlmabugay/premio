@@ -9,5 +9,13 @@ class RewardLedgerEntry extends Model
 {
     use HasUuids;
 
-    protected $guarded = [];
+    protected $fillable = [
+        'merchant_id',
+        'customer_id',
+        'type',
+        'reference_type',
+        'reference_id',
+        'points',
+        'created_at',
+    ];
 }

@@ -4,11 +4,13 @@ namespace App\Providers;
 
 use App\Domain\Customers\Contracts\CustomerRepositoryInterface;
 use App\Domain\Events\Contracts\EventRepositoryInterface;
+use App\Domain\Redemptions\Contracts\RedemptionRepositoryInterface;
 use App\Domain\Rewards\Contracts\RewardIssueRepositoryInterface;
 use App\Domain\Rewards\Contracts\RewardLedgerEntryRepositoryInterface;
 use App\Domain\Rewards\Contracts\RewardRuleRepositoryInterface;
 use App\Infrastructure\Persistence\Eloquent\EloquentCustomerRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentEventRepository;
+use App\Infrastructure\Persistence\Eloquent\EloquentRedemptionRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentRewardIssueRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentRewardLedgerEntryRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentRewardRuleRepository;
@@ -26,6 +28,7 @@ class DomainServiceProvider extends ServiceProvider
         $this->app->bind(RewardIssueRepositoryInterface::class, EloquentRewardIssueRepository::class);
         $this->app->bind(CustomerRepositoryInterface::class, EloquentCustomerRepository::class);
         $this->app->bind(RewardLedgerEntryRepositoryInterface::class, EloquentRewardLedgerEntryRepository::class);
+        $this->app->bind(RedemptionRepositoryInterface::class, EloquentRedemptionRepository::class);
     }
 
     /**

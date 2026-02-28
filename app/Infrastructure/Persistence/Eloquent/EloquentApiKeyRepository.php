@@ -17,4 +17,11 @@ class EloquentApiKeyRepository implements ApiKeyRepositoryInterface
             'is_active' => $apiKey->isActive(),
         ]);
     }
+
+    public function exists(string $key): bool
+    {
+        return EloquentApiKey::where('key_hash', $key)
+            ->where('is_active', true)
+            ->exists();
+    }
 }

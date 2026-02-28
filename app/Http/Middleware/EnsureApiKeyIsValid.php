@@ -2,13 +2,17 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\ApiKey;
+use App\Domain\ApiKeys\Services\ApiKeyService;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class EnsureApiKeyIsValid
+readonly class EnsureApiKeyIsValid
 {
+    public function __construct(
+        private ApiKeyService $apiKeyService,
+    ) {}
+
     /**
      * Handle an incoming request.
      *
@@ -24,9 +28,7 @@ class EnsureApiKeyIsValid
             ], 401);
         }
 
-        $exists = ApiKey::where('key_hash', $key)
-            ->where('is_active', true)
-            ->exists();
+        $exists = $this->apiKeyService->isKeyExists($key);
 
         if (! $exists) {
             return response()->json([

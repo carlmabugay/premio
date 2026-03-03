@@ -12,6 +12,7 @@ class RewardRule
 {
     public function __construct(
         private readonly int $id,
+        private readonly string $merchant_id,
         private readonly string $name,
         private readonly string $event_type,
         private readonly string $reward_type,
@@ -26,6 +27,11 @@ class RewardRule
     public function id(): int
     {
         return $this->id;
+    }
+
+    public function merchantId(): string
+    {
+        return $this->merchant_id;
     }
 
     public function name(): string

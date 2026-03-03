@@ -22,9 +22,11 @@ describe('Unit: Reward Engine', function () {
         it('matches when the event type matches.', function () {
 
             // Given
+            $merchant_id = Str::uuid()->toString();
+
             $event = new Event(
                 id: Str::uuid()->toString(),
-                merchant_id: Str::uuid()->toString(),
+                merchant_id: $merchant_id,
                 external_id : 'EXT-123',
                 type : 'order.completed',
                 source: 'shopify',
@@ -36,6 +38,7 @@ describe('Unit: Reward Engine', function () {
             // And
             $rule = new RewardRule(
                 id: 1,
+                merchant_id: $merchant_id,
                 name: 'Active Rule',
                 event_type: 'order.completed',
                 reward_type: 'fixed',
@@ -56,10 +59,12 @@ describe('Unit: Reward Engine', function () {
 
         it('matches when payload condition satisfies.', function () {
 
+            $merchant_id = Str::uuid()->toString();
+
             // Given
             $event = new Event(
                 id: Str::uuid()->toString(),
-                merchant_id: Str::uuid()->toString(),
+                merchant_id: $merchant_id,
                 external_id : 'EXT-123',
                 type : 'order.completed',
                 source: 'shopify',
@@ -71,6 +76,7 @@ describe('Unit: Reward Engine', function () {
             // And
             $rule = new RewardRule(
                 id: 1,
+                merchant_id: $merchant_id,
                 name: 'Active Rule',
                 event_type: 'order.completed',
                 reward_type: 'fixed',
@@ -99,9 +105,11 @@ describe('Unit: Reward Engine', function () {
         it('matches when multiple conditions all satisfy.', function () {
 
             // Given
+            $merchant_id = Str::uuid()->toString();
+
             $event = new Event(
                 id: Str::uuid()->toString(),
-                merchant_id: Str::uuid()->toString(),
+                merchant_id: $merchant_id,
                 external_id : 'EXT-123',
                 type : 'order.completed',
                 source: 'shopify',
@@ -116,6 +124,7 @@ describe('Unit: Reward Engine', function () {
             // And
             $rule = new RewardRule(
                 id: 1,
+                merchant_id: $merchant_id,
                 name: 'Active Rule',
                 event_type: 'order.completed',
                 reward_type: 'fixed',
@@ -150,9 +159,11 @@ describe('Unit: Reward Engine', function () {
         it('matches when event occurred inside date range.', function () {
 
             // Given
+            $merchant_id = Str::uuid()->toString();
+
             $event = new Event(
                 id: Str::uuid()->toString(),
-                merchant_id: Str::uuid()->toString(),
+                merchant_id: $merchant_id,
                 external_id : 'EXT-123',
                 type : 'order.completed',
                 source: 'shopify',
@@ -164,6 +175,7 @@ describe('Unit: Reward Engine', function () {
             // And
             $rule = new RewardRule(
                 id: 1,
+                merchant_id: $merchant_id,
                 name: 'Active Rule',
                 event_type: 'order.completed',
                 reward_type: 'fixed',
@@ -186,9 +198,12 @@ describe('Unit: Reward Engine', function () {
 
         it('matches when event occurred_at equals starts_at.', function () {
 
+            // Given
+            $merchant_id = Str::uuid()->toString();
+
             $event = new Event(
                 id: Str::uuid()->toString(),
-                merchant_id: Str::uuid()->toString(),
+                merchant_id: $merchant_id,
                 external_id: 'EXT-123',
                 type: 'order.completed',
                 source: 'shopify',
@@ -199,6 +214,7 @@ describe('Unit: Reward Engine', function () {
 
             $rule = new RewardRule(
                 id: 1,
+                merchant_id: $merchant_id,
                 name: 'Boundary Start Rule',
                 event_type: 'order.completed',
                 reward_type: 'fixed',
@@ -220,9 +236,12 @@ describe('Unit: Reward Engine', function () {
 
         it('matches when event occurred_at equals ends_at.', function () {
 
+            // Given
+            $merchant_id = Str::uuid()->toString();
+
             $event = new Event(
                 id: Str::uuid()->toString(),
-                merchant_id: Str::uuid()->toString(),
+                merchant_id: $merchant_id,
                 external_id: 'EXT-123',
                 type: 'order.completed',
                 source: 'shopify',
@@ -233,6 +252,7 @@ describe('Unit: Reward Engine', function () {
 
             $rule = new RewardRule(
                 id: 1,
+                merchant_id: $merchant_id,
                 name: 'Boundary End Rule',
                 event_type: 'order.completed',
                 reward_type: 'fixed',
@@ -255,9 +275,11 @@ describe('Unit: Reward Engine', function () {
         it('matches when rule has no payload conditions.', function () {
 
             // Given
+            $merchant_id = Str::uuid()->toString();
+
             $event = new Event(
                 id: Str::uuid()->toString(),
-                merchant_id: Str::uuid()->toString(),
+                merchant_id: $merchant_id,
                 external_id : 'EXT-123',
                 type : 'order.completed',
                 source: 'shopify',
@@ -269,6 +291,7 @@ describe('Unit: Reward Engine', function () {
             // And
             $rule = new RewardRule(
                 id: 1,
+                merchant_id: $merchant_id,
                 name: 'Active Rule',
                 event_type: 'order.completed',
                 reward_type: 'fixed',
@@ -291,9 +314,11 @@ describe('Unit: Reward Engine', function () {
         it('matches when rule has no date range.', function () {
 
             // Given
+            $merchant_id = Str::uuid()->toString();
+
             $event = new Event(
                 id: Str::uuid()->toString(),
-                merchant_id: Str::uuid()->toString(),
+                merchant_id: $merchant_id,
                 external_id : 'EXT-123',
                 type : 'order.completed',
                 source: 'shopify',
@@ -305,6 +330,7 @@ describe('Unit: Reward Engine', function () {
             // And
             $rule = new RewardRule(
                 id: 1,
+                merchant_id: $merchant_id,
                 name: 'Active Rule',
                 event_type: 'order.completed',
                 reward_type: 'fixed',
@@ -331,9 +357,11 @@ describe('Unit: Reward Engine', function () {
         it('does not match when event type differs.', function () {
 
             // Given
+            $merchant_id = Str::uuid()->toString();
+
             $event = new Event(
                 id: Str::uuid()->toString(),
-                merchant_id: Str::uuid()->toString(),
+                merchant_id: $merchant_id,
                 external_id : 'EXT-123',
                 type : 'order.received',
                 source: 'shopify',
@@ -345,6 +373,7 @@ describe('Unit: Reward Engine', function () {
             // And
             $rule = new RewardRule(
                 id: 1,
+                merchant_id: $merchant_id,
                 name: 'Active Rule',
                 event_type: 'order.completed',
                 reward_type: 'fixed',
@@ -367,9 +396,11 @@ describe('Unit: Reward Engine', function () {
         it('does not match when rule inactive.', function () {
 
             // Given
+            $merchant_id = Str::uuid()->toString();
+
             $event = new Event(
                 id: Str::uuid()->toString(),
-                merchant_id: Str::uuid()->toString(),
+                merchant_id: $merchant_id,
                 external_id : 'EXT-123',
                 type : 'order.completed',
                 source: 'shopify',
@@ -381,6 +412,7 @@ describe('Unit: Reward Engine', function () {
             // And
             $rule = new RewardRule(
                 id: 1,
+                merchant_id: $merchant_id,
                 name: 'Active Rule',
                 event_type: 'order.completed',
                 reward_type: 'fixed',
@@ -403,9 +435,11 @@ describe('Unit: Reward Engine', function () {
         it('does not match when event occurred outside date range.', function () {
 
             // Given
+            $merchant_id = Str::uuid()->toString();
+
             $event = new Event(
                 id: Str::uuid()->toString(),
-                merchant_id: Str::uuid()->toString(),
+                merchant_id: $merchant_id,
                 external_id : 'EXT-123',
                 type : 'order.completed',
                 source: 'shopify',
@@ -417,6 +451,7 @@ describe('Unit: Reward Engine', function () {
             // And
             $rule = new RewardRule(
                 id: 1,
+                merchant_id: $merchant_id,
                 name: 'Active Rule',
                 event_type: 'order.completed',
                 reward_type: 'fixed',
@@ -439,9 +474,12 @@ describe('Unit: Reward Engine', function () {
 
         it('does not match when event occurred_at is before starts_at.', function () {
 
+            // Given
+            $merchant_id = Str::uuid()->toString();
+
             $event = new Event(
                 id: Str::uuid()->toString(),
-                merchant_id: Str::uuid()->toString(),
+                merchant_id: $merchant_id,
                 external_id: 'EXT-123',
                 type: 'order.completed',
                 source: 'shopify',
@@ -452,6 +490,7 @@ describe('Unit: Reward Engine', function () {
 
             $rule = new RewardRule(
                 id: 1,
+                merchant_id: $merchant_id,
                 name: 'Future Rule',
                 event_type: 'order.completed',
                 reward_type: 'fixed',
@@ -473,9 +512,12 @@ describe('Unit: Reward Engine', function () {
 
         it('does not match rule when event occurred_at is after ends_at.', function () {
 
+            // Given
+            $merchant_id = Str::uuid()->toString();
+
             $event = new Event(
                 id: Str::uuid()->toString(),
-                merchant_id: Str::uuid()->toString(),
+                merchant_id: $merchant_id,
                 external_id: 'EXT-123',
                 type: 'order.completed',
                 source: 'shopify',
@@ -486,6 +528,7 @@ describe('Unit: Reward Engine', function () {
 
             $rule = new RewardRule(
                 id: 1,
+                merchant_id: $merchant_id,
                 name: 'Expired Rule',
                 event_type: 'order.completed',
                 reward_type: 'fixed',
@@ -508,9 +551,11 @@ describe('Unit: Reward Engine', function () {
         it('does not match when payload condition fails.', function () {
 
             // Given
+            $merchant_id = Str::uuid()->toString();
+
             $event = new Event(
                 id: Str::uuid()->toString(),
-                merchant_id: Str::uuid()->toString(),
+                merchant_id: $merchant_id,
                 external_id : 'EXT-123',
                 type : 'order.completed',
                 source: 'shopify',
@@ -522,6 +567,7 @@ describe('Unit: Reward Engine', function () {
             // And
             $rule = new RewardRule(
                 id: 1,
+                merchant_id: $merchant_id,
                 name: 'Active Rule',
                 event_type: 'order.completed',
                 reward_type: 'fixed',
@@ -550,9 +596,11 @@ describe('Unit: Reward Engine', function () {
         it('does not match when payload field missing.', function () {
 
             // Given
+            $merchant_id = Str::uuid()->toString();
+
             $event = new Event(
                 id: Str::uuid()->toString(),
-                merchant_id: Str::uuid()->toString(),
+                merchant_id: $merchant_id,
                 external_id : 'EXT-123',
                 type : 'order.completed',
                 source: 'shopify',
@@ -564,6 +612,7 @@ describe('Unit: Reward Engine', function () {
             // And
             $rule = new RewardRule(
                 id: 1,
+                merchant_id: $merchant_id,
                 name: 'Active Rule',
                 event_type: 'order.completed',
                 reward_type: 'fixed',
@@ -585,9 +634,11 @@ describe('Unit: Reward Engine', function () {
         it('does not match when condition value is not numeric.', function () {
 
             // Given
+            $merchant_id = Str::uuid()->toString();
+
             $event = new Event(
                 id: Str::uuid()->toString(),
-                merchant_id: Str::uuid()->toString(),
+                merchant_id: $merchant_id,
                 external_id : 'EXT-123',
                 type : 'order.completed',
                 source: 'shopify',
@@ -599,6 +650,7 @@ describe('Unit: Reward Engine', function () {
             // And
             $rule = new RewardRule(
                 id: 1,
+                merchant_id: $merchant_id,
                 name: 'Active Rule',
                 event_type: 'order.completed',
                 reward_type: 'fixed',
@@ -627,9 +679,11 @@ describe('Unit: Reward Engine', function () {
         it('does not match when rule has expired.', function () {
 
             // Given
+            $merchant_id = Str::uuid()->toString();
+
             $event = new Event(
                 id: Str::uuid()->toString(),
-                merchant_id: Str::uuid()->toString(),
+                merchant_id: $merchant_id,
                 external_id : 'EXT-123',
                 type : 'order.completed',
                 source: 'shopify',
@@ -641,6 +695,7 @@ describe('Unit: Reward Engine', function () {
             // And
             $rule = new RewardRule(
                 id: 1,
+                merchant_id: $merchant_id,
                 name: 'Active Rule',
                 event_type: 'order.completed',
                 reward_type: 'fixed',
@@ -665,9 +720,11 @@ describe('Unit: Reward Engine', function () {
         it('does not match when rule not yet started.', function () {
 
             // Given
+            $merchant_id = Str::uuid()->toString();
+
             $event = new Event(
                 id: Str::uuid()->toString(),
-                merchant_id: Str::uuid()->toString(),
+                merchant_id: $merchant_id,
                 external_id : 'EXT-123',
                 type : 'order.completed',
                 source: 'shopify',
@@ -679,6 +736,7 @@ describe('Unit: Reward Engine', function () {
             // And
             $rule = new RewardRule(
                 id: 1,
+                merchant_id: $merchant_id,
                 name: 'Active Rule',
                 event_type: 'order.completed',
                 reward_type: 'fixed',
@@ -707,9 +765,11 @@ describe('Unit: Reward Engine', function () {
         it('throws when operator is unsupported.', function () {
 
             // Given
+            $merchant_id = Str::uuid()->toString();
+
             $event = new Event(
                 id: Str::uuid()->toString(),
-                merchant_id: Str::uuid()->toString(),
+                merchant_id: $merchant_id,
                 external_id : 'EXT-123',
                 type : 'order.completed',
                 source: 'shopify',
@@ -721,6 +781,7 @@ describe('Unit: Reward Engine', function () {
             // And
             $rule = new RewardRule(
                 id: 1,
+                merchant_id: $merchant_id,
                 name: 'Active Rule',
                 event_type: 'order.completed',
                 reward_type: 'fixed',
@@ -748,9 +809,11 @@ describe('Unit: Reward Engine', function () {
         it('does not match when condition JSON is malformed.', function () {
 
             // Given
+            $merchant_id = Str::uuid()->toString();
+
             $event = new Event(
                 id: Str::uuid()->toString(),
-                merchant_id: Str::uuid()->toString(),
+                merchant_id: $merchant_id,
                 external_id : 'EXT-123',
                 type : 'order.completed',
                 source: 'shopify',
@@ -777,6 +840,7 @@ describe('Unit: Reward Engine', function () {
                 // And
                 $rule = new RewardRule(
                     id: 1,
+                    merchant_id: $merchant_id,
                     name: 'Active Rule',
                     event_type: 'order.completed',
                     reward_type: 'fixed',
@@ -797,10 +861,13 @@ describe('Unit: Reward Engine', function () {
         })->throws(MalformedCondition::class);
 
         it('ignores unknown payload fields safely.', function () {
+
             // Given
+            $merchant_id = Str::uuid()->toString();
+
             $event = new Event(
                 id: Str::uuid()->toString(),
-                merchant_id: Str::uuid()->toString(),
+                merchant_id: $merchant_id,
                 external_id : 'EXT-123',
                 type : 'order.completed',
                 source: 'shopify',
@@ -815,6 +882,7 @@ describe('Unit: Reward Engine', function () {
             // And
             $rule = new RewardRule(
                 id: 1,
+                merchant_id: $merchant_id,
                 name: 'Active Rule',
                 event_type: 'order.completed',
                 reward_type: 'fixed',
@@ -841,10 +909,13 @@ describe('Unit: Reward Engine', function () {
         });
 
         it('matches correctly when payload value is string and rule expects string.', function () {
+
             // Given
+            $merchant_id = Str::uuid()->toString();
+
             $event = new Event(
                 id: Str::uuid()->toString(),
-                merchant_id: Str::uuid()->toString(),
+                merchant_id: $merchant_id,
                 external_id : 'EXT-123',
                 type : 'order.completed',
                 source: 'shopify',
@@ -858,6 +929,7 @@ describe('Unit: Reward Engine', function () {
             // And
             $rule = new RewardRule(
                 id: 1,
+                merchant_id: $merchant_id,
                 name: 'Active Rule',
                 event_type: 'order.completed',
                 reward_type: 'fixed',
@@ -886,9 +958,11 @@ describe('Unit: Reward Engine', function () {
         it('matches correctly when payload value is numeric string and rule expects numeric.', function () {
 
             // Given
+            $merchant_id = Str::uuid()->toString();
+
             $event = new Event(
                 id: Str::uuid()->toString(),
-                merchant_id: Str::uuid()->toString(),
+                merchant_id: $merchant_id,
                 external_id : 'EXT-123',
                 type : 'order.completed',
                 source: 'shopify',
@@ -903,6 +977,7 @@ describe('Unit: Reward Engine', function () {
             // And
             $rule = new RewardRule(
                 id: 1,
+                merchant_id: $merchant_id,
                 name: 'Active Rule',
                 event_type: 'order.completed',
                 reward_type: 'fixed',
@@ -928,10 +1003,13 @@ describe('Unit: Reward Engine', function () {
         });
 
         it('handles null payload values safely.', function () {
+
             // Given
+            $merchant_id = Str::uuid()->toString();
+
             $event = new Event(
                 id: Str::uuid()->toString(),
-                merchant_id: Str::uuid()->toString(),
+                merchant_id: $merchant_id,
                 external_id : 'EXT-123',
                 type : 'order.completed',
                 source: 'shopify',
@@ -943,6 +1021,7 @@ describe('Unit: Reward Engine', function () {
             // And
             $rule = new RewardRule(
                 id: 1,
+                merchant_id: $merchant_id,
                 name: 'Active Rule',
                 event_type: 'order.completed',
                 reward_type: 'fixed',
@@ -970,9 +1049,11 @@ describe('Unit: Reward Engine', function () {
         it('handles boolean comparisons correctly.', function () {
 
             // Given
+            $merchant_id = Str::uuid()->toString();
+
             $event = new Event(
                 id: Str::uuid()->toString(),
-                merchant_id: Str::uuid()->toString(),
+                merchant_id: $merchant_id,
                 external_id : 'EXT-123',
                 type : 'order.completed',
                 source: 'shopify',
@@ -986,6 +1067,7 @@ describe('Unit: Reward Engine', function () {
             // And
             $rule = new RewardRule(
                 id: 1,
+                merchant_id: $merchant_id,
                 name: 'Active Rule',
                 event_type: 'order.completed',
                 reward_type: 'fixed',

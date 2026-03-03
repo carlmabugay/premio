@@ -24,9 +24,11 @@ describe('Unit: Evaluate Rules', function () {
         it('evaluates multiple rules and returns only matching rules.', function () {
 
             // Given
+            $merchant_id = Str::uuid()->toString();
+
             $event = new Event(
                 id: Str::uuid()->toString(),
-                merchant_id: Str::uuid()->toString(),
+                merchant_id: $merchant_id,
                 external_id : 'EXT-123',
                 type : 'order.completed',
                 source: 'shopify',
@@ -38,6 +40,7 @@ describe('Unit: Evaluate Rules', function () {
             // And
             $matchingRule = new RewardRule(
                 id: 1,
+                merchant_id: $merchant_id,
                 name: 'Matching Rule',
                 event_type: 'order.completed',
                 reward_type: 'fixed',
@@ -54,6 +57,7 @@ describe('Unit: Evaluate Rules', function () {
 
             $nonMatchingRule = new RewardRule(
                 id: 2,
+                merchant_id: $merchant_id,
                 name: 'Non Matching Rule',
                 event_type: 'order.completed',
                 reward_type: 'fixed',
@@ -103,10 +107,13 @@ describe('Unit: Evaluate Rules', function () {
         });
 
         it('evaluates multiple rules where some match and some don’t.', function () {
+
             // Given
+            $merchant_id = Str::uuid()->toString();
+
             $event = new Event(
                 id: Str::uuid()->toString(),
-                merchant_id: Str::uuid()->toString(),
+                merchant_id: $merchant_id,
                 external_id : 'EXT-123',
                 type : 'order.completed',
                 source: 'shopify',
@@ -121,6 +128,7 @@ describe('Unit: Evaluate Rules', function () {
             // And
             $matchingRule = new RewardRule(
                 id: 1,
+                merchant_id: $merchant_id,
                 name: 'Matching Rule',
                 event_type: 'order.completed',
                 reward_type: 'fixed',
@@ -138,6 +146,7 @@ describe('Unit: Evaluate Rules', function () {
             // And
             $nonMatchingRule = new RewardRule(
                 id: 2,
+                merchant_id: $merchant_id,
                 name: 'Non Matching Rule',
                 event_type: 'order.completed',
                 reward_type: 'fixed',
@@ -187,10 +196,13 @@ describe('Unit: Evaluate Rules', function () {
         });
 
         it('returns empty result when no rules match.', function () {
+
             // Given
+            $merchant_id = Str::uuid()->toString();
+
             $event = new Event(
                 id: Str::uuid()->toString(),
-                merchant_id: Str::uuid()->toString(),
+                merchant_id: $merchant_id,
                 external_id : 'EXT-123',
                 type : 'order.completed',
                 source: 'shopify',
@@ -205,6 +217,7 @@ describe('Unit: Evaluate Rules', function () {
             // And
             $nonMatchingRuleOne = new RewardRule(
                 id: 2,
+                merchant_id: $merchant_id,
                 name: 'None Matching Rule One',
                 event_type: 'order.completed',
                 reward_type: 'fixed',
@@ -222,6 +235,7 @@ describe('Unit: Evaluate Rules', function () {
             // And
             $nonMatchingRuleTwo = new RewardRule(
                 id: 2,
+                merchant_id: $merchant_id,
                 name: 'None Matching Rule Two',
                 event_type: 'order.completed',
                 reward_type: 'fixed',
@@ -262,9 +276,11 @@ describe('Unit: Evaluate Rules', function () {
         it('issues rewards for rules returned by the engine.', function () {
 
             // Given
+            $merchant_id = Str::uuid()->toString();
+
             $event = new Event(
                 id: Str::uuid()->toString(),
-                merchant_id: Str::uuid()->toString(),
+                merchant_id: $merchant_id,
                 external_id : 'EXT-123',
                 type : 'order.completed',
                 source: 'shopify',
@@ -278,6 +294,7 @@ describe('Unit: Evaluate Rules', function () {
 
             $inactiveRule = new RewardRule(
                 id: 1,
+                merchant_id: $merchant_id,
                 name: 'Inactive Rule',
                 event_type: 'order.completed',
                 reward_type: 'fixed',
@@ -294,6 +311,7 @@ describe('Unit: Evaluate Rules', function () {
 
             $activeRule = new RewardRule(
                 id: 2,
+                merchant_id: $merchant_id,
                 name: 'Active Rule',
                 event_type: 'order.completed',
                 reward_type: 'fixed',
@@ -344,9 +362,11 @@ describe('Unit: Evaluate Rules', function () {
         it('evaluates rules in deterministic order (if order matters).', function () {
 
             // Given
+            $merchant_id = Str::uuid()->toString();
+
             $event = new Event(
                 id: Str::uuid()->toString(),
-                merchant_id: Str::uuid()->toString(),
+                merchant_id: $merchant_id,
                 external_id : 'EXT-123',
                 type : 'order.completed',
                 source: 'shopify',
@@ -362,6 +382,7 @@ describe('Unit: Evaluate Rules', function () {
             // And
             $ruleLowPriority = new RewardRule(
                 id: 1,
+                merchant_id: $merchant_id,
                 name: 'Low Priority',
                 event_type: 'order.completed',
                 reward_type: 'fixed',
@@ -380,6 +401,7 @@ describe('Unit: Evaluate Rules', function () {
             // And
             $ruleHighPriority = new RewardRule(
                 id: 2,
+                merchant_id: $merchant_id,
                 name: 'High Priority',
                 event_type: 'order.completed',
                 reward_type: 'fixed',
@@ -428,9 +450,11 @@ describe('Unit: Evaluate Rules', function () {
         it('produces consistent result when re-evaluating.', function () {
 
             // Given
+            $merchant_id = Str::uuid()->toString();
+
             $event = new Event(
                 id: Str::uuid()->toString(),
-                merchant_id: Str::uuid()->toString(),
+                merchant_id: $merchant_id,
                 external_id : 'EXT-123',
                 type : 'order.completed',
                 source: 'shopify',
@@ -445,6 +469,7 @@ describe('Unit: Evaluate Rules', function () {
             // And
             $rule = new RewardRule(
                 id: 1,
+                merchant_id: $merchant_id,
                 name: 'Active Rule',
                 event_type: 'order.completed',
                 reward_type: 'fixed',
@@ -498,9 +523,11 @@ describe('Unit: Evaluate Rules', function () {
         it('does not evaluate inactive rules at all (repository filter).', function () {
 
             // Given
+            $merchant_id = Str::uuid()->toString();
+
             $event = new Event(
                 id: Str::uuid()->toString(),
-                merchant_id: Str::uuid()->toString(),
+                merchant_id: $merchant_id,
                 external_id : 'EXT-123',
                 type : 'order.completed',
                 source: 'shopify',
@@ -514,6 +541,7 @@ describe('Unit: Evaluate Rules', function () {
 
             $activeRule = new RewardRule(
                 id: 2,
+                merchant_id: $merchant_id,
                 name: 'Active Rule',
                 event_type: 'order.completed',
                 reward_type: 'fixed',
@@ -565,9 +593,11 @@ describe('Unit: Evaluate Rules', function () {
         it('does not evaluate rules twice for the same event.', function () {
 
             // Given
+            $merchant_id = Str::uuid()->toString();
+
             $event = new Event(
                 id: Str::uuid()->toString(),
-                merchant_id: Str::uuid()->toString(),
+                merchant_id: $merchant_id,
                 external_id : 'EXT-123',
                 type : 'order.completed',
                 source: 'shopify',

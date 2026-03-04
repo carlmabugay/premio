@@ -11,7 +11,7 @@ class CreateCustomerDTO
         public array $meta_data,
     ) {}
 
-    public function fromArray(array $customer): self
+    public static function fromArray(array $customer): self
     {
         return new self(
             merchant_id: $customer['merchant_id'],

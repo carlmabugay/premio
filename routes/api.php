@@ -8,4 +8,5 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('v1')->group(function () {
     Route::post('/events', EventIngestionController::class)->middleware(EnsureApiKeyIsValid::class);
     Route::post('/rules', RewardRuleController::class)->middleware(EnsureApiKeyIsValid::class);
+    Route::post('/customers', RewardRuleController::class)->middleware(EnsureApiKeyIsValid::class);
 });

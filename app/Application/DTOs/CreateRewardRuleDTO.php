@@ -3,6 +3,7 @@
 namespace App\Application\DTOs;
 
 use DateTimeImmutable;
+use Exception;
 
 class CreateRewardRuleDTO
 {
@@ -18,6 +19,9 @@ class CreateRewardRuleDTO
         public ?float $priority,
     ) {}
 
+    /**
+     * @throws Exception
+     */
     public static function fromArray(array $data): self
     {
         return new self(
@@ -27,8 +31,8 @@ class CreateRewardRuleDTO
             reward_type: $data['reward_type'],
             reward_value: $data['reward_value'],
             is_active: $data['is_active'],
-            starts_at: $data['starts_at'],
-            ends_at: $data['ends_at'],
+            starts_at: new DateTimeImmutable($data['starts_at']),
+            ends_at: new DateTimeImmutable($data['ends_at']),
             priority: $data['priority'],
         );
     }

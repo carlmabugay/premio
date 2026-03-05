@@ -3,12 +3,14 @@
 namespace App\Application\UseCases;
 
 use App\Application\DTOs\CreateRewardRuleDTO;
-use App\Domain\Rewards\Contracts\RewardRuleRepositoryInterface;
 use App\Domain\Rewards\Entities\RewardRule;
+use App\Domain\Rewards\Services\RewardRuleService;
 
 readonly class HandleRewardRuleCreation
 {
-    public function __construct(private RewardRuleRepositoryInterface $rewardRuleRepository) {}
+    public function __construct(
+        private RewardRuleService $service
+    ) {}
 
     public function handle(CreateRewardRuleDTO $dto): void
     {
@@ -25,7 +27,7 @@ readonly class HandleRewardRuleCreation
             priority: $dto->priority,
         );
 
-        $this->rewardRuleRepository->save($rule);
+        $this->service->save($rule);
 
     }
 }

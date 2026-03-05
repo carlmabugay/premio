@@ -1,0 +1,18 @@
+<?php
+
+namespace App\Domain\Rewards\Services;
+
+use App\Domain\Rewards\Contracts\RewardRuleRepositoryInterface;
+use App\Domain\Rewards\Entities\RewardRule;
+
+readonly class RewardRuleService
+{
+    public function __construct(
+        private RewardRuleRepositoryInterface $repository
+    ) {}
+
+    public function save(RewardRule $rewardRule): void
+    {
+        $this->repository->save($rewardRule);
+    }
+}

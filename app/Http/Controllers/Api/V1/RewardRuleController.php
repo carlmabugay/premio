@@ -6,12 +6,16 @@ use App\Application\DTOs\CreateRewardRuleDTO;
 use App\Application\UseCases\HandleRewardRuleCreation;
 use App\Http\Requests\CreateRewardRuleRequest;
 use App\Http\Responses\RewardRuleCreationResponse;
+use Exception;
 use Illuminate\Http\JsonResponse;
 
 class RewardRuleController
 {
     public function __construct() {}
 
+    /**
+     * @throws Exception
+     */
     public function __invoke(CreateRewardRuleRequest $request, HandleRewardRuleCreation $handler): JsonResponse
     {
         $dto = CreateRewardRuleDTO::fromArray($request->validated());

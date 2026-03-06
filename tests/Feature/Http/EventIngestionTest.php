@@ -43,7 +43,7 @@ describe('Feature: Event Ingestion', function () {
                 'type' => 'order.completed',
                 'source' => 'shopify',
                 'customer' => [
-                  'id' => 'CUST-123',
+                    'id' => 'CST-123',
                 ],
                 'payload' => [
                     'order_total' => 1500,
@@ -69,7 +69,7 @@ describe('Feature: Event Ingestion', function () {
                         'source',
                         'customer' => [
                             'id',
-                        ]
+                        ],
                     ],
                     'rewards' => [
                         [
@@ -94,8 +94,11 @@ describe('Feature: Event Ingestion', function () {
                 'external_id' => 'EXT-123',
                 'type' => 'order.completed',
                 'source' => 'shopify',
+                'customer' => [
+                    'id' => 'CST-123',
+                ],
                 'payload' => [
-                    'customer_id' => 'CST-123',
+                    'order_total' => 1500,
                 ],
                 'occurred_at' => now()->format('Y-m-d H:i:s'),
             ];
@@ -134,8 +137,11 @@ describe('Feature: Event Ingestion', function () {
                 'external_id' => 'EXT-123',
                 'type' => 'order.completed',
                 'source' => 'shopify',
+                'customer' => [
+                    'id' => 'CST-123',
+                ],
                 'payload' => [
-                    'customer_id' => 'CST-123',
+                    'order_total' => 1500,
                 ],
                 'occurred_at' => now()->format('Y-m-d H:i:s'),
             ];

@@ -13,7 +13,7 @@ describe('Unit: CustomerService', function () {
             // Arrange:
             $repo = Mockery::mock(CustomerRepositoryInterface::class);
             $merchant_id = Str::uuid()->toString();
-            $external_customer_id = 'CUST-123';
+            $external_customer_id = 'CST-123';
 
             // Expectation / Assert:
             $repo->shouldReceive('save')

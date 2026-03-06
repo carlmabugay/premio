@@ -34,6 +34,7 @@ describe('Unit: Evaluate Rules', function () {
                 external_id : 'EXT-123',
                 type : 'order.completed',
                 source: 'shopify',
+                customer: ['id' => 'CST-123'],
                 payload: ['order_total' => 1500],
                 occurred_at: new DateTimeImmutable('2026-01-01 12:00:00'),
                 processed_at: null,
@@ -122,6 +123,7 @@ describe('Unit: Evaluate Rules', function () {
                 external_id : 'EXT-123',
                 type : 'order.completed',
                 source: 'shopify',
+                customer: ['id' => 'CST-123'],
                 payload: [
                     'amount' => 150,
                     'currency' => 'USD',
@@ -214,6 +216,7 @@ describe('Unit: Evaluate Rules', function () {
                 external_id : 'EXT-123',
                 type : 'order.completed',
                 source: 'shopify',
+                customer: ['id' => 'CST-123'],
                 payload: [
                     'amount' => 150,
                     'currency' => 'USD',
@@ -295,6 +298,7 @@ describe('Unit: Evaluate Rules', function () {
                 external_id : 'EXT-123',
                 type : 'order.completed',
                 source: 'shopify',
+                customer: ['id' => 'CST-123'],
                 payload: [
                     'amount' => 150,
                     'currency' => 'USD',
@@ -384,6 +388,7 @@ describe('Unit: Evaluate Rules', function () {
                 external_id : 'EXT-123',
                 type : 'order.completed',
                 source: 'shopify',
+                customer: ['id' => 'CST-123'],
                 payload: [
                     'amount' => 150,
                     'currency' => 'USD',
@@ -475,6 +480,7 @@ describe('Unit: Evaluate Rules', function () {
                 external_id : 'EXT-123',
                 type : 'order.completed',
                 source: 'shopify',
+                customer: ['id' => 'CST-123'],
                 payload: [
                     'amount' => 150,
                     'currency' => 'USD',
@@ -551,6 +557,7 @@ describe('Unit: Evaluate Rules', function () {
                 external_id : 'EXT-123',
                 type : 'order.completed',
                 source: 'shopify',
+                customer: ['id' => 'CST-123'],
                 payload: [
                     'amount' => 150,
                     'currency' => 'USD',
@@ -624,6 +631,7 @@ describe('Unit: Evaluate Rules', function () {
                 external_id : 'EXT-123',
                 type : 'order.completed',
                 source: 'shopify',
+                customer: ['id' => 'CST-123'],
                 payload: [
                     'amount' => 150,
                     'currency' => 'USD',

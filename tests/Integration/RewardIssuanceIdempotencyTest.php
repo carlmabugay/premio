@@ -51,6 +51,7 @@ describe('Integration: Reward Issuance Idempotency', function () {
                 external_id : 'EXT-123',
                 type : 'order.completed',
                 source: 'shopify',
+                customer: ['id' => 'CST-123'],
                 payload: [
                     'amount' => 1000,
                 ],

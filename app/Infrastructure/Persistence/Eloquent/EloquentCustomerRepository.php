@@ -3,18 +3,15 @@
 namespace App\Infrastructure\Persistence\Eloquent;
 
 use App\Domain\Customers\Contracts\CustomerRepositoryInterface;
-use App\Domain\Customers\Entities\Customer;
 use App\Models\Customer as EloquentCustomer;
 
 class EloquentCustomerRepository implements CustomerRepositoryInterface
 {
-    public function save(Customer $customer): void
+    public function save(string $merchant_id, string $external_customer_id): void
     {
-        EloquentCustomer::create([
-            'merchant_id' => $customer->merchantId(),
-            'external_id' => $customer->externalId(),
-            'email' => $customer->email(),
-            'meta_data' => $customer->metaData(),
-        ]);
+        EloquentCustomer::firstOrCreate(
+            ['merchant_id' => $merchant_id],
+            ['external_customer_id' => $external_customer_id]
+        );
     }
 }

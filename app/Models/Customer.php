@@ -13,7 +13,7 @@ class Customer extends Model
 
     protected $fillable = [
         'merchant_id',
-        'external_id',
+        'external_customer_id',
         'email',
         'meta_data',
     ];

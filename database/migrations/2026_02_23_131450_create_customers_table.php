@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('customers', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('merchant_id')->constrained()->cascadeOnDelete();
-            $table->string('external_id');
+            $table->string('external_customer_id');
             $table->string('email')->nullable();
             $table->json('meta_data')->nullable();
             $table->timestamps();

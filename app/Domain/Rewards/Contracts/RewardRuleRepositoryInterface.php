@@ -9,4 +9,6 @@ interface RewardRuleRepositoryInterface
     public function findActive(string $event_type): array;
 
     public function save(RewardRule $rewardRule): RewardRule;
+
+    public function fetchAll(): array;
 }

@@ -40,6 +40,15 @@ class EloquentRewardRuleRepository implements RewardRuleRepositoryInterface
         return $rewardRule;
     }
 
+    public function fetchAll(): array
+    {
+        return EloquentRewardRule::query()
+            ->where('is_active', true)
+            ->get()
+            ->map(fn ($model) => $this->toDomain($model))
+            ->all();
+    }
+
     /**
      * @throws Exception
      */

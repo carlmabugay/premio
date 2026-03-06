@@ -34,4 +34,30 @@ describe('Unit: RewardRuleService', function () {
 
         });
     });
+
+    it('should fetch list of reward rules.', function () {
+
+        // Arrange:
+        $repo = Mockery::mock(RewardRuleRepositoryInterface::class);
+        $rule = new RewardRule(
+            id: 1,
+            merchant_id: Str::uuid()->toString(),
+            name: 'Active Rule',
+            event_type: 'order.completed',
+            reward_type: 'fixed',
+            reward_value: 100,
+            is_active: true,
+        );
+
+        // Expectation / Assert:
+        $repo->shouldReceive('fetchAll')
+            ->once()
+            ->andReturn([
+                $rule,
+            ]);
+
+        // Act:
+        $service = new RewardRuleService($repo);
+        $service->fetchAll($rule);
+    });
 });

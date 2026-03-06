@@ -15,4 +15,9 @@ readonly class RewardRuleService
     {
         return $this->repository->save($rewardRule);
     }
+
+    public function fetchAll(): array
+    {
+        return $this->repository->fetchAll();
+    }
 }

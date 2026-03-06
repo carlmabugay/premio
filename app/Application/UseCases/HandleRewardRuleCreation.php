@@ -2,7 +2,8 @@
 
 namespace App\Application\UseCases;
 
-use App\Application\DTOs\CreateRewardRuleDTO;
+use App\Application\DTOs\Read\RewardRuleReadDTO;
+use App\Application\DTOs\Write\RewardRuleCreateDTO;
 use App\Domain\Rewards\Entities\RewardRule;
 use App\Domain\Rewards\Services\RewardRuleService;
 
@@ -12,10 +13,10 @@ readonly class HandleRewardRuleCreation
         private RewardRuleService $service
     ) {}
 
-    public function handle(CreateRewardRuleDTO $dto): void
+    public function handle(RewardRuleCreateDTO $dto): RewardRuleReadDTO
     {
         $rule = new RewardRule(
-            id: 1,
+            id: null,
             merchant_id: $dto->merchant_id,
             name: $dto->name,
             event_type: $dto->event_type,
@@ -27,7 +28,8 @@ readonly class HandleRewardRuleCreation
             priority: $dto->priority,
         );
 
-        $this->service->save($rule);
+        $savedRule = $this->service->save($rule);
 
+        return RewardRuleReadDTO::fromEntity($savedRule);
     }
 }

@@ -2,14 +2,18 @@
 
 namespace App\Http\Responses;
 
+use App\Application\DTOs\Read\RewardRuleReadDTO;
 use Illuminate\Http\JsonResponse;
 
-class RewardRuleCreationResponse
+readonly class RewardRuleCreationResponse
 {
+    public function __construct(private RewardRuleReadDTO $dto) {}
+
     public function make(): JsonResponse
     {
         return response()->json([
-            'status' => 'processed',
-        ], 200);
+            'id' => $this->dto->id,
+            'status' => 'created',
+        ], 201);
     }
 }

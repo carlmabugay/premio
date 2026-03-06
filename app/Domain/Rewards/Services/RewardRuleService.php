@@ -11,8 +11,8 @@ readonly class RewardRuleService
         private RewardRuleRepositoryInterface $repository
     ) {}
 
-    public function save(RewardRule $rewardRule): void
+    public function save(RewardRule $rewardRule): RewardRule
     {
-        $this->repository->save($rewardRule);
+        return $this->repository->save($rewardRule);
     }
 }

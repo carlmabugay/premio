@@ -43,7 +43,11 @@ describe('Feature: Reward Rule Creation', function () {
                 'X-API-KEY' => $this->api->key_hash,
             ])->postJson('/api/v1/rules', $payload);
 
-            $response->assertStatus(200);
+            $response->assertCreated()
+                ->assertJsonStructure([
+                    'id',
+                    'status',
+                ]);
 
             $this->assertDatabaseHas('reward_rules', [
                 'merchant_id' => $this->merchant->id,

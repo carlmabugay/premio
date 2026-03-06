@@ -11,7 +11,6 @@ use DateTimeImmutable;
 class RewardRule
 {
     public function __construct(
-        private readonly int $id,
         private readonly string $merchant_id,
         private readonly string $name,
         private readonly string $event_type,
@@ -22,11 +21,17 @@ class RewardRule
         private readonly ?DateTimeImmutable $ends_at = null,
         private readonly ?array $conditions = [],
         public int $priority = 100,
+        private int|string|null $id = null,
     ) {}
 
-    public function id(): int
+    public function id(): int|string|null
     {
         return $this->id;
+    }
+
+    public function setId(int $id): void
+    {
+        $this->id = $id;
     }
 
     public function merchantId(): string

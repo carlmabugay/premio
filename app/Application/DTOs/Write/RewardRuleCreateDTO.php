@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Application\DTOs;
+namespace App\Application\DTOs\Write;
 
 use DateTimeImmutable;
 use Exception;
 
-class CreateRewardRuleDTO
+class RewardRuleCreateDTO
 {
     public function __construct(
         public string $merchant_id,

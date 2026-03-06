@@ -22,9 +22,9 @@ class EloquentRewardRuleRepository implements RewardRuleRepositoryInterface
             ->all();
     }
 
-    public function save(RewardRule $rewardRule): void
+    public function save(RewardRule $rewardRule): RewardRule
     {
-        EloquentRewardRule::create([
+        $rule = EloquentRewardRule::create([
             'merchant_id' => $rewardRule->merchantId(),
             'event_type' => $rewardRule->eventType(),
             'name' => $rewardRule->name(),
@@ -34,6 +34,10 @@ class EloquentRewardRuleRepository implements RewardRuleRepositoryInterface
             'ends_at' => $rewardRule->endsAt(),
             'priority' => $rewardRule->priority(),
         ]);
+
+        $rewardRule->setId($rule->id);
+
+        return $rewardRule;
     }
 
     /**

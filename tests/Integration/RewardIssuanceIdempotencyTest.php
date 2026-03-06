@@ -4,6 +4,7 @@ use App\Application\UseCases\EvaluateRules;
 use App\Domain\Events\Entities\Event;
 use App\Domain\Rewards\Services\ConditionEngine;
 use App\Domain\Rewards\Services\RewardEngine;
+use App\Infrastructure\Persistence\Eloquent\EloquentCustomerRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentEventRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentRewardIssueRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentRewardRuleRepository;
@@ -60,6 +61,7 @@ describe('Integration: Reward Issuance Idempotency', function () {
             $useCase = new EvaluateRules(
                 new EloquentEventRepository,
                 new EloquentRewardIssueRepository,
+                new EloquentCustomerRepository,
                 new RewardEngine(
                     new EloquentRewardRuleRepository,
                     new ConditionEngine

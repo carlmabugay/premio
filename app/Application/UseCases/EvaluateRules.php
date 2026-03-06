@@ -3,6 +3,7 @@
 namespace App\Application\UseCases;
 
 use App\Application\Results\RuleEvaluationResult;
+use App\Domain\Customers\Contracts\CustomerRepositoryInterface;
 use App\Domain\Events\Contracts\EventRepositoryInterface;
 use App\Domain\Events\Entities\Event;
 use App\Domain\Rewards\Contracts\RewardIssueRepositoryInterface;
@@ -16,6 +17,7 @@ readonly class EvaluateRules
     public function __construct(
         private EventRepositoryInterface $eventRepository,
         private RewardIssueRepositoryInterface $issueRepository,
+        private CustomerRepositoryInterface $customerRepository,
         private RewardEngine $rewardEngine,
     ) {}
 
@@ -31,6 +33,7 @@ readonly class EvaluateRules
         }
 
         $this->eventRepository->save($event);
+        $this->customerRepository->save($event->merchantId(), $event->id());
 
         $matches = $this->rewardEngine->evaluate($event);
         usort($matches, fn ($a, $b) => $a->priority <=> $b->priority);

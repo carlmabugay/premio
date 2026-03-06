@@ -19,7 +19,7 @@ return new class extends Migration
             $table->json('meta_data')->nullable();
             $table->timestamps();
 
-            $table->unique(['merchant_id', 'external_id']);
+            $table->unique(['merchant_id', 'external_customer_id']);
         });
     }
 

@@ -1,6 +1,7 @@
 <?php
 
 use App\Application\UseCases\EvaluateRules;
+use App\Domain\Customers\Contracts\CustomerRepositoryInterface;
 use App\Domain\Events\Contracts\EventRepositoryInterface;
 use App\Domain\Events\Entities\Event;
 use App\Domain\Rewards\Contracts\RewardIssueRepositoryInterface;
@@ -12,9 +13,10 @@ use Illuminate\Support\Str;
 beforeEach(function () {
     $this->eventRepository = Mockery::mock(EventRepositoryInterface::class);
     $this->issueRepository = Mockery::mock(RewardIssueRepositoryInterface::class);
+    $this->customerRepository = Mockery::mock(CustomerRepositoryInterface::class);
     $this->rewardEngine = Mockery::mock(RewardEngine::class);
 
-    $this->useCase = new EvaluateRules($this->eventRepository, $this->issueRepository, $this->rewardEngine);
+    $this->useCase = new EvaluateRules($this->eventRepository, $this->issueRepository, $this->customerRepository, $this->rewardEngine);
 });
 
 describe('Unit: Evaluate Rules', function () {
@@ -81,6 +83,9 @@ describe('Unit: Evaluate Rules', function () {
             $this->eventRepository->shouldReceive('save')
                 ->once()
                 ->with($event);
+
+            $this->customerRepository->shouldReceive('save')
+                ->once();
 
             $this->rewardEngine->shouldReceive('evaluate')
                 ->with($event)
@@ -171,6 +176,9 @@ describe('Unit: Evaluate Rules', function () {
                 ->once()
                 ->with($event);
 
+            $this->customerRepository->shouldReceive('save')
+                ->once();
+
             $this->issueRepository->shouldReceive('issue')
                 ->once()
                 ->with(Mockery::on(function ($issue) use ($event, $matchingRule) {
@@ -260,6 +268,9 @@ describe('Unit: Evaluate Rules', function () {
                 ->once()
                 ->with($event);
 
+            $this->customerRepository->shouldReceive('save')
+                ->once();
+
             $this->issueRepository->shouldNotReceive('issue');
 
             $this->rewardEngine->shouldReceive('evaluate')
@@ -335,6 +346,9 @@ describe('Unit: Evaluate Rules', function () {
             $this->eventRepository->shouldReceive('save')
                 ->once()
                 ->with($event);
+
+            $this->customerRepository->shouldReceive('save')
+                ->once();
 
             $this->issueRepository->shouldReceive('issue')
                 ->once()
@@ -427,6 +441,9 @@ describe('Unit: Evaluate Rules', function () {
                 ->once()
                 ->with($event);
 
+            $this->customerRepository->shouldReceive('save')
+                ->once();
+
             $this->issueRepository->shouldReceive('issue')
                 ->once()
                 ->ordered()
@@ -491,6 +508,9 @@ describe('Unit: Evaluate Rules', function () {
             $this->eventRepository->shouldReceive('save')
                 ->once()
                 ->with($event);
+
+            $this->customerRepository->shouldReceive('save')
+                ->once();
 
             $this->issueRepository->shouldReceive('issue')
                 ->once()
@@ -566,6 +586,9 @@ describe('Unit: Evaluate Rules', function () {
                 ->once()
                 ->with($event)
                 ->andReturn(true);
+
+            $this->customerRepository->shouldReceive('save')
+                ->once();
 
             $this->issueRepository->shouldReceive('issue')
                 ->once()

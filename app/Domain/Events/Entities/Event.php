@@ -12,6 +12,7 @@ readonly class Event
         private string $external_id,
         private string $type,
         private string $source,
+        private array $customer,
         private ?array $payload,
         private DateTimeImmutable $occurred_at,
         private ?DateTimeImmutable $processed_at,
@@ -40,6 +41,16 @@ readonly class Event
     public function source(): string
     {
         return $this->source;
+    }
+
+    public function customer(): array
+    {
+        return $this->customer;
+    }
+
+    public function customerId(): string
+    {
+        return $this->customer['id'];
     }
 
     public function payload(): ?array

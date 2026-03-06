@@ -9,6 +9,7 @@ class CreateEventDTO
         public string $external_id,
         public string $type,
         public string $source,
+        public array $customer,
         public array $payload,
         public string $occurred_at,
     ) {}
@@ -20,6 +21,7 @@ class CreateEventDTO
             external_id: $event['external_id'],
             type: $event['type'],
             source: $event['source'],
+            customer: $event['customer'],
             payload: $event['payload'],
             occurred_at: $event['occurred_at'],
         );

@@ -27,6 +27,8 @@ class IngestEventRequest extends FormRequest
             'external_id' => 'required|string',
             'source' => 'required|string',
             'type' => 'required|string',
+            'customer' => 'required|array',
+            'customer.id' => 'required|string',
             'payload' => 'required|array',
             'occurred_at' => 'required|date',
         ];

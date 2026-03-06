@@ -33,7 +33,7 @@ readonly class EvaluateRules
         }
 
         $this->eventRepository->save($event);
-        $this->customerRepository->save($event->merchantId(), $event->id());
+        $this->customerRepository->save($event->merchantId(), $event->customerId());
 
         $matches = $this->rewardEngine->evaluate($event);
         usort($matches, fn ($a, $b) => $a->priority <=> $b->priority);

@@ -42,6 +42,9 @@ describe('Feature: Event Ingestion', function () {
                 'external_id' => 'EXT-123',
                 'type' => 'order.completed',
                 'source' => 'shopify',
+                'customer' => [
+                  'id' => 'CUST-123',
+                ],
                 'payload' => [
                     'order_total' => 1500,
                 ],
@@ -64,6 +67,9 @@ describe('Feature: Event Ingestion', function () {
                         'external_id',
                         'type',
                         'source',
+                        'customer' => [
+                            'id',
+                        ]
                     ],
                     'rewards' => [
                         [
@@ -76,6 +82,7 @@ describe('Feature: Event Ingestion', function () {
                 ]);
 
             $this->assertDatabaseCount('events', 1);
+            $this->assertDatabaseCount('customers', 1);
             $this->assertDatabaseCount('reward_issues', 1);
         });
 

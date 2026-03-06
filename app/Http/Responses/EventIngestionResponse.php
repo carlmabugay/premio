@@ -33,6 +33,9 @@ readonly class EventIngestionResponse
                 'external_id' => $this->request['external_id'],
                 'type' => $this->request['type'],
                 'source' => $this->request['source'],
+                'customer' => [
+                    'id' => $this->request['customer']['id'],
+                ]
             ],
             'rewards' => array_map(fn ($issue) => [
                 'rule_id' => $issue->rewardRuleId(),

@@ -26,6 +26,7 @@ readonly class HandleEventIngestion
             external_id: $dto->external_id,
             type: $dto->type,
             source: $dto->source,
+            customer: $dto->customer,
             payload: $dto->payload,
             occurred_at: new DateTimeImmutable($dto->occurred_at),
             processed_at: null,

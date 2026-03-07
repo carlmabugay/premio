@@ -3,14 +3,14 @@
 namespace App\Domain\Rewards\Services;
 
 use App\Domain\Events\Entities\Event;
-use App\Domain\Rewards\Contracts\RewardRuleRepositoryInterface;
+use App\Domain\Rewards\Contracts\Read\RewardRuleReadRepositoryInterface;
 use App\Exceptions\MalformedCondition;
 use App\Exceptions\UnsupportedOperator;
 
 class RewardEngine
 {
     public function __construct(
-        private readonly RewardRuleRepositoryInterface $ruleRepository,
+        private readonly RewardRuleReadRepositoryInterface $ruleRepository,
         private ConditionEngine $conditionEngine,
     ) {}
 

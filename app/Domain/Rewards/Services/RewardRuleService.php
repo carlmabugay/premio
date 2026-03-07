@@ -2,22 +2,24 @@
 
 namespace App\Domain\Rewards\Services;
 
-use App\Domain\Rewards\Contracts\RewardRuleRepositoryInterface;
+use App\Domain\Rewards\Contracts\Read\RewardRuleReadRepositoryInterface;
+use App\Domain\Rewards\Contracts\Write\RewardRuleWriteRepositoryInterface;
 use App\Domain\Rewards\Entities\RewardRule;
 
 readonly class RewardRuleService
 {
     public function __construct(
-        private RewardRuleRepositoryInterface $repository
+        private RewardRuleWriteRepositoryInterface $writeRepository,
+        private RewardRuleReadRepositoryInterface $readRepository
     ) {}
 
     public function save(RewardRule $rewardRule): RewardRule
     {
-        return $this->repository->save($rewardRule);
+        return $this->writeRepository->save($rewardRule);
     }
 
     public function fetchAll(): array
     {
-        return $this->repository->fetchAll();
+        return $this->readRepository->fetchAll();
     }
 }

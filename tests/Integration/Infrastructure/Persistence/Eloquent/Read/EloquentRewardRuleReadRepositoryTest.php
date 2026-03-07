@@ -1,8 +1,8 @@
 <?php
 
 use App\Domain\Rewards\Entities\RewardRule;
-use App\Infrastructure\Persistence\Eloquent\EloquentRewardRuleRepository;
-use App\Models\Merchant;
+use App\Infrastructure\Persistence\Eloquent\Read\EloquentRewardRuleReadRepository;
+use App\Models\Merchant as EloquentMerchant;
 use App\Models\RewardRule as EloquentRewardRule;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -10,15 +10,18 @@ use Tests\TestCase;
 uses(TestCase::class, RefreshDatabase::class);
 
 beforeEach(function () {
-    $this->merchant = Merchant::factory()->active()->create();
+    $this->merchant = EloquentMerchant::factory()->active()->create();
+    $this->repository = new EloquentRewardRuleReadRepository;
 });
 
-describe('Integration: EloquentRewardRuleRepository', function () {
+describe('Integration: EloquentRewardRuleReadRepository', function () {
 
     describe('Positives', function () {
 
-        it('findActive returns only active rules.', function () {
+        it('should only return active reward rules when using findActive method.', function () {
 
+            // Arrange:
+            // Active rule
             EloquentRewardRule::create([
                 'merchant_id' => $this->merchant->id,
                 'name' => 'Active Rule',
@@ -54,10 +57,10 @@ describe('Integration: EloquentRewardRuleRepository', function () {
                 'priority' => 20,
             ]);
 
-            $repository = new EloquentRewardRuleRepository;
+            // Act:
+            $rules = $this->repository->findActive('order.created');
 
-            $rules = $repository->findActive('order.created');
-
+            // Assert:
             expect($rules[0])->toBeInstanceOf(RewardRule::class)
                 ->and(get_object_vars($rules[0]->conditions()[0]))->toBe([
                     'field' => 'amount',
@@ -70,8 +73,9 @@ describe('Integration: EloquentRewardRuleRepository', function () {
 
         });
 
-        it('findActive filters by event_type correctly.', function () {
+        it('should filter by event_type correctly when using findActive method.', function () {
 
+            // Arrange:
             EloquentRewardRule::create([
                 'merchant_id' => $this->merchant->id,
                 'name' => 'Order Rule',
@@ -94,9 +98,7 @@ describe('Integration: EloquentRewardRuleRepository', function () {
                 'priority' => 1,
             ]);
 
-            $repository = new EloquentRewardRuleRepository;
-
-            $rules = $repository->findActive('order.created');
+            $rules = $this->repository->findActive('order.created');
 
             expect($rules[0])->toBeInstanceOf(RewardRule::class)
                 ->and($rules)->toHaveCount(1)
@@ -104,8 +106,10 @@ describe('Integration: EloquentRewardRuleRepository', function () {
 
         });
 
-        it('findActive respects priority ordering (ascending).', function () {
+        it('should respect priority ordering (ascending) when using findActive method.', function () {
 
+            // Arrange:
+            // Low priority rule
             EloquentRewardRule::create([
                 'merchant_id' => $this->merchant->id,
                 'name' => 'Low Priority Rule',
@@ -117,6 +121,7 @@ describe('Integration: EloquentRewardRuleRepository', function () {
                 'priority' => 50,
             ]);
 
+            // High priority rule
             EloquentRewardRule::create([
                 'merchant_id' => $this->merchant->id,
                 'name' => 'High Priority Rule',
@@ -128,6 +133,7 @@ describe('Integration: EloquentRewardRuleRepository', function () {
                 'priority' => 10,
             ]);
 
+            // Medium priority rule
             EloquentRewardRule::create([
                 'merchant_id' => $this->merchant->id,
                 'name' => 'Mid Priority Rule',
@@ -139,10 +145,10 @@ describe('Integration: EloquentRewardRuleRepository', function () {
                 'priority' => 30,
             ]);
 
-            $repository = new EloquentRewardRuleRepository;
+            // Act:
+            $rules = $this->repository->findActive('order.created');
 
-            $rules = $repository->findActive('order.created');
-
+            // Assert:
             expect($rules)->toHaveCount(3)
                 ->and($rules[0]->priority())->toBe(10)
                 ->and($rules[1]->priority())->toBe(30)
@@ -150,8 +156,9 @@ describe('Integration: EloquentRewardRuleRepository', function () {
 
         });
 
-        it('findActive correctly hydrates DateTimeImmutable.', function () {
+        it('should correctly hydrates DateTimeImmutable when using findActive method.', function () {
 
+            // Arrange:
             EloquentRewardRule::create([
                 'merchant_id' => $this->merchant->id,
                 'name' => 'Date Rule',
@@ -163,10 +170,10 @@ describe('Integration: EloquentRewardRuleRepository', function () {
                 'priority' => 50,
             ]);
 
-            $repository = new EloquentRewardRuleRepository;
+            // Act:
+            $rules = $this->repository->findActive('order.created');
 
-            $rules = $repository->findActive('order.created');
-
+            // Assert:
             expect($rules)->toHaveCount(1);
 
             $rule = $rules[0];
@@ -181,12 +188,59 @@ describe('Integration: EloquentRewardRuleRepository', function () {
 
         });
 
+        it('should return all reward rules when using fetchAll method.', function () {
+
+            // Arrange:
+            // Active rule
+            EloquentRewardRule::create([
+                'merchant_id' => $this->merchant->id,
+                'name' => 'Active Rule',
+                'event_type' => 'order.created',
+                'is_active' => true,
+                'starts_at' => null,
+                'ends_at' => null,
+                'conditions' => json_encode([
+                    [
+                        'field' => 'amount',
+                        'operator' => '>=',
+                        'value' => 100,
+                    ],
+                ]),
+                'priority' => 10,
+            ]);
+
+            // Inactive rule
+            EloquentRewardRule::create([
+                'merchant_id' => $this->merchant->id,
+                'name' => 'Inactive Rule',
+                'event_type' => 'order.created',
+                'is_active' => false,
+                'starts_at' => null,
+                'ends_at' => null,
+                'conditions' => json_encode([
+                    [
+                        'field' => 'amount',
+                        'operator' => '>=',
+                        'value' => 200,
+                    ],
+                ]),
+                'priority' => 20,
+            ]);
+
+            // Act:
+            $rules = $this->repository->fetchAll();
+
+            // Assert:
+            expect($rules)->toHaveCount(2);
+        });
+
     });
 
     describe('Negatives', function () {
 
-        it('findActive returns empty array when no active rules exist.', function () {
+        it('should return empty array when no active reward rules exist after using findActive method.', function () {
 
+            // Arrange:
             EloquentRewardRule::create([
                 'merchant_id' => $this->merchant->id,
                 'name' => 'Inactive Rule',
@@ -209,9 +263,7 @@ describe('Integration: EloquentRewardRuleRepository', function () {
                 'priority' => 1,
             ]);
 
-            $repository = new EloquentRewardRuleRepository;
-
-            $rules = $repository->findActive('order.created');
+            $rules = $this->repository->findActive('order.created');
 
             expect($rules)->toBeArray()
                 ->and($rules)->toBeEmpty();

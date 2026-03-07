@@ -1,18 +1,17 @@
 <?php
 
-namespace App\Infrastructure\Persistence\Eloquent;
+namespace App\Infrastructure\Persistence\Eloquent\Read;
 
-use App\Domain\Rewards\Contracts\RewardRuleRepositoryInterface;
+use App\Domain\Rewards\Contracts\Read\RewardRuleReadRepositoryInterface;
 use App\Domain\Rewards\Entities\RewardRule;
 use App\Models\RewardRule as EloquentRewardRule;
 use DateTimeImmutable;
 use Exception;
 
-class EloquentRewardRuleRepository implements RewardRuleRepositoryInterface
+class EloquentRewardRuleReadRepository implements RewardRuleReadRepositoryInterface
 {
     public function findActive(string $event_type): array
     {
-
         return EloquentRewardRule::query()
             ->where('is_active', true)
             ->where('event_type', $event_type)
@@ -22,28 +21,9 @@ class EloquentRewardRuleRepository implements RewardRuleRepositoryInterface
             ->all();
     }
 
-    public function save(RewardRule $rewardRule): RewardRule
-    {
-        $rule = EloquentRewardRule::create([
-            'merchant_id' => $rewardRule->merchantId(),
-            'event_type' => $rewardRule->eventType(),
-            'name' => $rewardRule->name(),
-            'reward_type' => $rewardRule->rewardType(),
-            'reward_value' => $rewardRule->rewardValue(),
-            'starts_at' => $rewardRule->startsAt(),
-            'ends_at' => $rewardRule->endsAt(),
-            'priority' => $rewardRule->priority(),
-        ]);
-
-        $rewardRule->setId($rule->id);
-
-        return $rewardRule;
-    }
-
     public function fetchAll(): array
     {
         return EloquentRewardRule::query()
-            ->where('is_active', true)
             ->get()
             ->map(fn ($model) => $this->toDomain($model))
             ->all();
@@ -55,7 +35,6 @@ class EloquentRewardRuleRepository implements RewardRuleRepositoryInterface
     private function toDomain(EloquentRewardRule $model): RewardRule
     {
         return new RewardRule(
-            id: $model->id,
             merchant_id: $model->merchant_id,
             name: $model->name,
             event_type: $model->event_type,
@@ -66,6 +45,7 @@ class EloquentRewardRuleRepository implements RewardRuleRepositoryInterface
             ends_at: $model->ends_at ? new DateTimeImmutable($model->ends_at) : null,
             conditions: json_decode($model->conditions),
             priority: $model->priority,
+            id: $model->id,
         );
     }
 }

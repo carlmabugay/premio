@@ -1,7 +1,7 @@
 <?php
 
 use App\Domain\Events\Entities\Event;
-use App\Domain\Rewards\Contracts\RewardRuleRepositoryInterface;
+use App\Domain\Rewards\Contracts\Read\RewardRuleReadRepositoryInterface;
 use App\Domain\Rewards\Entities\RewardRule;
 use App\Domain\Rewards\Services\ConditionEngine;
 use App\Domain\Rewards\Services\RewardEngine;
@@ -10,7 +10,7 @@ use App\Exceptions\UnsupportedOperator;
 use Illuminate\Support\Str;
 
 beforeEach(function () {
-    $this->repository = Mockery::mock(RewardRuleRepositoryInterface::class);
+    $this->repository = Mockery::mock(RewardRuleReadRepositoryInterface::class);
     $this->conditionEngine = new ConditionEngine;
     $this->engine = new RewardEngine($this->repository, $this->conditionEngine);
 });

@@ -7,7 +7,7 @@ use App\Domain\Rewards\Services\RewardEngine;
 use App\Infrastructure\Persistence\Eloquent\EloquentCustomerRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentEventRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentRewardIssueRepository;
-use App\Infrastructure\Persistence\Eloquent\EloquentRewardRuleRepository;
+use App\Infrastructure\Persistence\Eloquent\Read\EloquentRewardRuleReadRepository;
 use App\Models\Merchant;
 use App\Models\RewardRule as EloquentRewardRule;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -17,8 +17,6 @@ use Tests\TestCase;
 uses(TestCase::class, RefreshDatabase::class);
 
 describe('Integration: Reward Issuance Idempotency', function () {
-
-    describe('Positives', function () {});
 
     describe('Negatives', function () {
 
@@ -64,7 +62,7 @@ describe('Integration: Reward Issuance Idempotency', function () {
                 new EloquentRewardIssueRepository,
                 new EloquentCustomerRepository,
                 new RewardEngine(
-                    new EloquentRewardRuleRepository,
+                    new EloquentRewardRuleReadRepository,
                     new ConditionEngine
                 ),
             );
@@ -85,6 +83,4 @@ describe('Integration: Reward Issuance Idempotency', function () {
         });
 
     });
-
-    describe('Edge Cases', function () {});
 });

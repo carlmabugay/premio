@@ -68,5 +68,30 @@ describe('Unit: RewardRuleService', function () {
             $this->service->fetchAll($rule);
 
         });
+
+        it('should return a reward rule when using fetchById method.', function () {
+
+            // Arrange:
+            $rule_id = 1;
+            $rule = new RewardRule(
+                merchant_id: Str::uuid()->toString(),
+                name: 'Active Rule',
+                event_type: 'order.completed',
+                reward_type: 'fixed',
+                reward_value: 100,
+                is_active: true,
+                id: $rule_id,
+            );
+
+            // Assert (Expectation):
+            $this->readRepository->shouldReceive('fetchById')
+                ->once()
+                ->with($rule_id)
+                ->andReturn($rule);
+
+            // Act:
+            $this->service->fetchById($rule_id);
+
+        });
     });
 });

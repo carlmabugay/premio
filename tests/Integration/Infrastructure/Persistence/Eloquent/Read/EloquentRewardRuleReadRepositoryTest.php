@@ -234,6 +234,52 @@ describe('Integration: EloquentRewardRuleReadRepository', function () {
             expect($rules)->toHaveCount(2);
         });
 
+        it('should filter by id correctly when using fetchById method.', function () {
+
+            // Arrange:
+            // Active rule
+            EloquentRewardRule::create([
+                'merchant_id' => $this->merchant->id,
+                'name' => 'Active Rule',
+                'event_type' => 'order.created',
+                'is_active' => true,
+                'starts_at' => null,
+                'ends_at' => null,
+                'conditions' => json_encode([
+                    [
+                        'field' => 'amount',
+                        'operator' => '>=',
+                        'value' => 100,
+                    ],
+                ]),
+                'priority' => 10,
+            ]);
+
+            // Inactive rule
+            EloquentRewardRule::create([
+                'merchant_id' => $this->merchant->id,
+                'name' => 'Inactive Rule',
+                'event_type' => 'order.created',
+                'is_active' => false,
+                'starts_at' => null,
+                'ends_at' => null,
+                'conditions' => json_encode([
+                    [
+                        'field' => 'amount',
+                        'operator' => '>=',
+                        'value' => 200,
+                    ],
+                ]),
+                'priority' => 20,
+            ]);
+            // Act:
+            $rule = $this->repository->fetchById(EloquentRewardRule::first()->id);
+
+            // Assert:
+            expect($rule)->toBeInstanceOf(RewardRule::class)
+                ->and($rule->merchantId())->toBe($this->merchant->id);
+        });
+
     });
 
     describe('Negatives', function () {

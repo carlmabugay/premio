@@ -22,4 +22,9 @@ readonly class RewardRuleService
     {
         return $this->readRepository->fetchAll();
     }
+
+    public function fetchById(int $id): RewardRule
+    {
+        return $this->readRepository->fetchById($id);
+    }
 }

@@ -29,6 +29,13 @@ class EloquentRewardRuleReadRepository implements RewardRuleReadRepositoryInterf
             ->all();
     }
 
+    public function fetchById(int $id): RewardRule
+    {
+        $model = EloquentRewardRule::query()->where('id', $id)->first();
+
+        return $this->toDomain($model);
+    }
+
     /**
      * @throws Exception
      */

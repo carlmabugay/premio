@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Application\UseCases\HandleRewardRuleCollection;
+use App\Http\Responses\RewardRuleCollectionResponse;
 use Illuminate\Http\JsonResponse;
 
 class CollectRewardRuleController
@@ -11,8 +12,8 @@ class CollectRewardRuleController
     {
         $result = $handler->handle();
 
-        return response()->json([
-            'data' => $result,
-        ]);
+        $response = new RewardRuleCollectionResponse($result);
+
+        return $response->make();
     }
 }

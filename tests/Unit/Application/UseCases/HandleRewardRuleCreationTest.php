@@ -11,7 +11,7 @@ describe('Unit: Handle Reward Rule Creation', function () {
 
     describe('Positive', function () {
 
-        it('should handle rewards rule creation.', function () {
+        it('should create a new reward rule when using handle method.', function () {
 
             // Arrange:
             $service = Mockery::mock(RewardRuleService::class);

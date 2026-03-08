@@ -17,8 +17,9 @@ describe('Feature: Reward Rule Creation', function () {
 
     describe('Positives', function () {
 
-        it('create a reward rule.', function () {
+        it('should create a new rule when using /api/v1/rules post api endpoint.', function () {
 
+            // Arrange:
             $payload = [
                 'merchant_id' => $this->merchant->id,
                 'event_type' => 'order.completed',
@@ -38,11 +39,12 @@ describe('Feature: Reward Rule Creation', function () {
                 'priority' => 100,
             ];
 
-            // When
+            // Act:
             $response = $this->withHeaders([
                 'X-API-KEY' => $this->api->key_hash,
             ])->postJson('/api/v1/rules', $payload);
 
+            // Assert:
             $response->assertCreated()
                 ->assertJsonStructure([
                     'id',

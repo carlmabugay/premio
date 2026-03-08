@@ -9,7 +9,7 @@ use App\Http\Responses\RewardRuleCreationResponse;
 use Exception;
 use Illuminate\Http\JsonResponse;
 
-class RewardRuleController
+final class CreateRewardRuleController
 {
     /**
      * @throws Exception

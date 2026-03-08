@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Merchant;
 use App\Models\RewardRule;
+use DateTimeImmutable;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -25,13 +26,13 @@ class RewardRuleFactory extends Factory
             'name' => 'Reward Rule '.$this->faker->word(),
             'event_type' => 'order.completed',
             'is_active' => true,
-            'starts_at' => null,
-            'ends_at' => null,
+            'starts_at' => new DateTimeImmutable('2026-01-01 12:00:00'),
+            'ends_at' => new DateTimeImmutable('2026-06-01 12:00:00'),
             'conditions' => json_encode([
                 [
                     'field' => 'amount',
                     'operator' => '>=',
-                    'value' => 100,
+                    'value' => 500,
                 ],
             ]),
             'priority' => $this->faker->numberBetween(1, 100),

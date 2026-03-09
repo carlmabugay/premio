@@ -35,4 +35,11 @@ readonly class RewardRuleReadDTO
             priority: $rule->priority(),
         );
     }
+
+    public static function fromEntityCollection(array $rules): array
+    {
+        return collect($rules)
+            ->map(fn ($rule) => self::fromEntity($rule))
+            ->toArray();
+    }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Application\UseCases;
 
+use App\Application\DTOs\Read\RewardRuleReadDTO;
 use App\Domain\Rewards\Services\RewardRuleService;
 
 readonly class HandleRewardRuleCollection
@@ -12,6 +13,8 @@ readonly class HandleRewardRuleCollection
 
     public function handle(): array
     {
-        return $this->service->fetchAll();
+        $rules = $this->service->fetchAll();
+
+        return RewardRuleReadDTO::fromEntityCollection($rules);
     }
 }

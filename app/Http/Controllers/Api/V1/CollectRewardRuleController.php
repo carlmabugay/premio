@@ -6,7 +6,7 @@ use App\Application\UseCases\HandleRewardRuleCollection;
 use App\Http\Responses\RewardRuleCollectionResponse;
 use Illuminate\Http\JsonResponse;
 
-class CollectRewardRuleController
+final class CollectRewardRuleController
 {
     public function __invoke(HandleRewardRuleCollection $handler): JsonResponse
     {

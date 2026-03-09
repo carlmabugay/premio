@@ -25,6 +25,8 @@ class RewardRuleFactory extends Factory
             'merchant_id' => Merchant::factory(),
             'name' => 'Reward Rule '.$this->faker->word(),
             'event_type' => 'order.completed',
+            'reward_type' => 'fixed',
+            'reward_value' => $this->faker->numberBetween(100, 1000),
             'is_active' => true,
             'starts_at' => new DateTimeImmutable('2026-01-01 12:00:00'),
             'ends_at' => new DateTimeImmutable('2026-06-01 12:00:00'),

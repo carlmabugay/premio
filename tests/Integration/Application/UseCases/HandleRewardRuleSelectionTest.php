@@ -1,5 +1,6 @@
 <?php
 
+use App\Application\DTOs\Read\RewardRuleReadDTO;
 use App\Application\UseCases\HandleRewardRuleSelection;
 use App\Domain\Rewards\Entities\RewardRule;
 use App\Domain\Rewards\Services\RewardRuleService;
@@ -55,10 +56,10 @@ describe('Integration: Reward Rule Selection', function () {
             // Act:
             $result = $useCase->handle($rule->id);
 
-            expect($result)->tobeInstanceOf(RewardRule::class)
-                ->and($result->id())->toBe($ruleEntity->id())
-                ->and($result->merchantId())->toBe($ruleEntity->merchantId())
-                ->and($result->name())->toBe($ruleEntity->name());
+            expect($result)->tobeInstanceOf(RewardRuleReadDTO::class)
+                ->and($result->id)->toBe($ruleEntity->id())
+                ->and($result->merchant_id)->toBe($ruleEntity->merchantId())
+                ->and($result->name)->toBe($ruleEntity->name());
         });
 
     });

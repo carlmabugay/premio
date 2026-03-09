@@ -4,7 +4,7 @@ namespace App\Http\Responses;
 
 use Illuminate\Http\JsonResponse;
 
-class RewardRuleCollectionResponse
+readonly class RewardRuleCollectionResponse
 {
     public function __construct(private array $data) {}
 

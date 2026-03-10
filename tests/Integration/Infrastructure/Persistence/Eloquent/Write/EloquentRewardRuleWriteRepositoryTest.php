@@ -5,6 +5,7 @@ namespace Tests\Integration\Infrastructure\Persistence\Eloquent\Write;
 use App\Domain\Rewards\Entities\RewardRule;
 use App\Infrastructure\Persistence\Eloquent\Write\EloquentRewardRuleWriteRepository;
 use App\Models\Merchant as EloquentMerchant;
+use App\Models\RewardRule as EloquentRewardRule;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -43,6 +44,28 @@ describe('Integration: EloquentRewardRuleWriteRepository', function () {
 
             // Assert:
             $this->assertDatabaseCount('reward_rules', 1);
+
+        });
+
+        it('should update an existing reward rule when using update method.', function () {
+
+            // Arrange:
+            $rule = EloquentRewardRule::factory()->create([
+                'merchant_id' => $this->merchant->id,
+            ]);
+
+            $dataToUpdate = [
+                'event_type' => 'cart.checkout.completed',
+                'reward_type' => 'percentage',
+                'reward_value' => 1,
+            ];
+
+            // Act:
+            $repository = new EloquentRewardRuleWriteRepository;
+            $repository->update($rule->id, $dataToUpdate);
+
+            // Assert:
+            $this->assertDatabaseHas('reward_rules', $dataToUpdate);
 
         });
     });

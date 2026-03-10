@@ -7,7 +7,7 @@ use App\Domain\Rewards\Entities\RewardRule;
 use App\Domain\Rewards\Services\RewardRuleService;
 use Illuminate\Support\Str;
 
-describe('Unit: Handle Reward Rule Creation', function () {
+describe('Integration: Handle Reward Rule Creation', function () {
 
     describe('Positive', function () {
 

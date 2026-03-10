@@ -93,5 +93,27 @@ describe('Unit: RewardRuleService', function () {
             $this->service->fetchById($rule_id);
 
         });
+
+        it('should update an existing reward rule when using update method.', function () {
+
+            // Arrange:
+            $rule_id = 1;
+
+            $dataToUpdate = [
+                'event_type' => 'cart.checkout.completed',
+                'reward_type' => 'percentage',
+                'reward_value' => 1,
+            ];
+
+            // Assert (Expectation):
+            $this->writeRepository->shouldReceive('update')
+                ->once()
+                ->withArgs([$rule_id, $dataToUpdate])
+                ->andReturn(1);
+
+            // Act:
+            $this->service->update($rule_id, $dataToUpdate);
+
+        });
     });
 });

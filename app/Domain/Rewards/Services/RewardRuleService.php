@@ -27,4 +27,9 @@ class RewardRuleService
     {
         return $this->readRepository->fetchById($id);
     }
+
+    public function update(int $id, array $data): int
+    {
+        return $this->writeRepository->update($id, $data);
+    }
 }

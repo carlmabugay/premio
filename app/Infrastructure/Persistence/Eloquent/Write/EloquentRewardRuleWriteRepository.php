@@ -25,4 +25,11 @@ class EloquentRewardRuleWriteRepository implements RewardRuleWriteRepositoryInte
 
         return $rewardRule;
     }
+
+    public function update(int $id, array $data): int
+    {
+        return EloquentRewardRule::query()
+            ->where('id', $id)
+            ->update($data);
+    }
 }

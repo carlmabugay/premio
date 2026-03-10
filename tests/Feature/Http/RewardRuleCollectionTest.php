@@ -31,6 +31,7 @@ describe('Feature: Reward Rule Collection', function () {
             $response->assertOk()
                 ->assertJsonStructure([
                     'data',
+                    'total',
                 ]);
         });
 

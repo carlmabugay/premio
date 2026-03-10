@@ -39,7 +39,7 @@ readonly class RewardRuleReadDTO
     public static function fromEntityCollection(array $rules): array
     {
         return collect($rules)
-            ->map(fn ($rule) => self::fromEntity($rule))
+            ->map(fn ($rule) => $rule)
             ->toArray();
     }
 }

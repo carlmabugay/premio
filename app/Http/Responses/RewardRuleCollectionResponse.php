@@ -12,6 +12,7 @@ readonly class RewardRuleCollectionResponse
     {
         return response()->json([
             'data' => $this->data,
+            'total' => count($this->data),
         ]);
     }
 }

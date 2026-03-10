@@ -1,6 +1,7 @@
 <?php
 
 use App\Application\UseCases\HandleRewardRuleCollection;
+use App\Domain\Rewards\Entities\RewardRule;
 use App\Domain\Rewards\Services\RewardRuleService;
 use App\Models\ApiKey as EloquentApiKey;
 use App\Models\Merchant as EloquentMerchant;
@@ -28,18 +29,32 @@ describe('Integration: Reward Rule Collection', function () {
                 'merchant_id' => $this->merchant->id,
             ]);
 
+            $entityRules = $rules->map(fn ($rule) => new RewardRule(
+                merchant_id: $rule->merchant_id,
+                name: $rule->name,
+                event_type: $rule->event_type,
+                reward_type: $rule->reward_type,
+                reward_value: $rule->reward_value,
+                is_active: $rule->is_active,
+                starts_at: $rule->starts_at ? new DateTimeImmutable($rule->starts_at) : null,
+                ends_at: $rule->ends_at ? new DateTimeImmutable($rule->ends_at) : null,
+                conditions: json_decode($rule->conditions),
+                priority: $rule->priority,
+                id: $rule->id,
+            ))->all();
+
             $service = Mockery::mock(RewardRuleService::class);
             $useCase = new HandleRewardRuleCollection($service);
 
             // Assert (Expectation):
             $service->shouldReceive('fetchAll')
                 ->once()
-                ->andReturn([$rules]);
+                ->andReturn($entityRules);
 
             // Act:
             $result = $useCase->handle();
 
-            expect($result[0]->count())->toBe($rules->count());
+            expect(count($result))->toBe(count($entityRules));
         });
 
     });

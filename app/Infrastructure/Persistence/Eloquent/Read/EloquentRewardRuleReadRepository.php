@@ -21,9 +21,10 @@ class EloquentRewardRuleReadRepository implements RewardRuleReadRepositoryInterf
             ->all();
     }
 
-    public function fetchAll(): array
+    public function fetchAll(string $merchant_id): array
     {
         return EloquentRewardRule::query()
+            ->where('merchant_id', $merchant_id)
             ->get()
             ->map(fn ($model) => $this->toDomain($model))
             ->all();

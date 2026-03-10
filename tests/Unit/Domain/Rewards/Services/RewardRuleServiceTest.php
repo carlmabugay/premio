@@ -47,8 +47,10 @@ describe('Unit: RewardRuleService', function () {
         it('should return all reward rules when using fetchAll method.', function () {
 
             // Arrange:
+            $merchant_id = Str::uuid()->toString();
+
             $rule = new RewardRule(
-                merchant_id: Str::uuid()->toString(),
+                merchant_id: $merchant_id,
                 name: 'Active Rule',
                 event_type: 'order.completed',
                 reward_type: 'fixed',
@@ -65,7 +67,7 @@ describe('Unit: RewardRuleService', function () {
                 ]);
 
             // Act:
-            $this->service->fetchAll($rule);
+            $this->service->fetchAll($merchant_id);
 
         });
 

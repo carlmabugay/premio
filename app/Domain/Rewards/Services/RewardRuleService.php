@@ -18,9 +18,9 @@ class RewardRuleService
         return $this->writeRepository->save($rewardRule);
     }
 
-    public function fetchAll(): array
+    public function fetchAll(string $merchant_id): array
     {
-        return $this->readRepository->fetchAll();
+        return $this->readRepository->fetchAll($merchant_id);
     }
 
     public function fetchById(int $id): RewardRule

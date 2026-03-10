@@ -1,6 +1,7 @@
 <?php
 
 use App\Application\UseCases\HandleRewardRuleCollection;
+use App\Domain\ApiKeys\Services\ApiKeyService;
 use App\Domain\Rewards\Entities\RewardRule;
 use App\Domain\Rewards\Services\RewardRuleService;
 use App\Models\ApiKey as EloquentApiKey;
@@ -43,16 +44,24 @@ describe('Integration: Reward Rule Collection', function () {
                 id: $rule->id,
             ))->all();
 
-            $service = Mockery::mock(RewardRuleService::class);
-            $useCase = new HandleRewardRuleCollection($service);
+            $ruleService = Mockery::mock(RewardRuleService::class);
+            $apiKeyService = Mockery::mock(ApiKeyService::class);
+
+            $useCase = new HandleRewardRuleCollection($ruleService, $apiKeyService);
 
             // Assert (Expectation):
-            $service->shouldReceive('fetchAll')
+            $apiKeyService->shouldReceive('isKeyExists')
                 ->once()
+                ->with($this->api->key_hash)
+                ->andReturn(true);
+
+            $ruleService->shouldReceive('fetchAll')
+                ->once()
+                ->with()
                 ->andReturn($entityRules);
 
             // Act:
-            $result = $useCase->handle();
+            $result = $useCase->handle($this->api->key_hash);
 
             expect(count($result))->toBe(count($entityRules));
         });

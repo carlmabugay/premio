@@ -191,7 +191,7 @@ describe('Integration: EloquentRewardRuleReadRepository', function () {
         it('should return all reward rules when using fetchAll method.', function () {
 
             // Arrange:
-            // Active rule
+            // Merchant Rule
             EloquentRewardRule::create([
                 'merchant_id' => $this->merchant->id,
                 'name' => 'Active Rule',
@@ -209,10 +209,12 @@ describe('Integration: EloquentRewardRuleReadRepository', function () {
                 'priority' => 10,
             ]);
 
-            // Inactive rule
+            $otherMerchant = EloquentMerchant::factory()->create();
+
+            // Non-Merchant rule
             EloquentRewardRule::create([
-                'merchant_id' => $this->merchant->id,
-                'name' => 'Inactive Rule',
+                'merchant_id' => $otherMerchant->id,
+                'name' => 'Active Rule',
                 'event_type' => 'order.created',
                 'is_active' => false,
                 'starts_at' => null,
@@ -228,10 +230,10 @@ describe('Integration: EloquentRewardRuleReadRepository', function () {
             ]);
 
             // Act:
-            $rules = $this->repository->fetchAll();
+            $rules = $this->repository->fetchAll($this->merchant->id);
 
             // Assert:
-            expect($rules)->toHaveCount(2);
+            expect($rules)->toHaveCount(1);
         });
 
         it('should filter by id correctly when using fetchById method.', function () {

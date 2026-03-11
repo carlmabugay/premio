@@ -10,5 +10,5 @@ interface RewardRuleReadRepositoryInterface
 
     public function fetchAll(string $merchant_id): array;
 
-    public function fetchById(int $id): RewardRule;
+    public function fetchById(string $merchant_id, int $id): RewardRule;
 }

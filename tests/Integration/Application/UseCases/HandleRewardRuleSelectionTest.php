@@ -2,6 +2,8 @@
 
 use App\Application\DTOs\Read\RewardRuleReadDTO;
 use App\Application\UseCases\HandleRewardRuleSelection;
+use App\Domain\ApiKeys\Entities\ApiKey;
+use App\Domain\ApiKeys\Services\ApiKeyService;
 use App\Domain\Rewards\Entities\RewardRule;
 use App\Domain\Rewards\Services\RewardRuleService;
 use App\Models\ApiKey as EloquentApiKey;
@@ -44,17 +46,31 @@ describe('Integration: Reward Rule Selection', function () {
                 id: $rule->id,
             );
 
-            $service = Mockery::mock(RewardRuleService::class);
-            $useCase = new HandleRewardRuleSelection($service);
+            $entityApiKey = new ApiKey(
+                merchant_id: $this->api->merchant_id,
+                name: $this->api->name,
+                key_hash: $this->api->key_hash,
+                is_active: $this->api->is_active,
+            );
+
+            $ruleService = Mockery::mock(RewardRuleService::class);
+            $apiKeyService = Mockery::mock(ApiKeyService::class);
+
+            $useCase = new HandleRewardRuleSelection($ruleService, $apiKeyService);
 
             // Assert (Expectation):
-            $service->shouldReceive('fetchById')
+            $apiKeyService->shouldReceive('fetchByApiKey')
                 ->once()
-                ->with($rule->id)
+                ->with($this->api->key_hash)
+                ->andReturn($entityApiKey);
+
+            $ruleService->shouldReceive('fetchById')
+                ->once()
+                ->withArgs([$this->merchant->id, $rule->id])
                 ->andReturn($ruleEntity);
 
             // Act:
-            $result = $useCase->handle($rule->id);
+            $result = $useCase->handle($this->api->key_hash, $rule->id);
 
             expect($result)->tobeInstanceOf(RewardRuleReadDTO::class)
                 ->and($result->id)->toBe($ruleEntity->id())

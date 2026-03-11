@@ -21,7 +21,9 @@ describe('Feature: Reward Rule Selection', function () {
         it('should return selected reward rule by id when using /api/v1/rules/{id} get api endpoint.', function () {
 
             // Arrange:
-            $rule = EloquentRewardRule::factory()->create();
+            $rule = EloquentRewardRule::factory()->create([
+                'merchant_id' => $this->merchant->id,
+            ]);
 
             // Act:
             $response = $this->withHeaders([

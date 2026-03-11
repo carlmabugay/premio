@@ -23,9 +23,9 @@ class RewardRuleService
         return $this->readRepository->fetchAll($merchant_id);
     }
 
-    public function fetchById(int $id): RewardRule
+    public function fetchById(string $merchant_id, int $id): RewardRule
     {
-        return $this->readRepository->fetchById($id);
+        return $this->readRepository->fetchById($merchant_id, $id);
     }
 
     public function update(int $id, array $data): int

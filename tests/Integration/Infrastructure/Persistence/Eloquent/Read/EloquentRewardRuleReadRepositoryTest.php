@@ -275,7 +275,7 @@ describe('Integration: EloquentRewardRuleReadRepository', function () {
                 'priority' => 20,
             ]);
             // Act:
-            $rule = $this->repository->fetchById(EloquentRewardRule::first()->id);
+            $rule = $this->repository->fetchById($this->merchant->id, EloquentRewardRule::first()->id);
 
             // Assert:
             expect($rule)->toBeInstanceOf(RewardRule::class)

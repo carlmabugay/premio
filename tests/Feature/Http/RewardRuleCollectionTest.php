@@ -21,7 +21,9 @@ describe('Feature: Reward Rule Collection', function () {
         it('should collect all reward rules when using /api/v1/rules get api endpoint.', function () {
 
             // Arrange:
-            $rules = EloquentRewardRule::factory()->count(10)->create();
+            $rules = EloquentRewardRule::factory()->count(10)->create([
+                'merchant_id' => $this->merchant->id,
+            ]);
 
             // Act:
             $response = $this->withHeaders([

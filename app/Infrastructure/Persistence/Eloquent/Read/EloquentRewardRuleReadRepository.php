@@ -30,9 +30,12 @@ class EloquentRewardRuleReadRepository implements RewardRuleReadRepositoryInterf
             ->all();
     }
 
-    public function fetchById(int $id): RewardRule
+    public function fetchById(string $merchant_id, int $id): RewardRule
     {
-        $model = EloquentRewardRule::query()->where('id', $id)->first();
+        $model = EloquentRewardRule::query()
+            ->where('id', $id)
+            ->where('merchant_id', $merchant_id)
+            ->first();
 
         return $this->toDomain($model);
     }

@@ -75,8 +75,9 @@ describe('Unit: RewardRuleService', function () {
 
             // Arrange:
             $rule_id = 1;
+            $merchant_id = Str::uuid()->toString();
             $rule = new RewardRule(
-                merchant_id: Str::uuid()->toString(),
+                merchant_id: $merchant_id,
                 name: 'Active Rule',
                 event_type: 'order.completed',
                 reward_type: 'fixed',
@@ -88,11 +89,11 @@ describe('Unit: RewardRuleService', function () {
             // Assert (Expectation):
             $this->readRepository->shouldReceive('fetchById')
                 ->once()
-                ->with($rule_id)
+                ->withArgs([$merchant_id, $rule_id])
                 ->andReturn($rule);
 
             // Act:
-            $this->service->fetchById($rule_id);
+            $this->service->fetchById($merchant_id, $rule_id);
 
         });
 

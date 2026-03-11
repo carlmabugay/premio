@@ -1,6 +1,7 @@
 <?php
 
 use App\Application\UseCases\HandleRewardRuleCollection;
+use App\Domain\ApiKeys\Entities\ApiKey;
 use App\Domain\ApiKeys\Services\ApiKeyService;
 use App\Domain\Rewards\Entities\RewardRule;
 use App\Domain\Rewards\Services\RewardRuleService;
@@ -44,20 +45,27 @@ describe('Integration: Reward Rule Collection', function () {
                 id: $rule->id,
             ))->all();
 
+            $entityApiKey = new ApiKey(
+                merchant_id: $this->api->merchant_id,
+                name: $this->api->name,
+                key_hash: $this->api->key_hash,
+                is_active: $this->api->is_active,
+            );
+
             $ruleService = Mockery::mock(RewardRuleService::class);
             $apiKeyService = Mockery::mock(ApiKeyService::class);
 
             $useCase = new HandleRewardRuleCollection($ruleService, $apiKeyService);
 
             // Assert (Expectation):
-            $apiKeyService->shouldReceive('isKeyExists')
+            $apiKeyService->shouldReceive('fetchByApiKey')
                 ->once()
                 ->with($this->api->key_hash)
-                ->andReturn(true);
+                ->andReturn($entityApiKey);
 
             $ruleService->shouldReceive('fetchAll')
                 ->once()
-                ->with()
+                ->with($this->api->merchant_id)
                 ->andReturn($entityRules);
 
             // Act:

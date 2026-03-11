@@ -15,9 +15,9 @@ readonly class HandleRewardRuleCollection
 
     public function handle(string $api_key): array
     {
-        $merchant_id = $this->apiKeyService->isKeyExists($api_key);
+        $key = $this->apiKeyService->fetchByApiKey($api_key);
 
-        $rules = $this->ruleService->fetchAll($merchant_id);
+        $rules = $this->ruleService->fetchAll($key->merchantId());
 
         return RewardRuleReadDTO::fromEntityCollection($rules);
     }

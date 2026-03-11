@@ -3,9 +3,23 @@
 use App\Application\DTOs\Read\RewardRuleReadDTO;
 use App\Application\DTOs\Write\RewardRuleCreateDTO;
 use App\Application\UseCases\HandleRewardRuleCreation;
+use App\Domain\ApiKeys\Entities\ApiKey;
+use App\Domain\ApiKeys\Services\ApiKeyService;
 use App\Domain\Rewards\Entities\RewardRule;
 use App\Domain\Rewards\Services\RewardRuleService;
-use Illuminate\Support\Str;
+use App\Models\ApiKey as EloquentApiKey;
+use App\Models\Merchant as EloquentMerchant;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
+
+uses(TestCase::class, RefreshDatabase::class);
+
+beforeEach(function () {
+    $this->merchant = EloquentMerchant::factory()->active()->create();
+    $this->api = EloquentApiKey::factory()->create([
+        'merchant_id' => $this->merchant->id,
+    ]);
+});
 
 describe('Integration: Handle Reward Rule Creation', function () {
 
@@ -14,11 +28,19 @@ describe('Integration: Handle Reward Rule Creation', function () {
         it('should create a new reward rule when using handle method.', function () {
 
             // Arrange:
-            $service = Mockery::mock(RewardRuleService::class);
-            $useCase = new HandleRewardRuleCreation($service);
+            $ruleService = Mockery::mock(RewardRuleService::class);
+            $apiKeyService = Mockery::mock(ApiKeyService::class);
+            $useCase = new HandleRewardRuleCreation($ruleService, $apiKeyService);
+
+            $entityApiKey = new ApiKey(
+                merchant_id: $this->api->merchant_id,
+                name: $this->api->name,
+                key_hash: $this->api->key_hash,
+                is_active: $this->api->is_active,
+            );
 
             $dto = RewardRuleCreateDTO::fromArray([
-                'merchant_id' => Str::uuid()->toString(),
+                'merchant_id' => $entityApiKey->merchantId(),
                 'name' => 'New Active Rule',
                 'event_type' => 'order.completed',
                 'reward_type' => 'fixed',
@@ -36,7 +58,7 @@ describe('Integration: Handle Reward Rule Creation', function () {
                 'priority' => 10,
             ]);
 
-            $rule = new RewardRule(
+            $entityRule = new RewardRule(
                 merchant_id: $dto->merchant_id,
                 name: $dto->name,
                 event_type: $dto->event_type,
@@ -49,12 +71,17 @@ describe('Integration: Handle Reward Rule Creation', function () {
             );
 
             // Assert (Expectation):
-            $service->shouldReceive('save')
+            $apiKeyService->shouldReceive('fetchByApiKey')
                 ->once()
-                ->andReturn($rule);
+                ->with($this->api->key_hash)
+                ->andReturn($entityApiKey);
+
+            $ruleService->shouldReceive('save')
+                ->once()
+                ->andReturn($entityRule);
 
             // Act:
-            $result = $useCase->handle($dto);
+            $result = $useCase->handle($this->api->key_hash, $dto);
 
             expect($result)->toBeInstanceOf(RewardRuleReadDTO::class)
                 ->and($result->merchant_id === $dto->merchant_id)

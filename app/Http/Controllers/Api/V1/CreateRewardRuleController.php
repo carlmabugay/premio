@@ -16,9 +16,11 @@ final class CreateRewardRuleController
      */
     public function __invoke(CreateRewardRuleRequest $request, HandleRewardRuleCreation $handler): JsonResponse
     {
+        $api_key = $request->header('X-API-KEY');
+
         $dto = RewardRuleCreateDTO::fromArray($request->validated());
 
-        $result = $handler->handle($dto);
+        $result = $handler->handle($api_key, $dto);
 
         $response = new RewardRuleCreationResponse($result);
 

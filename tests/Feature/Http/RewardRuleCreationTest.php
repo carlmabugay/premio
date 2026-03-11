@@ -21,7 +21,6 @@ describe('Feature: Reward Rule Creation', function () {
 
             // Arrange:
             $payload = [
-                'merchant_id' => $this->merchant->id,
                 'event_type' => 'order.completed',
                 'name' => 'Active Rule',
                 'reward_type' => 'fixed',

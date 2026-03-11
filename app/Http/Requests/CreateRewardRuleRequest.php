@@ -14,7 +14,6 @@ class CreateRewardRuleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'merchant_id' => 'required|exists:merchants,id',
             'name' => 'required|string',
             'event_type' => 'required|string',
             'reward_type' => 'required|string',

@@ -1,8 +1,10 @@
 <?php
 
+use App\Application\DTOs\Read\RewardRuleReadDTO;
 use App\Application\UseCases\HandleRewardRuleModification;
 use App\Domain\ApiKeys\Entities\ApiKey;
 use App\Domain\ApiKeys\Services\ApiKeyService;
+use App\Domain\Rewards\Entities\RewardRule;
 use App\Domain\Rewards\Services\RewardRuleService;
 use App\Models\ApiKey as EloquentApiKey;
 use App\Models\Merchant as EloquentMerchant;
@@ -41,11 +43,26 @@ describe('Integration: Handle Reward Rule Modification', function () {
                 'merchant_id' => $this->merchant->id,
             ]);
 
-            $dataToUpdate = [
-                'event_type' => 'cart.checkout.completed',
-                'reward_type' => 'percentage',
-                'reward_value' => 1,
+            $new_rule_name = 'New rule name';
+
+            $payload = [
+                'id' => $rule->id,
+                'name' => $new_rule_name,
             ];
+
+            $ruleEntity = new RewardRule(
+                merchant_id: $rule->merchant_id,
+                name: $new_rule_name,
+                event_type: $rule->event_type,
+                reward_type: $rule->reward_type,
+                reward_value: $rule->reward_value,
+                is_active: $rule->is_active,
+                starts_at: $rule->starts_at ? new DateTimeImmutable($rule->starts_at) : null,
+                ends_at: $rule->ends_at ? new DateTimeImmutable($rule->ends_at) : null,
+                conditions: json_decode($rule->conditions),
+                priority: $rule->priority,
+                id: $rule->id,
+            );
 
             // Assert (Expectation):
             $apiKeyService->shouldReceive('fetchByApiKey')
@@ -55,13 +72,14 @@ describe('Integration: Handle Reward Rule Modification', function () {
 
             $ruleService->shouldReceive('update')
                 ->once()
-                ->withArgs([$entityApiKey->merchantId(), $rule->id, $dataToUpdate])
-                ->andReturn(1);
+                ->withArgs([$entityApiKey->merchantId(), $payload])
+                ->andReturn($ruleEntity);
 
             // Act:
-            $result = $useCase->handle($this->api->key_hash, $rule->id, $dataToUpdate);
+            $result = $useCase->handle($this->api->key_hash, $payload);
 
-            expect($result)->toBe(1);
+            expect($result)->toBeInstanceOf(RewardRuleReadDTO::class)
+                ->and($result->name)->toBe($new_rule_name);
         });
 
     });

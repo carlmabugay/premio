@@ -102,21 +102,31 @@ describe('Unit: RewardRuleService', function () {
             // Arrange:
             $rule_id = 1;
             $merchant_id = Str::uuid()->toString();
+            $rule_name = 'New Active Rule';
 
-            $dataToUpdate = [
-                'event_type' => 'cart.checkout.completed',
-                'reward_type' => 'percentage',
-                'reward_value' => 1,
+            $payload = [
+                'id' => $rule_id,
+                'name' => $rule_name,
             ];
+
+            $entityRule = new RewardRule(
+                merchant_id: $merchant_id,
+                name: $rule_name,
+                event_type: 'order.completed',
+                reward_type: 'fixed',
+                reward_value: 100,
+                is_active: true,
+                id: $rule_id,
+            );
 
             // Assert (Expectation):
             $this->writeRepository->shouldReceive('update')
                 ->once()
-                ->withArgs([$merchant_id, $rule_id, $dataToUpdate])
-                ->andReturn(1);
+                ->withArgs([$merchant_id, $payload])
+                ->andReturn($entityRule);
 
             // Act:
-            $this->service->update($merchant_id, $rule_id, $dataToUpdate);
+            $this->service->update($merchant_id, $payload);
 
         });
     });

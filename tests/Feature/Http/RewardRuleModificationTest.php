@@ -18,7 +18,7 @@ describe('Feature: Reward Rule Creation', function () {
 
     describe('Positives', function () {
 
-        it('should create a new rule when using /api/v1/rules/{id} patch api endpoint.', function () {
+        it('should create a new rule when using /api/v1/rules/{id} put api endpoint.', function () {
 
             // Arrange:
             $rule = EloquentRewardRule::factory()->create([
@@ -36,7 +36,11 @@ describe('Feature: Reward Rule Creation', function () {
             ])->putJson('/api/v1/rules/', $payload);
 
             // Assert:
-            $response->assertStatus(204);
+            $response->assertSuccessful()
+                ->assertJsonStructure([
+                    'status',
+                    'data',
+                ]);
 
             $this->assertDatabaseHas('reward_rules', $payload);
 

@@ -12,8 +12,8 @@ readonly class RewardRuleCreationResponse
     public function make(): JsonResponse
     {
         return response()->json([
-            'id' => $this->dto->id,
             'status' => 'created',
+            'id' => $this->dto->id,
         ], 201);
     }
 }

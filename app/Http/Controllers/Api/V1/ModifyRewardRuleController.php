@@ -7,7 +7,7 @@ use App\Http\Requests\ModifyRewardRuleRequest;
 use App\Http\Responses\RewardRuleModificationResponse;
 use Illuminate\Http\JsonResponse;
 
-class ModifyRewardRuleController
+final class ModifyRewardRuleController
 {
     public function __invoke(ModifyRewardRuleRequest $request, HandleRewardRuleModification $handler): JsonResponse
     {
@@ -15,7 +15,7 @@ class ModifyRewardRuleController
 
         $result = $handler->handle($api_key, $request->validated());
 
-        $response = new RewardRuleModificationResponse;
+        $response = new RewardRuleModificationResponse($result);
 
         return $response->make();
     }

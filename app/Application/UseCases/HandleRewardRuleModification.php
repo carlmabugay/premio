@@ -2,8 +2,8 @@
 
 namespace App\Application\UseCases;
 
+use App\Application\DTOs\Read\RewardRuleReadDTO;
 use App\Domain\ApiKeys\Services\ApiKeyService;
-use App\Domain\Rewards\Entities\RewardRule;
 use App\Domain\Rewards\Services\RewardRuleService;
 
 readonly class HandleRewardRuleModification
@@ -13,10 +13,12 @@ readonly class HandleRewardRuleModification
         private ApiKeyService $apiKeyService
     ) {}
 
-    public function handle(string $api_key, array $data): RewardRule
+    public function handle(string $api_key, array $data): RewardRuleReadDTO
     {
         $key = $this->apiKeyService->fetchByApiKey($api_key);
 
-        return $this->ruleService->update($key->merchantId(), $data);
+        $rule = $this->ruleService->update($key->merchantId(), $data);
+
+        return RewardRuleReadDTO::fromEntity($rule);
     }
 }

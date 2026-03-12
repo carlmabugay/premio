@@ -54,7 +54,8 @@ describe('Integration: EloquentRewardRuleWriteRepository', function () {
                 'merchant_id' => $this->merchant->id,
             ]);
 
-            $dataToUpdate = [
+            $payload = [
+                'id' => $rule->id,
                 'event_type' => 'cart.checkout.completed',
                 'reward_type' => 'percentage',
                 'reward_value' => 1,
@@ -62,10 +63,10 @@ describe('Integration: EloquentRewardRuleWriteRepository', function () {
 
             // Act:
             $repository = new EloquentRewardRuleWriteRepository;
-            $repository->update($this->merchant->id, $rule->id, $dataToUpdate);
+            $repository->update($this->merchant->id, $payload);
 
             // Assert:
-            $this->assertDatabaseHas('reward_rules', $dataToUpdate);
+            $this->assertDatabaseHas('reward_rules', $payload);
 
         });
     });

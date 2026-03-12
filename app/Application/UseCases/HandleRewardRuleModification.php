@@ -2,16 +2,20 @@
 
 namespace App\Application\UseCases;
 
+use App\Domain\ApiKeys\Services\ApiKeyService;
 use App\Domain\Rewards\Services\RewardRuleService;
 
 readonly class HandleRewardRuleModification
 {
     public function __construct(
-        private RewardRuleService $service
+        private RewardRuleService $ruleService,
+        private ApiKeyService $apiKeyService
     ) {}
 
-    public function handle(int $id, array $data): int
+    public function handle(string $api_key, int $id, array $data): int
     {
-        return $this->service->update($id, $data);
+        $key = $this->apiKeyService->fetchByApiKey($api_key);
+
+        return $this->ruleService->update($key->merchantId(), $id, $data);
     }
 }

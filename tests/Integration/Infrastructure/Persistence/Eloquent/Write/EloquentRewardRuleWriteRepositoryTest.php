@@ -62,7 +62,7 @@ describe('Integration: EloquentRewardRuleWriteRepository', function () {
 
             // Act:
             $repository = new EloquentRewardRuleWriteRepository;
-            $repository->update($rule->id, $dataToUpdate);
+            $repository->update($this->merchant->id, $rule->id, $dataToUpdate);
 
             // Assert:
             $this->assertDatabaseHas('reward_rules', $dataToUpdate);

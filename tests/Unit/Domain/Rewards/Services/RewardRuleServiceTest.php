@@ -101,6 +101,7 @@ describe('Unit: RewardRuleService', function () {
 
             // Arrange:
             $rule_id = 1;
+            $merchant_id = Str::uuid()->toString();
 
             $dataToUpdate = [
                 'event_type' => 'cart.checkout.completed',
@@ -111,11 +112,11 @@ describe('Unit: RewardRuleService', function () {
             // Assert (Expectation):
             $this->writeRepository->shouldReceive('update')
                 ->once()
-                ->withArgs([$rule_id, $dataToUpdate])
+                ->withArgs([$merchant_id, $rule_id, $dataToUpdate])
                 ->andReturn(1);
 
             // Act:
-            $this->service->update($rule_id, $dataToUpdate);
+            $this->service->update($merchant_id, $rule_id, $dataToUpdate);
 
         });
     });

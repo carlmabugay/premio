@@ -8,5 +8,5 @@ interface RewardRuleWriteRepositoryInterface
 {
     public function save(RewardRule $rewardRule): RewardRule;
 
-    public function update(string $merchant_id, int $id, array $data): int;
+    public function update(string $merchant_id, array $data): RewardRule;
 }

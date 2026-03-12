@@ -28,8 +28,8 @@ class RewardRuleService
         return $this->readRepository->fetchById($merchant_id, $id);
     }
 
-    public function update(string $merchant_id, int $id, array $data): int
+    public function update(string $merchant_id, array $data): RewardRule
     {
-        return $this->writeRepository->update($merchant_id, $id, $data);
+        return $this->writeRepository->update($merchant_id, $data);
     }
 }

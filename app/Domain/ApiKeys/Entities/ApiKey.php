@@ -2,13 +2,13 @@
 
 namespace App\Domain\ApiKeys\Entities;
 
-class ApiKey
+readonly class ApiKey
 {
     public function __construct(
-        public string $merchant_id,
-        public string $name,
-        public string $key_hash,
-        public bool $is_active,
+        private string $merchant_id,
+        private string $name,
+        private string $key_hash,
+        private bool $is_active,
     ) {}
 
     public function merchantId(): string

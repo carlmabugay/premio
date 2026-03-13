@@ -2,7 +2,7 @@
 
 namespace App\Application\DTOs;
 
-class CreateMerchantDTO
+readonly class CreateMerchantDTO
 {
     public function __construct(
         public string $name,

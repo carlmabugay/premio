@@ -20,7 +20,7 @@ class RewardRule
         private readonly ?DateTimeImmutable $starts_at = null,
         private readonly ?DateTimeImmutable $ends_at = null,
         private readonly ?array $conditions = [],
-        public int $priority = 100,
+        private readonly int $priority = 100,
         private int|string|null $id = null,
     ) {}
 

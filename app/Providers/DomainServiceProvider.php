@@ -2,7 +2,8 @@
 
 namespace App\Providers;
 
-use App\Domain\ApiKeys\Contracts\ApiKeyRepositoryInterface;
+use App\Domain\ApiKeys\Contracts\Read\ApiKeyReadRepositoryInterface;
+use App\Domain\ApiKeys\Contracts\Write\ApiKeyWriteRepositoryInterface;
 use App\Domain\Customers\Contracts\CustomerRepositoryInterface;
 use App\Domain\Events\Contracts\EventRepositoryInterface;
 use App\Domain\Merchants\Contracts\MerchantRepositoryInterface;
@@ -11,14 +12,15 @@ use App\Domain\Rewards\Contracts\Read\RewardRuleReadRepositoryInterface;
 use App\Domain\Rewards\Contracts\RewardIssueRepositoryInterface;
 use App\Domain\Rewards\Contracts\RewardLedgerEntryRepositoryInterface;
 use App\Domain\Rewards\Contracts\Write\RewardRuleWriteRepositoryInterface;
-use App\Infrastructure\Persistence\Eloquent\EloquentApiKeyRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentCustomerRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentEventRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentMerchantRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentRedemptionRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentRewardIssueRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentRewardLedgerEntryRepository;
+use App\Infrastructure\Persistence\Eloquent\Read\EloquentApiKeyReadRepository;
 use App\Infrastructure\Persistence\Eloquent\Read\EloquentRewardRuleReadRepository;
+use App\Infrastructure\Persistence\Eloquent\Write\EloquentApiKeyWriteRepository;
 use App\Infrastructure\Persistence\Eloquent\Write\EloquentRewardRuleWriteRepository;
 use Illuminate\Support\ServiceProvider;
 
@@ -31,10 +33,11 @@ class DomainServiceProvider extends ServiceProvider
         RewardLedgerEntryRepositoryInterface::class => EloquentRewardLedgerEntryRepository::class,
         RedemptionRepositoryInterface::class => EloquentRedemptionRepository::class,
         MerchantRepositoryInterface::class => EloquentMerchantRepository::class,
-        ApiKeyRepositoryInterface::class => EloquentApiKeyRepository::class,
 
         RewardRuleWriteRepositoryInterface::class => EloquentRewardRuleWriteRepository::class,
         RewardRuleReadRepositoryInterface::class => EloquentRewardRuleReadRepository::class,
+        ApiKeyWriteRepositoryInterface::class => EloquentApiKeyWriteRepository::class,
+        ApiKeyReadRepositoryInterface::class => EloquentApiKeyReadRepository::class,
     ];
 
     /**

@@ -5,7 +5,7 @@ namespace App\Application\DTOs\Write;
 use DateTimeImmutable;
 use Exception;
 
-class RewardRuleCreateDTO
+readonly class RewardRuleCreateDTO
 {
     public function __construct(
         public ?string $merchant_id,

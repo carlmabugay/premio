@@ -4,7 +4,7 @@ namespace App\Http\Responses;
 
 use Illuminate\Http\JsonResponse;
 
-class CustomerCreationResponse
+readonly class CustomerCreationResponse
 {
     public function make(): JsonResponse
     {

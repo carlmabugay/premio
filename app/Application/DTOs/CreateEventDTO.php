@@ -2,7 +2,7 @@
 
 namespace App\Application\DTOs;
 
-class CreateEventDTO
+readonly class CreateEventDTO
 {
     public function __construct(
         public string $merchant_id,

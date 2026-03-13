@@ -2,22 +2,22 @@
 
 namespace App\Domain\ApiKeys\Services;
 
-use App\Domain\ApiKeys\Contracts\ApiKeyRepositoryInterface;
+use App\Domain\ApiKeys\Contracts\Read\ApiKeyReadRepositoryInterface;
 use App\Domain\ApiKeys\Entities\ApiKey;
 
 class ApiKeyService
 {
     public function __construct(
-        private readonly ApiKeyRepositoryInterface $repository
+        private readonly ApiKeyReadRepositoryInterface $readRepository,
     ) {}
 
     public function isKeyExists(string $key): bool
     {
-        return $this->repository->exists($key);
+        return $this->readRepository->exists($key);
     }
 
     public function fetchByApiKey(string $api_key): ApiKey
     {
-        return $this->repository->fetchByApiKey($api_key);
+        return $this->readRepository->fetchByApiKey($api_key);
     }
 }

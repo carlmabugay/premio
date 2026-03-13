@@ -10,7 +10,7 @@ use App\Http\Responses\EventIngestionResponse;
 use Illuminate\Http\JsonResponse;
 use Throwable;
 
-class EventIngestionController extends Controller
+final class EventIngestionController extends Controller
 {
     /**
      * @throws Throwable

@@ -2,7 +2,7 @@
 
 namespace App\Application\DTOs;
 
-class CreateCustomerDTO
+readonly class CreateCustomerDTO
 {
     public function __construct(
         public string $merchant_id,
